@@ -509,8 +509,7 @@ const Counter = component(({ initialValue = input<number>() }) => ({
 }));
 ```
 
-## Backward compatible
-Managing legacy implementations with `ng-content`, `ng-template`, ...and having a host:
+## Backward compatibility
 ```ts
 import { component, input } from '@angular/core';
 
