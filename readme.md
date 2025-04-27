@@ -7,7 +7,7 @@ Points:
     - `fragment`: a duo `template` / `style` that captures some markup for reusability,
     - `directive`: a `script` that can change the appearance or behavior of DOM elements.
 2. hostless components + ts lexical scoping for templates,
-3. ts/ng expressions with `{}`: bindings + text interpolation,
+3. ts expressions with `{}`: bindings + text interpolation,
 4. component inputs: lifted up + immediately available + spread,
 5. new bindings for DOM elements: `class:`, `style:`, `attr:`, `bind:`, `use:`, `on:`,
 6. composition with fragments and directives,
