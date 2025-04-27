@@ -3,8 +3,7 @@
 
 Points:
 1. building blocks as functions:
-    - `component`: a treble `script` / `template` / `style` where you can read / write state
-    and capture user interaction,
+    - `component`: a treble `script` / `template` / `style`,
     - `fragment`: a duo `template` / `style` that captures some markup for reusability,
     - `directive`: a `script` that can change the appearance or behavior of DOM elements.
 2. hostless components + ts lexical scoping for templates,
