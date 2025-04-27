@@ -2,11 +2,11 @@
 **Note: just personal thoughts from a DEV perspective on [the future of angular](https://myconf.dev/videos/2024-keynote-session-the-future-of-angular). Strongly inspired by svelte / solid (without JSX 😅)**
 
 Points:
-1. components as functions:
+1. builsing blocks as functions:
     - `component`: a treble `script` / `template` / `style` where you can read / write state
     and capture user interaction,
     - `fragment`: a duo `template` / `style` that captures some markup for reusability,
-    - `directive`: an action that can change the appearance or behavior of DOM elements.
+    - `directive`: a `script` that can change the appearance or behavior of DOM elements.
 2. hostless components + ts lexical scoping for templates,
 3. `{}` ts/ng expressions: bindings + text interpolation,
 4. component inputs: lifted up + immediately available + spread,
