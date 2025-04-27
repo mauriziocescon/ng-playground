@@ -69,43 +69,6 @@ const TextSearch = component(({
 }));
 ```
 
-## Inputs
-Inputs lifted up for providers init:
-```ts
-import { component, linkedSignal, input, WritableSignal, provide, inject } from '@angular/core';
-
-class CounterStore {
-  private readonly counter: WritableSignal<number>;
-  readonly value = this.counter.asReadonly();
-
-  constructor(c: Signal<number>) {
-    this.counter = linkedSignal(() => c());
-  }
-
-  decrease() {
-    this.counter.update(v => v - 1);
-  }
-
-  increase() {
-    this.counter.update(v => v + 1);
-  }
-}
-
-const Counter = component(({ c = input<number>() }) => ({
-  providers: [
-    provide({ token: CounterStore, useFactory: () => new CounterStore(c) }),
-  ],
-  script: () => {
-    const store = inject(CounterStore);
-  },
-  template: `
-    <h1>Counter</h1>
-    <div>Value: { store.value() }</div>
-    <button on:click={ store.decrease() }> - </button>
-    <button on:click={ store.increase() }> + </button>`,
-}));
-```
-
 Component bindings:
 ```ts
 import { component, signal, computed } from '@angular/core';
@@ -153,7 +116,6 @@ export UserDetail = component(({
 ```
 
 ## Element directives
-
 Change the appearance or behavior of DOM elements:
 ```ts
 import { component, signal } from '@angular/core';
@@ -201,6 +163,43 @@ const tooltip = directive(({
 
     // ...
   },
+}));
+```
+
+## Inputs
+Inputs lifted up for providers init:
+```ts
+import { component, linkedSignal, input, WritableSignal, provide, inject } from '@angular/core';
+
+class CounterStore {
+  private readonly counter: WritableSignal<number>;
+  readonly value = this.counter.asReadonly();
+
+  constructor(c: Signal<number>) {
+    this.counter = linkedSignal(() => c());
+  }
+
+  decrease() {
+    this.counter.update(v => v - 1);
+  }
+
+  increase() {
+    this.counter.update(v => v + 1);
+  }
+}
+
+const Counter = component(({ c = input<number>() }) => ({
+  providers: [
+    provide({ token: CounterStore, useFactory: () => new CounterStore(c) }),
+  ],
+  script: () => {
+    const store = inject(CounterStore);
+  },
+  template: `
+    <h1>Counter</h1>
+    <div>Value: { store.value() }</div>
+    <button on:click={ store.decrease() }> - </button>
+    <button on:click={ store.increase() }> + </button>`,
 }));
 ```
 
