@@ -10,7 +10,7 @@ Points:
 2. hostless components + ts lexical scoping for templates,
 3. `{}` ts/ng expressions: bindings + text interpolation,
 4. component inputs: lifted up + immediately available + spread,
-5. new bindings for native elements: `class:`, `style:`, `attr:`, `bind:`, `use:`, `on:`,
+5. new bindings for DOM elements: `class:`, `style:`, `attr:`, `bind:`, `use:`, `on:`,
 6. composition with fragments and directives,
 7. lifecycle hooks: after** + onDestroy,
 8. DI enhancements,
