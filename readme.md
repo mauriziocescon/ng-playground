@@ -5,7 +5,7 @@ Points:
 1. components as functions:
     - `component`: a treble `script` / `template` / `style` where you can read / write state
     and capture user interaction,
-    - `fragment`: a duo `template` / `style` that caputures some markup for reusability,
+    - `fragment`: a duo `template` / `style` that captures some markup for reusability,
     - `directive`: an action that can change the appearance or behavior of DOM elements.
 2. hostless components + ts lexical scoping for templates,
 3. `{}` ts/ng expressions: bindings + text interpolation,
