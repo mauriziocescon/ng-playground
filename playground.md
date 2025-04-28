@@ -48,6 +48,8 @@
 <span (click)="callMethod()">{{ text() }}</span>
 <span on:click={callMethod()}>{ text() }</span>
 
+<input type="text" on:keyup.enter={callMethod($event)} />
+
 <ul [attr.role]="listRole()"></ul>
 <ul attr:role={listRole()}></ul>
 
