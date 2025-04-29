@@ -20,7 +20,7 @@ Component structure and element bindings:
 ```ts
 import { component, signal, linkedSignal, input, output } from '@angular/core';
 
-const TextSearch = component(({
+export const TextSearch = component(({
   value = input.required<string>(),
   valueChange = output<string>(),
 }) => ({
@@ -59,7 +59,7 @@ External files:
 ```ts
 import { component, input, output } from '@angular/core';
 
-const TextSearch = component(({
+export const TextSearch = component(({
   value = input.required<string>(),
   valueChange = output<string>(),
 }) => ({
@@ -75,7 +75,7 @@ import { component, signal, computed } from '@angular/core';
 
 import { UserDetail, User } from './user-detail';
 
-const UserDetailConsumer = component(() => ({
+export const UserDetailConsumer = component(() => ({
   script: () => {
     const user = signal<User>(...);
     const another = signal<string>(...);
@@ -105,7 +105,7 @@ import { component, input, model, output } from '@angular/core';
 
 export interface User { /** ... **/ }
 
-export UserDetail = component(({
+export const UserDetail = component(({
   user = input<User>(),
   another = input<string>(),
   valid = model<boolean>(),
@@ -122,7 +122,7 @@ import { component, signal } from '@angular/core';
 
 import { tooltip } from '@mylib/tooltip';
 
-const TextSearch = component(() => ({
+export const TextSearch = component(() => ({
   script: () => {
     const text = signal('');
     const valid = signal(false);
@@ -153,7 +153,7 @@ const TextSearch = component(() => ({
 // -- tooltip in @mylib/tooltip --------------------
 import { directive, input, model, output, inject, ElementRef } from '@angular/core';
 
-const tooltip = directive(({
+export const tooltip = directive(({
   message = input.required<string>(),
   valid = model<boolean>(),
   dismiss = output<void>(),
@@ -192,7 +192,7 @@ class CounterStore {
   }
 }
 
-const Counter = component(({ c = input<number>() }) => ({
+export const Counter = component(({ c = input<number>() }) => ({
   providers: [
     provide({ token: CounterStore, useFactory: () => new CounterStore(c) }),
   ],
@@ -220,7 +220,7 @@ import { Item } from '.../model/item';
 
 class ItemStore { /** ... **/ }
 
-const Item = component(() => ({
+export const Item = component(() => ({
   providers: [
     provide({ token: ItemStore, useFactory: () => new ItemStore(item) }),
   ],
@@ -274,7 +274,7 @@ import { Item } from '../model/item';
 
 class ItemStore { /** ... **/ }
 
-const Item = component(({ item = input.required<Item>() }) => ({
+export const Item = component(({ item = input.required<Item>() }) => ({
   providers: [
     provide({ token: ItemStore, useFactory: () => new ItemStore(item) }),
   ],
@@ -336,7 +336,7 @@ const myNode = fragment((node: CustomNode) => ({
     }`,
 }));
 
-const TreeConsumer = component(({
+export const TreeConsumer = component(({
   nodes = input.required<CustomNode[]>(),
   custom = input.required<boolean>(),
 }) => ({
@@ -354,7 +354,7 @@ import { Render } from '@angular/common';
 
 export interface Node { /** ... **/ }
 
-const Tree = component(({
+export const Tree = component(({
   nodes = input.required<Node[]>(),
   custumNode = input<Fragment<[Node]>>(),
 }) => ({
@@ -379,7 +379,7 @@ import { tooltip } from '@mylib/tooltip';
 
 import { TextSearch } from './text-search';
 
-const TextSearchConsumer = component(() => ({
+export const TextSearchConsumer = component(() => ({
   script: () => {
     const tooltipMsg = signal('');
   },
@@ -392,7 +392,7 @@ const TextSearchConsumer = component(() => ({
 // -- TextSearch -----------------------------------
 import { component, signal, DirProps } from '@angular/core';
 
-const TextSearch = component(({
+export const TextSearch = component(({
   withTooltip = input<DirProps<{ message: string }>>(),
   tooltipMsg = input<string>(),
 }) => ({
@@ -414,7 +414,7 @@ import { Dynamic } from '@angular/common';
 import { AComp } from './a-comp';
 import { BComp } from './b-comp';
 
-const Something = component(() => ({
+export const Something = component(() => ({
   script: () => {
     const condition = signal<boolean>(/** ... **/);
     const comp = computed(() => condition() ? AComp : BComp);
@@ -448,7 +448,7 @@ const Child = component(() => ({
     <!-- ... -->`,
 }));
 
-const Parent = component(() => ({
+export const Parent = component(() => ({
   script: () => {
     const value = signal('');
 
@@ -478,7 +478,7 @@ import { component } from '@angular/core';
 
 import { Menu, MenuItem } from '@mylib/menu';
 
-const MenuConsumer = component(() => ({
+export const MenuConsumer = component(() => ({
   script: () => { /** ... **/ },
   template: `
     <!-- ... -->
@@ -491,7 +491,7 @@ const MenuConsumer = component(() => ({
 // -- Menu in @mylib/menu --------------------------
 import { component, ref, input, Fragment, computed } from '@angular/core';
 
-const Menu = component(({
+export const Menu = component(({
   children = input.required<Fragment<void>>(), 
 }) => ({
   script: () => {
@@ -505,7 +505,7 @@ const Menu = component(({
     <!-- ... ->`,
 }));
 
-const MenuItem = component(({
+export const MenuItem = component(({
   children = input.required<Fragment<void>>(), 
 }) => ({
   script: () => { /** ... **/ },
@@ -552,7 +552,7 @@ const rootToken = provideForRoot('desc', {
    },
 });
 
-const Counter = component(({ initialValue = input<number>() }) => ({
+export const Counter = component(({ initialValue = input<number>() }) => ({
   providers: [
     provide({ token: compToken, useFactory: () => compToken.factory(initialValue) }),
   ],
@@ -573,7 +573,7 @@ import { component, input } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 
-const AdminLinkWithTooltip = component(({
+export const AdminLinkWithTooltip = component(({
   tooltipMessage = input.required<string>(),
   hasPermissions = input.required<boolean>(),
 }) => ({
