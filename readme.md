@@ -552,6 +552,7 @@ const Counter = component(({ initialValue = input<number>() }) => ({
 ```
 
 ## Backward compatibility
+Still can use the legacy concepts for composition: 
 ```ts
 import { component, input } from '@angular/core';
 
