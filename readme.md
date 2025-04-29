@@ -132,7 +132,7 @@ const TextSearch = component(() => ({
     }
   },
   template: `
-    <!-- ...-->
+    <!-- ... -->
 
     <!-- simple grouping of props (if any):
          use:directive(
@@ -242,7 +242,7 @@ export const Card = component(({
   footer = input<Fragment<void>>(),
 }) => ({
   template: `
-    <!-- ...-->
+    <!-- ... -->
 
     @if (children()) {
       <div class="my-lib-card">
@@ -396,7 +396,7 @@ const TextSearch = component(({
     const tooltip = withTooltip();
   },
   template: `
-    <!-- ...-->
+    <!-- ... -->
 
     <div use:tooltip(message={ tooltipMsg() })> Something </div>`,
 }));
@@ -423,11 +423,12 @@ const Something = component(() => ({
 }));
 ```
 
-Template ref variables (difficult point):
+## Template ref variables (difficult point)
+Retrieving references of elements / components:
 ```ts
 import { component, ref, refs } from '@angular/core';
 
-const AComp = component(() => ({
+const Child = component(() => ({
   script: () => {
     // ...
     // exposed as public; the rest is private
@@ -439,23 +440,61 @@ const AComp = component(() => ({
     <!-- ... -->`,
 }));
 
-const Something = component(() => ({
+const Parent = component(() => ({
   script: () => {
     // signal
     const elRef = ref<ElementRef<HTMLDivElement>>('el');
 
-    // can only call what's returned by AComp.script
-    const aCompRef1 = ref<AComp>('aComp');
-    const aCompRef2 = ref(AComp);
+    // can only use what's returned by Child.script
+    const childRef1 = ref<Child>('c');
+    const childRef2 = ref(Child);
 
-    const aCompRefs = refs<AComp[]>(AComp);
+    const childrenRef = refs<Child[]>(Child);
   },
   template: `
     <div ref:this="el"></div>
 
-    <AComp ref:this="aComp" />
+    <Child ref:this="c" />
 
-    <AComp />`,
+    <Child />`,
+}));
+```
+Retrieving content:
+```ts
+import { component, refs, Fragment } from '@angular/core';
+
+const MenuItem = component(({
+  children = input<Fragment<void>>(), 
+}) => ({
+  script: () => { /** ... **/ },
+  template: `
+    <!-- ... -->`,
+}));
+
+const Menu = component(({
+  children = input<Fragment<void>>(), 
+}) => ({
+  script: () => {
+    const menuItems = refs(MenuItem);
+    const numOfItems = computed(() => menuItems()?.length ?? 0);
+    // ...
+  },
+  template: `
+    <!-- ... -->
+    @if (children()) {
+      <Render fragment={ children() } />
+    }
+	<!-- ... ->`,
+}));
+
+const MenuConsumer = component(() => ({
+  script: () => { /** ... **/ },
+  template: `
+    <!-- ... -->
+	<Menu>
+	  <MuneItem>First</MenuItem>
+	  <MenuItem>Second</MenuItem>
+	</Menu>`,
 }));
 ```
 
