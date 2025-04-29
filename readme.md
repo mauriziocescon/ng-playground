@@ -426,7 +426,7 @@ const Something = component(() => ({
 ## Template ref (difficult point)
 Retrieving references of elements / components / directives:
 ```ts
-import { component, ref } from '@angular/core';
+import { component, ref, signal } from '@angular/core';
 
 import { tooltip } from '@mylib/tooltip';
 
@@ -444,6 +444,7 @@ const Child = component(() => ({
 
 const Parent = component(() => ({
   script: () => {
+    const text = signal('');
     // signal
     const elRef = ref<ElementRef<HTMLDivElement>>('el');
 
