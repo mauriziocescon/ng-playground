@@ -461,7 +461,7 @@ const Parent = component(() => ({
 ```
 Retrieving content:
 ```ts
-import { component, refs, Fragment } from '@angular/core';
+import { component, refs, input, Fragment, computed } from '@angular/core';
 
 const MenuItem = component(({
   children = input<Fragment<void>>(), 
@@ -484,7 +484,7 @@ const Menu = component(({
     @if (children()) {
       <Render fragment={ children() } />
     }
-	<!-- ... ->`,
+    <!-- ... ->`,
 }));
 
 const MenuConsumer = component(() => ({
