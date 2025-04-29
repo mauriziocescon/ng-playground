@@ -426,7 +426,7 @@ const Something = component(() => ({
 ## Template refs (difficult point)
 Retrieving references of elements / components:
 ```ts
-import { component, ref, refs } from '@angular/core';
+import { component, ref } from '@angular/core';
 
 const Child = component(() => ({
   script: () => {
@@ -448,8 +448,7 @@ const Parent = component(() => ({
     // can only use what's returned by Child.script
     const childRef1 = ref<Child>('c');
     const childRef2 = ref(Child);
-
-    const childRefs = refs<Child[]>(Child);
+    const childRef3 = ref<Child[]>(Child, {any: true});
   },
   template: `
     <div ref:this="el"></div>
@@ -476,21 +475,13 @@ const MenuConsumer = component(() => ({
 }));
 
 // -- Menu in @mylib/menu --------------------------
-import { component, refs, input, Fragment, computed } from '@angular/core';
-
-const MenuItem = component(({
-  children = input<Fragment<void>>(), 
-}) => ({
-  script: () => { /** ... **/ },
-  template: `
-    <!-- ... -->`,
-}));
+import { component, ref, input, Fragment, computed } from '@angular/core';
 
 const Menu = component(({
   children = input<Fragment<void>>(), 
 }) => ({
   script: () => {
-    const menuItems = refs(MenuItem);
+    const menuItems = ref(MenuItem, {any: true});
     const numOfItems = computed(() => menuItems()?.length ?? 0);
     // ...
   },
@@ -500,6 +491,14 @@ const Menu = component(({
       <Render fragment={ children() } />
     }
     <!-- ... ->`,
+}));
+
+const MenuItem = component(({
+  children = input<Fragment<void>>(), 
+}) => ({
+  script: () => { /** ... **/ },
+  template: `
+    <!-- ... -->`,
 }));
 ```
 
