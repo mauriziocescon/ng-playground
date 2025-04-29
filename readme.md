@@ -160,8 +160,12 @@ const tooltip = directive(({
 }) => ({
   script: () => {
     const elRef = inject(ElementRef);
-
     // ...
+
+    // exposed as public
+    return {
+      // ...
+    };
   },
 }));
 ```
