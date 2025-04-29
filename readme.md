@@ -461,6 +461,21 @@ const Parent = component(() => ({
 ```
 Retrieving content dynamically:
 ```ts
+import { component } from '@angular/core';
+
+import { Menu, MenuItem } from '@mylib/menu';
+
+const MenuConsumer = component(() => ({
+  script: () => { /** ... **/ },
+  template: `
+    <!-- ... -->
+    <Menu>
+      <MenuItem>First</MenuItem>
+      <MenuItem>Second</MenuItem>
+    </Menu>`,
+}));
+
+// -- Menu in @mylib/menu --------------------------
 import { component, refs, input, Fragment, computed } from '@angular/core';
 
 const MenuItem = component(({
@@ -485,16 +500,6 @@ const Menu = component(({
       <Render fragment={ children() } />
     }
     <!-- ... ->`,
-}));
-
-const MenuConsumer = component(() => ({
-  script: () => { /** ... **/ },
-  template: `
-    <!-- ... -->
-    <Menu>
-      <MenuItem>First</MenuItem>
-      <MenuItem>Second</MenuItem>
-    </Menu>`,
 }));
 ```
 
