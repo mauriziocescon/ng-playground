@@ -134,7 +134,7 @@ const TextSearch = component(() => ({
   template: `
     <!-- ... -->
 
-    <!-- simple grouping of props (if any):
+    <!-- simple grouping of props or ref (if any):
          use:directive(
            input={ var }
            bind:model={ var }
@@ -424,7 +424,7 @@ const Something = component(() => ({
 ```
 
 ## Template ref (difficult point)
-Retrieving references of elements / components:
+Retrieving references of elements / components / directives:
 ```ts
 import { component, ref } from '@angular/core';
 
