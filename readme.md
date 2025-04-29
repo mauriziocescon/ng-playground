@@ -134,7 +134,7 @@ const TextSearch = component(() => ({
   template: `
     <!-- ... -->
 
-    <!-- simple grouping of props / ref (if any):
+    <!-- grouping of directive data (if any):
          use:directive(
            input={ var }
            bind:model={ var }
@@ -428,6 +428,8 @@ Retrieving references of elements / components / directives:
 ```ts
 import { component, ref } from '@angular/core';
 
+import { tooltip } from '@mylib/tooltip';
+
 const Child = component(() => ({
   script: () => {
     // ...
@@ -451,7 +453,11 @@ const Parent = component(() => ({
     const childRef3 = ref<Child[]>(Child, { any: true });
   },
   template: `
-    <div ref:this="el"></div>
+    <div 
+      ref:this="el" 
+      use:tooltip(message={ text() } ref:this="tooltip")>
+        Something
+    </div>
 
     <Child ref:this="c" />
 
