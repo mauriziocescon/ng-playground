@@ -390,10 +390,10 @@ const TextSearchConsumer = component(() => ({
 }));
 
 // -- TextSearch -----------------------------------
-import { component, signal, Dir } from '@angular/core';
+import { component, signal, DirProps } from '@angular/core';
 
 const TextSearch = component(({
-  withTooltip = input<Dir<{ message: string }>>(),
+  withTooltip = input<DirProps<{ message: string }>>(),
   tooltipMsg = input<string>(),
 }) => ({
   script: () => {
@@ -430,17 +430,18 @@ const Something = component(() => ({
 ## Template ref (difficult point)
 Retrieving references of elements / components / directives:
 ```ts
-import { component, ref, signal } from '@angular/core';
+import { component, ref, signal, Signal} from '@angular/core';
 
 import { tooltip } from '@mylib/tooltip';
 
 const Child = component(() => ({
   script: () => {
+    const text = signal('');
     // ...
 
     // exposed as public; the rest is private
     return {
-      // ...
+      text: text.asReadonly(),
     };
   },
   template: `
@@ -449,20 +450,20 @@ const Child = component(() => ({
 
 const Parent = component(() => ({
   script: () => {
-    const text = signal('');
+    const value = signal('');
 
     // signal
     const elRef = ref<ElementRef<HTMLDivElement>>('el');
 
     // can only use what's returned by Child.script
-    const childRef1 = ref<Child>('c');
+    const childRef1 = ref<{ text: Signal<string> }>('c');
     const childRef2 = ref(Child);
-    const childRef3 = ref<Child[]>(Child, { any: true });
+    const childRef3 = ref<{ text: Signal<string> }[]>(Child, { any: true });
   },
   template: `
     <div 
       ref:this="el" 
-      use:tooltip(message={ text() } ref:this="tooltip")>
+      use:tooltip(message={ value() } ref:this="tooltip")>
         Something
     </div>
 
