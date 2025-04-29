@@ -445,6 +445,7 @@ const Child = component(() => ({
 const Parent = component(() => ({
   script: () => {
     const text = signal('');
+
     // signal
     const elRef = ref<ElementRef<HTMLDivElement>>('el');
 
