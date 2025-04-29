@@ -491,10 +491,10 @@ const MenuConsumer = component(() => ({
   script: () => { /** ... **/ },
   template: `
     <!-- ... -->
-	<Menu>
-	  <MuneItem>First</MenuItem>
-	  <MenuItem>Second</MenuItem>
-	</Menu>`,
+    <Menu>
+      <MenuItem>First</MenuItem>
+      <MenuItem>Second</MenuItem>
+    </Menu>`,
 }));
 ```
 
