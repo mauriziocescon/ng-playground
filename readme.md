@@ -204,7 +204,7 @@ const Counter = component(({ c = input<number>() }) => ({
 ```
 
 ## Composition with fragments and directives
-Fragments are very similar to svelte [`snippets`](https://svelte.dev/docs/svelte/snippet) (or `ng-template`).
+Fragments are very similar to svelte [`snippets`](https://svelte.dev/docs/svelte/snippet).
 
 Implicit children fragment (where + when):
 ```ts
