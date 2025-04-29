@@ -448,7 +448,7 @@ const Parent = component(() => ({
     // can only use what's returned by Child.script
     const childRef1 = ref<Child>('c');
     const childRef2 = ref(Child);
-    const childRef3 = ref<Child[]>(Child, {any: true});
+    const childRef3 = ref<Child[]>(Child, { any: true });
   },
   template: `
     <div ref:this="el"></div>
@@ -481,7 +481,7 @@ const Menu = component(({
   children = input<Fragment<void>>(), 
 }) => ({
   script: () => {
-    const menuItems = ref(MenuItem, {any: true});
+    const menuItems = ref(MenuItem, { any: true });
     const numOfItems = computed(() => menuItems()?.length ?? 0);
     // ...
   },
