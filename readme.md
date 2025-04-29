@@ -469,7 +469,7 @@ export const Parent = component(() => ({
   template: `
     <div 
       ref:this="el" 
-      use:tooltip(message={ value() } ref:this="tooltip")>
+      use:tooltip(message={ value() } ref:this="tlp")>
         Something
     </div>
 
