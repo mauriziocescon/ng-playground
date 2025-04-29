@@ -259,7 +259,7 @@ export const Card = component(({
 }));
 ```
 
-Customising components and capturing context:
+Customising components and binding context:
 ```ts
 import { component, inject, provide, input } from '@angular/core';
 
