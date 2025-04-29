@@ -192,7 +192,9 @@ class CounterStore {
   }
 }
 
-export const Counter = component(({ c = input<number>() }) => ({
+export const Counter = component(({ 
+  c = input<number>(), 
+}) => ({
   providers: [
     provide({ token: CounterStore, useFactory: () => new CounterStore(c) }),
   ],
@@ -220,7 +222,9 @@ import { Item } from '.../model/item';
 
 class ItemStore { /** ... **/ }
 
-export const Item = component(() => ({
+export const Item = component(({
+  item = input.required<Item>(), 
+}) => ({
   providers: [
     provide({ token: ItemStore, useFactory: () => new ItemStore(item) }),
   ],
@@ -274,7 +278,9 @@ import { Item } from '../model/item';
 
 class ItemStore { /** ... **/ }
 
-export const Item = component(({ item = input.required<Item>() }) => ({
+export const Item = component(({ 
+  item = input.required<Item>(), 
+}) => ({
   providers: [
     provide({ token: ItemStore, useFactory: () => new ItemStore(item) }),
   ],
@@ -552,7 +558,9 @@ const rootToken = provideForRoot('desc', {
    },
 });
 
-export const Counter = component(({ initialValue = input<number>() }) => ({
+export const Counter = component(({ 
+  initialValue = input<number>(), 
+}) => ({
   providers: [
     provide({ token: compToken, useFactory: () => compToken.factory(initialValue) }),
   ],
