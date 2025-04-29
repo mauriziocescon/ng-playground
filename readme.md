@@ -578,6 +578,6 @@ const AdminLinkWithTooltip = component(({
 - `ng-template` (`let-*` shorthands + `ngTemplateGuard_*`): likely replaced by `fragments`,
 - structural directives: likely replaced by `fragments`,
 - `Ng**Outlet` + `ng-container`: likely not needed anymore cause components are hostless,
-- `queries`: might not be needed anymore, but it's difficult to say because `ref` could be completely wrong. In general, it would be nice to better encapsulate the retrieval of data (`read` any provider),
+- `queries`: might not be needed anymore, but it's difficult to say because `ref` could be completely wrong. In general, it would be nice to better encapsulate the retrieval of data (`read` anything from `injector` tree),
 - directives attached to the host: not possible anymore; there might be some cases where
 the concept of the host makes sense (debatable).
