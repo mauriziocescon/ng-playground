@@ -478,7 +478,7 @@ const MenuConsumer = component(() => ({
 import { component, ref, input, Fragment, computed } from '@angular/core';
 
 const Menu = component(({
-  children = input<Fragment<void>>(), 
+  children = input.required<Fragment<void>>(), 
 }) => ({
   script: () => {
     const menuItems = ref(MenuItem, { any: true });
@@ -487,17 +487,17 @@ const Menu = component(({
   },
   template: `
     <!-- ... -->
-    @if (children()) {
-      <Render fragment={ children() } />
-    }
+    <Render fragment={ children() } />
     <!-- ... ->`,
 }));
 
 const MenuItem = component(({
-  children = input<Fragment<void>>(), 
+  children = input.required<Fragment<void>>(), 
 }) => ({
   script: () => { /** ... **/ },
   template: `
+    <!-- ... -->
+    <Render fragment={ children() } />
     <!-- ... -->`,
 }));
 ```
