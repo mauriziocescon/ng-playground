@@ -11,9 +11,9 @@ Points:
 4. hostless components + ts lexical scoping for templates,
 5. component inputs: lifted up + immediately available + spread,
 6. composition with fragments and directives,
-7. lifecycle hooks: after** + onDestroy,
-8. DI enhancements,
-9. concepts affected by these changes.
+7. template refs, 
+8. lifecycle hooks: after** + onDestroy,
+9. DI enhancements. 
 
 ## Components
 Component structure and element bindings:
@@ -423,7 +423,7 @@ const Something = component(() => ({
 }));
 ```
 
-## Template ref variables (difficult point)
+## Template refs (difficult point)
 Retrieving references of elements / components:
 ```ts
 import { component, ref, refs } from '@angular/core';
