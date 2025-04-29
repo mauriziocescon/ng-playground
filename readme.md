@@ -134,7 +134,7 @@ const TextSearch = component(() => ({
   template: `
     <!-- ... -->
 
-    <!-- simple grouping of props or ref (if any):
+    <!-- simple grouping of props / ref (if any):
          use:directive(
            input={ var }
            bind:model={ var }
