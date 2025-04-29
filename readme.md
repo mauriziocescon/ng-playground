@@ -459,7 +459,7 @@ const Parent = component(() => ({
     <Child />`,
 }));
 ```
-Retrieving content:
+Retrieving content dynamically:
 ```ts
 import { component, refs, input, Fragment, computed } from '@angular/core';
 
