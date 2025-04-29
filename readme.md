@@ -437,6 +437,7 @@ import { tooltip } from '@mylib/tooltip';
 const Child = component(() => ({
   script: () => {
     // ...
+
     // exposed as public; the rest is private
     return {
       // ...
