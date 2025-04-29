@@ -449,7 +449,7 @@ const Parent = component(() => ({
     const childRef1 = ref<Child>('c');
     const childRef2 = ref(Child);
 
-    const childrenRef = refs<Child[]>(Child);
+    const childRefs = refs<Child[]>(Child);
   },
   template: `
     <div ref:this="el"></div>
