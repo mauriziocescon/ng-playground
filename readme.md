@@ -152,7 +152,7 @@ export const TextSearch = component(() => ({
 }));
 
 // -- tooltip in @mylib/tooltip --------------------
-import { directive, input, model, output, inject, ElementRef } from '@angular/core';
+import { directive, input, model, output, inject, ElementRef, Renderer2 } from '@angular/core';
 
 export const tooltip = directive(({
   message = input.required<string>(),
@@ -161,6 +161,7 @@ export const tooltip = directive(({
 }) => ({
   script: () => {
     const elRef = inject(ElementRef);
+    const renderer = inject(Renderer2);
     // ...
 
     // exposed as public
