@@ -476,6 +476,8 @@ export const Parent = component(() => ({
         Something
     </div>
 
+    <button on:click={ tlp.toggle() }> Toggle tlp </button>
+
     <Child ref:this="c" />
 
     <Child />`,
