@@ -409,6 +409,7 @@ export const TextSearch = component(({
   template: `
     <!-- ... -->
 
+    <!-- tooltip = undefined => not applied -->
     <div use:tooltip(message={ tooltipMsg() })> Something </div>`,
 }));
 ```
@@ -446,7 +447,7 @@ const Child = component(() => ({
     const text = signal('');
     // ...
 
-    // exposed as public; the rest is private
+    // exposed as public
     return {
       text: text.asReadonly(),
     };
