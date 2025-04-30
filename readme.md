@@ -33,7 +33,6 @@ export const TextSearch = component(({
     }
 
     // exposed as public: inject(TextSearch), ...
-    // the rest is private
     return {
       text: text.asReadonly(),
     };
@@ -82,10 +81,7 @@ export const UserDetailConsumer = component(() => ({
     const another = signal<string>(...);
     const isValid = signal<boolean>(...);
 
-    const inputs = computed(() => ({
-      user: this.user(),
-      another: this.another(),
-    }));
+    const inputs = computed(() => ({ user: this.user(), another: this.another() }));
 
     function isValidChange() { /** ... **/ }
 
@@ -136,11 +132,7 @@ export const TextSearch = component(() => ({
     <!-- ... -->
 
     <!-- grouping / encapsulation of directive data (if any):
-         use:directive(
-           input={ var }
-           bind:model={ var }
-           on:modelChange={ varChange() }
-           on:output={ method() }) -->
+         use:directive( ... regular bindings ... ) -->
 
     <div use:tooltip(
       message={ text() }
@@ -255,16 +247,14 @@ export const Card = component(({
     <!-- ... -->
 
     @if (children()) {
-      <div class="my-lib-card">
 
-        <!--  similar to NgTemplateOutlet: no need
+      <!--  similar to NgTemplateOutlet: no need
               to have an anchor point like ng-container -->
 
-        <Render fragment={ children() } />
+      <Render fragment={ children() } />
 
-      </div>
     } @else {
-       <div class="my-lib-card"> Default </div>
+       <!-- ... -->
     }`,
 }));
 ```
@@ -410,7 +400,7 @@ export const TextSearch = component(({
   template: `
     <!-- ... -->
 
-    <!-- tooltip = undefined => not applied -->
+    <!-- tooltip === undefined => not applied -->
 
     <div use:tooltip(message={ tooltipMsg() })> Something </div>`,
 }));
@@ -480,7 +470,6 @@ export const Parent = component(() => ({
     </div>
 
     <Child ref:this="c" />
-
     <Child />
 
     <button on:click={ tlp().toggle() }> Toggle tlp </button>`,
