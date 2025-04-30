@@ -610,5 +610,5 @@ export const AdminLinkWithTooltip = component(({
 - `Ng**Outlet` + `ng-container`: likely not needed anymore cause components are hostless,
 - `queries`: might not be needed anymore, but it's difficult to say because `ref` could be completely wrong. In general, it would be nice to better encapsulate the retrieval of data (`read` anything from `injector` tree),
 - `directives` encapsulation: as for the previous point, no way for a directive to inject other ones applied to the same element (in case, it should be an explicit operation with a ref passed as an input), 
-- directives attached to the host (components): not possible anymore; there might be some cases where
+- `directives` attached to the host (components): not possible anymore; there might be some cases where
 the concept of the host makes sense (debatable).
