@@ -80,7 +80,6 @@ export const UserDetailConsumer = component(() => ({
     const user = signal<User>(...);
     const another = signal<string>(...);
     const isValid = signal<boolean>(...);
-
     const inputs = computed(() => ({ user: this.user(), another: this.another() }));
 
     function isValidChange() { /** ... **/ }
