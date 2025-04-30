@@ -505,7 +505,7 @@ export const Menu = component(({
   template: `
     <!-- ... -->
     <Render fragment={ children() } />
-    <!-- ... ->`,
+    <!-- ... -->`,
 }));
 
 export const MenuItem = component(({
