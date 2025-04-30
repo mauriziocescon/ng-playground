@@ -461,7 +461,7 @@ export const Parent = component(() => ({
   script: () => {
     const value = signal('');
 
-    // signal
+    // Signal
     const elRef = ref<ElementRef<HTMLDivElement>>('el');
 
     // can only use what's returned by Child.script
