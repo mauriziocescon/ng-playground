@@ -124,9 +124,7 @@ export const TextSearch = component(() => ({
     const text = signal('');
     const valid = signal(false);
 
-    function doSomething() {
-      // ...
-    }
+    function doSomething() { /** **/ }
   },
   template: `
     <!-- ... -->
@@ -157,9 +155,7 @@ export const tooltip = directive(({
     // ...
 
     // exposed as public
-    return {
-      // ...
-    };
+    return { /** ... **/ };
   },
 }));
 ```
