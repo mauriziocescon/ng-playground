@@ -135,7 +135,7 @@ export const TextSearch = component(() => ({
   template: `
     <!-- ... -->
 
-    <!-- grouping of directive data (if any):
+    <!-- grouping / encapsulation of directive data (if any):
          use:directive(
            input={ var }
            bind:model={ var }
