@@ -124,7 +124,7 @@ export const TextSearch = component(() => ({
     const text = signal('');
     const valid = signal(false);
 
-    function doSomething() { /** **/ }
+    function doSomething() { /** ... **/ }
   },
   template: `
     <!-- ... -->
