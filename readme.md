@@ -131,7 +131,7 @@ export const TextSearch = component(() => ({
   template: `
     <!-- ... -->
 
-    <!-- grouping / encapsulation of directive bindings (if any):
+    <!-- grouping / encapsulation of directive data (if any):
          use:directive( ... ) -->
 
     <div use:tooltip(
