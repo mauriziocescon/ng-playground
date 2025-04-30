@@ -72,7 +72,6 @@ export const TextSearch = component(({
 Component bindings:
 ```ts
 import { component, signal, computed } from '@angular/core';
-
 import { UserDetail, User } from './user-detail';
 
 export const UserDetailConsumer = component(() => ({
@@ -115,7 +114,6 @@ export const UserDetail = component(({
 Change the appearance or behavior of DOM elements:
 ```ts
 import { component, signal } from '@angular/core';
-
 import { tooltip } from '@mylib/tooltip';
 
 export const TextSearch = component(() => ({
@@ -200,9 +198,7 @@ Fragments are very similar to svelte [`snippets`](https://svelte.dev/docs/svelte
 Implicit children fragment (where + when):
 ```ts
 import { component, inject, provide } from '@angular/core';
-
 import { Card, Header, Content, Footer } from '@mylib/card';
-
 import { Item } from '.../model/item';
 
 class ItemStore { /** ... **/ }
@@ -253,9 +249,7 @@ export const Card = component(({
 Customising components and binding context:
 ```ts
 import { component, inject, provide, input } from '@angular/core';
-
 import { Card } from '@mylib/card';
-
 import { MyHeader, MyContent, MyFooter } from './my-comp';
 import { Item } from '../model/item';
 
@@ -300,7 +294,6 @@ export const Item = component(({
 Reusable fragments:
 ```ts
 import { component, input, fragment } from '@angular/core';
-
 import { Tree, Node } from '@mylib/tree';
 
 interface CustomNode extends Node {
@@ -363,9 +356,7 @@ export const Tree = component(({
 Directives passed as inputs and attached dynamically:
 ```ts
 import { component, signal } from '@angular/core';
-
 import { tooltip } from '@mylib/tooltip';
-
 import { TextSearch } from './text-search';
 
 export const TextSearchConsumer = component(() => ({
@@ -401,7 +392,6 @@ Dynamic components:
 ```ts
 import { component, signal, computed } from '@angular/core';
 import { Dynamic } from '@angular/common';
-
 import { AComp } from './a-comp';
 import { BComp } from './b-comp';
 
@@ -422,7 +412,6 @@ export const Something = component(() => ({
 Retrieving references of elements / components / directives:
 ```ts
 import { component, ref, Signal } from '@angular/core';
-
 import { tooltip } from '@mylib/tooltip';
 
 const Child = component(() => ({
@@ -467,7 +456,6 @@ export const Parent = component(() => ({
 Retrieving content dynamically:
 ```ts
 import { component } from '@angular/core';
-
 import { Menu, MenuItem } from '@mylib/menu';
 
 export const MenuConsumer = component(() => ({
@@ -563,7 +551,6 @@ export const Counter = component(({
 Still can use legacy concepts for composition: 
 ```ts
 import { component, input } from '@angular/core';
-
 import { MatButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 
