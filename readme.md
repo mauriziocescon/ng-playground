@@ -236,7 +236,7 @@ export const Card = component(({
     @if (children()) {
 
       <!--  similar to NgTemplateOutlet: no need
-              to have an anchor point like ng-container -->
+            to have an anchor point like ng-container -->
 
       <Render fragment={ children() } />
 
