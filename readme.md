@@ -604,6 +604,6 @@ export const AdminLinkWithTooltip = component(({
 - structural directives: likely replaced by `fragments`,
 - `Ng**Outlet` + `ng-container`: likely not needed anymore cause components are hostless,
 - `queries`: might not be needed anymore, but it's difficult to say because `ref` could be completely wrong. In general, it would be nice to better encapsulate the retrieval of data (`read` anything from `injector` tree),
-- `directives` encapsulation: as for the previous point, no automatic access of directives instances applied to the same element,
+- `directives`: as for the previous point, no automatic access of directives instances applied to the same element (need to pass a ref as input),
 - directives attached to the host (components): not possible anymore; there might be some cases where
 the concept of the host makes sense (debatable).
