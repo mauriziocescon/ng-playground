@@ -173,13 +173,9 @@ class CounterStore {
     this.counter = linkedSignal(() => c());
   }
 
-  decrease() {
-    this.counter.update(v => v - 1);
-  }
+  decrease() { /** ... **/ }
 
-  increase() {
-    this.counter.update(v => v + 1);
-  }
+  increase() { /** ... **/ }
 }
 
 export const Counter = component(({ 
