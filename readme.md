@@ -577,7 +577,7 @@ export const Counter = component(({
 ```
 
 ## Backward compatibility
-Still can use the legacy concepts for composition: 
+Still can use legacy concepts for composition: 
 ```ts
 import { component, input } from '@angular/core';
 
