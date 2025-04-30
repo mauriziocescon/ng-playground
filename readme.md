@@ -1,4 +1,4 @@
-# Anatomy of signal components
+## Anatomy of signal components
 **Note: just personal thoughts from a DEV perspective on [the future of angular](https://myconf.dev/videos/2024-keynote-session-the-future-of-angular) (template level). Strongly inspired by svelte / solid.**
 
 Points:
@@ -604,5 +604,6 @@ export const AdminLinkWithTooltip = component(({
 - structural directives: likely replaced by `fragments`,
 - `Ng**Outlet` + `ng-container`: likely not needed anymore cause components are hostless,
 - `queries`: might not be needed anymore, but it's difficult to say because `ref` could be completely wrong. In general, it would be nice to better encapsulate the retrieval of data (`read` anything from `injector` tree),
-- directives attached to the host: not possible anymore; there might be some cases where
+- `directives` encapsulation: as for the previous point, no automatic access of directives instances applied to the same element,
+- directives attached to the host (components): not possible anymore; there might be some cases where
 the concept of the host makes sense (debatable).
