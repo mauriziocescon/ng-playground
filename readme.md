@@ -32,7 +32,8 @@ export const TextSearch = component(({
       valueChange.emit(text());
     }
 
-    // exposed as public; the rest is private
+    // exposed as public: inject(TextSearch), ...
+    // the rest is private
     return {
       text: text.asReadonly(),
     };
