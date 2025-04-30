@@ -468,6 +468,8 @@ export const Parent = component(() => ({
     const childRef1 = ref<{ text: Signal<string> }>('c');
     const childRef2 = ref(Child);
     const childRef3 = ref<{ text: Signal<string> }[]>(Child, { any: true });
+    
+    const tlp = ref<{ toggle: () => void }>('tlp');
   },
   template: `
     <div 
@@ -476,11 +478,11 @@ export const Parent = component(() => ({
         Something
     </div>
 
-    <button on:click={ tlp.toggle() }> Toggle tlp </button>
-
     <Child ref:this="c" />
 
-    <Child />`,
+    <Child />
+
+    <button on:click={ tlp().toggle() }> Toggle tlp </button>`,
 }));
 ```
 Retrieving content dynamically:
