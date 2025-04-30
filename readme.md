@@ -1,5 +1,5 @@
 # Anatomy of signal components
-**Note: just personal thoughts from a DEV perspective on [the future of angular](https://myconf.dev/videos/2024-keynote-session-the-future-of-angular). Strongly inspired by svelte / solid (without JSX 😅)**
+**Note: just personal thoughts from a DEV perspective on [the future of angular](https://myconf.dev/videos/2024-keynote-session-the-future-of-angular) (template level). Strongly inspired by svelte / solid (without JSX 😅)**
 
 Points:
 1. building blocks as functions:
