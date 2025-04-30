@@ -410,6 +410,7 @@ export const TextSearch = component(({
     <!-- ... -->
 
     <!-- tooltip = undefined => not applied -->
+
     <div use:tooltip(message={ tooltipMsg() })> Something </div>`,
 }));
 ```
