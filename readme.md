@@ -425,7 +425,8 @@ export const Parent = component(() => ({
     const elRef = ref<ElementRef<HTMLDivElement>>('el');
 
     // 1. can only use what's returned by Child.script
-    // 2. cannot retrieve providers defined in the Child comp tree
+    // 2. templates only lookup: cannot retrieve providers 
+    //    defined in the Child comp tree
     const childRef1 = ref<{ text: Signal<string> }>('c');
     const childRef2 = ref(Child);
     const childRef3 = ref<{ text: Signal<string> }[]>(Child, { any: true });
