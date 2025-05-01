@@ -294,9 +294,7 @@ Reusable fragments:
 import { component, input, fragment } from '@angular/core';
 import { Tree, Node } from '@mylib/tree';
 
-interface CustomNode extends Node {
-    desc: string;
-}
+interface CustomNode extends Node { /** ... ** / }
 
 /**
 * Reusable fragment: can read state in the template,
@@ -318,14 +316,9 @@ const myNode = fragment((node: CustomNode) => ({
 
 export const TreeConsumer = component(({
   nodes = input.required<CustomNode[]>(),
-  custom = input.required<boolean>(),
 }) => ({
   template: `
-    @if (custom()) {
-      <Tree nodes={ nodes() } custumNode={ myNode } />
-    } @else {
-      <Tree nodes={ nodes() } />
-    }`,
+    <Tree nodes={ nodes() } custumNode={ myNode } />`,
 }));
 
 // -- tree in @mylib/tree --------------------------
