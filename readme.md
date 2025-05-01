@@ -82,7 +82,6 @@ export const UserDetailConsumer = component(() => ({
     const inputs = computed(() => ({ user: this.user(), another: this.another() }));
 
     function isValidChange() { /** ... **/ }
-
     function makeAdmin() { /** ... **/ }
   },
   template: `
@@ -171,7 +170,6 @@ class CounterStore {
   }
 
   decrease() { /** ... **/ }
-
   increase() { /** ... **/ }
 }
 
