@@ -427,7 +427,6 @@ export const Parent = component(() => ({
 
     // can only use what's returned by Child.script
     const manyComp = ref<{ text: Signal<string> }[]>();
-    
     const tlp = ref<{ toggle: () => void }>();
   },
   template: `
