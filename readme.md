@@ -363,6 +363,7 @@ export const TextSearchConsumer = component(() => ({
 // -- TextSearch -----------------------------------
 import { component, signal, DirProps } from '@angular/core';
 
+// Note: DirProps is not correct (just idea)
 export const TextSearch = component(({
   withTooltip = input<DirProps<{ message: string }>>(),
   tooltipMsg = input<string>(),
