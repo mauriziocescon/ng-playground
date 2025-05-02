@@ -400,7 +400,7 @@ export const Something = component(() => ({
 }));
 ```
 
-## Template ref (difficult point)
+## Template ref
 Retrieving references of elements / components / directives:
 ```ts
 import { component, ref, Signal } from '@angular/core';
@@ -422,27 +422,23 @@ const Child = component(() => ({
 
 export const Parent = component(() => ({
   script: () => {
-    // Signal
-    const elRef = ref<ElementRef<HTMLDivElement>>('el');
+    // readonly signal
+    const el = ref<ElementRef<HTMLDivElement>>();
 
-    // 1. can only use what's returned by Child.script
-    // 2. templates only lookup: cannot retrieve providers 
-    //    defined in the Child comp tree
-    const childRef1 = ref<{ text: Signal<string> }>('c');
-    const childRef2 = ref(Child);
-    const childRef3 = ref<{ text: Signal<string> }[]>(Child, { any: true });
+    // can only use what's returned by Child.script
+    const manyComp = ref<{ text: Signal<string> }[]>();
     
-    const tlp = ref<{ toggle: () => void }>('tlp');
+    const tlp = ref<{ toggle: () => void }>();
   },
   template: `
     <div 
-      ref:this="el" 
-      use:tooltip(message={ 'something' } ref:this="tlp")>
+      bind:this={ el } 
+      use:tooltip(message={ 'something' } bind:this={ tlp })>
         Something
     </div>
 
-    <Child ref:this="c" />
-    <Child />
+    <Child bind:many={ manyComp } />
+    <Child bind:many={ manyComp } />
 
     <button on:click={ tlp().toggle() }> Toggle tlp </button>`,
 }));
