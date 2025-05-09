@@ -195,42 +195,33 @@ Fragments are very similar to svelte [`snippets`](https://svelte.dev/docs/svelte
 
 Implicit children fragment (where + when):
 ```ts
-import { component, inject, provide } from '@angular/core';
-import { Card, Header, Content, Footer } from '@mylib/card';
-import { Item } from '.../model/item';
+import { component, computed } from '@angular/core';
+import { Menu, MenuItem } from '@mylib/menu';
 
-class ItemStore { /** ... **/ }
-
-export const Item = component(({
-  item = input.required<Item>(), 
-}) => ({
-  providers: [
-    provide({ token: ItemStore, useFactory: () => new ItemStore(item) }),
-  ],
+export const MenuConsumer = component(() => ({
   script: () => {
-    const store = inject(ItemStore);
+    const items = computed(() => [{ id: '1', desc: 'First' }, { id: '2', desc: 'Second' }]);
   },
   template: `
-    <Card>
-      <Header>{ store.title() }</Header>
-      <Content>{ store.content() }</Content>
-      <Footer>{ store.footer() }</Footer>
-    </Card>`,
+    <!-- ... -->
+    
+    <Menu>
+      <MenuItem>{ items()[0].desc }</MenuItem>
+      <MenuItem>{ items()[1].desc }</MenuItem>
+    </Menu>`,
 }));
 
-// -- Card in @mylib/card --------------------------
+// -- Menu in @mylib/menu --------------------------
 import { component, input, Fragment } from '@angular/core';
 import { Render } from '@angular/common';
 
-export const Card = component(({
-  children = input<Fragment<void>>(),
-  header = input<Fragment<void>>(),
-  content = input<Fragment<void>>(),
-  footer = input<Fragment<void>>(),
+export const Menu = component(({
+  children = input<Fragment<void>>(), 
 }) => ({
+  script: () => { /** ... **/ },
   template: `
     <!-- ... -->
-
+    
     @if (children()) {
 
       <!--  similar to NgTemplateOutlet: no need
@@ -242,51 +233,56 @@ export const Card = component(({
        <!-- ... -->
     }`,
 }));
+
+export const MenuItem = component(({
+  children = input.required<Fragment<void>>(), 
+}) => ({
+  script: () => { /** ... **/ },
+  template: `
+    <Render fragment={ children() } />`,
+}));
 ```
 
 Customising components and binding context:
 ```ts
-import { component, inject, provide, input } from '@angular/core';
-import { Card } from '@mylib/card';
-import { MyHeader, MyContent, MyFooter } from './my-comp';
-import { Item } from '../model/item';
+import { component } from '@angular/core';
+import { Menu } from '@mylib/menu';
+import { MyMenuItem } from './my-menu-item';
 
-class ItemStore { /** ... **/ }
-
-export const Item = component(({ 
-  item = input.required<Item>(), 
-}) => ({
-  providers: [
-    provide({ token: ItemStore, useFactory: () => new ItemStore(item) }),
-  ],
+export const MenuConsumer = component(() => ({
   script: () => {
-    const store = inject(ItemStore);
+    const items = computed(() => [{ id: '1', desc: 'First' }, { id: '2', desc: 'Second' }]);
   },
   template: `
-    <!-- fragments defined within component templates -->
-
-    @fragment header() {
-      <MyHeader>{ store.title() }</MyHeader>
+    <!-- ... -->
+    
+    @fragment menuItem(item: { id: string, desc: string }) {
+      <MyMenuItem>{ item.desc }</MyHeader>
     }
-
-    @fragment content() {
-      <MyContent>
-        <span>{ store.content() }</span>
-        <span>{ store.hasExtraContent() ? store.extraContent() : `` }</span>
-      </MyContent>
-    }
-
-    @fragment footer() {
-      <MyFooter>{ store.footer() }</MyFooter>
-    }
-
+    
     <!-- can omit input names if they match -->
-
-    <Card { header } { content } { footer } />`,
+    
+    <Menu items={ items() } { menuItem } />`,
 }));
 
-// -- Card in @mylib/card --------------------------
-// see previous example
+// -- Menu in @mylib/menu --------------------------
+import { component, input, Fragment } from '@angular/core';
+import { Render } from '@angular/common';
+
+export const Menu = component(({
+  items = input.required<{ id: string, desc: string }[]>(),
+  menuItem = input.required<Fragment<[{ id: string, desc: string }]>>(),
+}) => ({
+  script: () => { /** ... **/ },
+  template: `
+    <!-- ... -->
+    
+    <h1> Total items: { items().length } </h1>
+    
+    @for (item of items(); track item.id) {
+      <Render fragment={ children() } params={ [item] } />
+    }`,
+}));
 ```
 
 Reusable fragments:
@@ -344,7 +340,7 @@ export const Tree = component(({
 }));
 ```
 
-Directives passed as inputs and attached dynamically:
+Directives passed as inputs and attached dynamically (difficult point):
 ```ts
 import { component, signal } from '@angular/core';
 import { tooltip } from '@mylib/tooltip';
@@ -442,48 +438,6 @@ export const Parent = component(() => ({
     <button on:click={ tlp().toggle() }> Toggle tlp </button>`,
 }));
 ```
-Retrieving content dynamically:
-```ts
-import { component } from '@angular/core';
-import { Menu, MenuItem } from '@mylib/menu';
-
-export const MenuConsumer = component(() => ({
-  script: () => { /** ... **/ },
-  template: `
-    <!-- ... -->
-    <Menu>
-      <MenuItem>First</MenuItem>
-      <MenuItem>Second</MenuItem>
-    </Menu>`,
-}));
-
-// -- Menu in @mylib/menu --------------------------
-import { component, ref, input, Fragment, computed } from '@angular/core';
-
-export const Menu = component(({
-  children = input.required<Fragment<void>>(), 
-}) => ({
-  script: () => {
-    const menuItems = ref(MenuItem, { any: true });
-    const numOfItems = computed(() => menuItems()?.length ?? 0);
-    // ...
-  },
-  template: `
-    <!-- ... -->
-    <Render fragment={ children() } />
-    <!-- ... -->`,
-}));
-
-export const MenuItem = component(({
-  children = input.required<Fragment<void>>(), 
-}) => ({
-  script: () => { /** ... **/ },
-  template: `
-    <!-- ... -->
-    <Render fragment={ children() } />
-    <!-- ... -->`,
-}));
-```
 
 ## DI enhancements
 Better ergonomics around types / tokens:
@@ -562,7 +516,9 @@ export const AdminLinkWithTooltip = component(({
 - `ng-template` (`let-*` shorthands + `ngTemplateGuard_*`): likely replaced by `fragments`,
 - structural directives: likely replaced by `fragments`,
 - `Ng**Outlet` + `ng-container`: likely not needed anymore cause components are hostless,
-- `queries`: might not be needed anymore, but it's difficult to say because `ref` could be completely wrong. In general, it would be nice to better encapsulate the retrieval of data (`read` anything from `injector` tree),
-- `directives` encapsulation: as for the previous point, no way for a directive to inject other ones applied to the same element (in case, it should be an explicit operation with a `ref` passed as an `input`), 
+- `queries`: likely not needed anymore; if they stay, it would be nice to improve the retrieval of data: no way 
+to `read` anything from `injector` tree,
+- multiple `directives` applied to the same element: as for the previous point, no way for a directive to inject other ones applied to the same element; 
+if needed, it should be an explicit operation with a `ref` passed as an `input`, 
 - `directives` attached to the host (components): not possible anymore; there might be some cases where
 the concept of the host makes sense (debatable).
