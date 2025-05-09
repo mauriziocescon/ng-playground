@@ -193,7 +193,7 @@ export const Counter = component(({
 ## Composition with fragments and directives
 Fragments are very similar to svelte [`snippets`](https://svelte.dev/docs/svelte/snippet).
 
-Implicit children fragment (where + when):
+Implicit children fragment (where + when) and binding context:
 ```ts
 import { component, computed } from '@angular/core';
 import { Menu, MenuItem } from '@mylib/menu';
@@ -243,7 +243,7 @@ export const MenuItem = component(({
 }));
 ```
 
-Customising components and binding context:
+Customising components:
 ```ts
 import { component } from '@angular/core';
 import { Menu } from '@mylib/menu';
