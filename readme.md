@@ -11,9 +11,9 @@ Points:
 4. hostless components + ts lexical scoping for templates,
 5. component inputs: lifted up + immediately available + spread,
 6. composition with fragments and directives,
-7. template ref, 
+7. template ref,
 8. lifecycle hooks: after** + onDestroy,
-9. DI enhancements. 
+9. DI enhancements.
 
 ## Components
 Component structure and element bindings:
@@ -173,8 +173,8 @@ class CounterStore {
   increase() { /** ... **/ }
 }
 
-export const Counter = component(({ 
-  c = input<number>(), 
+export const Counter = component(({
+  c = input<number>(),
 }) => ({
   providers: [
     provide({ token: CounterStore, useFactory: () => new CounterStore(c) }),
@@ -204,7 +204,7 @@ export const MenuConsumer = component(() => ({
   },
   template: `
     <!-- ... -->
-    
+
     <Menu>
       <MenuItem>{ items()[0].desc }</MenuItem>
       <MenuItem>{ items()[1].desc }</MenuItem>
@@ -216,12 +216,12 @@ import { component, input, Fragment } from '@angular/core';
 import { Render } from '@angular/common';
 
 export const Menu = component(({
-  children = input<Fragment<void>>(), 
+  children = input<Fragment<void>>(),
 }) => ({
   script: () => { /** ... **/ },
   template: `
     <!-- ... -->
-    
+
     @if (children()) {
 
       <!--  similar to NgTemplateOutlet: no need
@@ -235,7 +235,7 @@ export const Menu = component(({
 }));
 
 export const MenuItem = component(({
-  children = input.required<Fragment<void>>(), 
+  children = input.required<Fragment<void>>(),
 }) => ({
   script: () => { /** ... **/ },
   template: `
@@ -255,13 +255,13 @@ export const MenuConsumer = component(() => ({
   },
   template: `
     <!-- ... -->
-    
+
     @fragment menuItem(item: { id: string, desc: string }) {
       <MyMenuItem>{ item.desc }</MyHeader>
     }
-    
+
     <!-- can omit input names if they match -->
-    
+
     <Menu items={ items() } { menuItem } />`,
 }));
 
@@ -276,9 +276,9 @@ export const Menu = component(({
   script: () => { /** ... **/ },
   template: `
     <!-- ... -->
-    
+
     <h1> Total items: { items().length } </h1>
-    
+
     @for (item of items(); track item.id) {
       <Render fragment={ children() } params={ [item] } />
     }`,
@@ -426,8 +426,8 @@ export const Parent = component(() => ({
     const tlp = ref<{ toggle: () => void }>();
   },
   template: `
-    <div 
-      bind:this={ el } 
+    <div
+      bind:this={ el }
       use:tooltip(message={ 'something' } bind:this={ tlp })>
         Something
     </div>
@@ -475,8 +475,8 @@ const rootToken = provideForRoot('desc', {
    },
 });
 
-export const Counter = component(({ 
-  initialValue = input<number>(), 
+export const Counter = component(({
+  initialValue = input<number>(),
 }) => ({
   providers: [
     provide({ token: compToken, useFactory: () => compToken.factory(initialValue) }),
@@ -491,7 +491,7 @@ export const Counter = component(({
 ```
 
 ## Backward compatibility
-Still can use legacy concepts for composition: 
+Still can use legacy concepts for composition:
 ```ts
 import { component, input } from '@angular/core';
 import { MatButton } from '@angular/material/button';
@@ -516,9 +516,9 @@ export const AdminLinkWithTooltip = component(({
 - `ng-template` (`let-*` shorthands + `ngTemplateGuard_*`): likely replaced by `fragments`,
 - structural directives: likely replaced by `fragments`,
 - `Ng**Outlet` + `ng-container`: likely not needed anymore cause components are hostless,
-- `queries`: likely not needed anymore; if they stay, it would be nice to improve the retrieval of data: no way 
+- `queries`: likely not needed anymore; if they stay, it would be nice to improve the retrieval of data: no way
 to `read` anything from `injector` tree,
-- multiple `directives` applied to the same element: as for the previous point, no way for a directive to inject other ones applied to the same element; 
-if needed, it should be an explicit operation with a `ref` passed as an `input`, 
+- multiple `directives` applied to the same element: as for the previous point, no way for a directive to inject other ones applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy));
+if needed, it should be an explicit operation with a `ref` passed as an `input`,
 - `directives` attached to the host (components): not possible anymore; there might be some cases where
 the concept of the host makes sense (debatable).
