@@ -191,7 +191,7 @@ export const Counter = component(({
 ```
 
 ## Composition with fragments and directives
-Fragments are very similar to svelte [`snippets`](https://svelte.dev/docs/svelte/snippet).
+Fragments are very similar to [`svelte snippets`](https://svelte.dev/docs/svelte/snippet). Shortly, functions returning html markup. Note that the returned markup is opaque: cannot manipulate it similarly to [`legacy react Children (must read)`](https://react.dev/reference/react/Children#alternatives) and [`solid children`](https://www.solidjs.com/tutorial/props_children).
 
 Implicit children fragment (where + when) and binding context:
 ```ts
