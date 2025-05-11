@@ -9,7 +9,7 @@ Points:
 2. ts expressions with `{}`: bindings + text interpolation,
 3. extra bindings for DOM elements: `class:`, `style:`, `attr:`, `bind:`, `use:`, `on:`,
 4. hostless components + ts lexical scoping for templates,
-5. component inputs: lifted up + immediately available + spread,
+5. component inputs: lifted up + immediately available,
 6. composition with fragments and directives,
 7. template ref,
 8. lifecycle hooks: after** + onDestroy,
@@ -71,24 +71,20 @@ export const TextSearch = component(({
 
 Component bindings:
 ```ts
-import { component, signal, computed } from '@angular/core';
+import { component, signal } from '@angular/core';
 import { UserDetail, User } from './user-detail';
 
 export const UserDetailConsumer = component(() => ({
   script: () => {
     const user = signal<User>(...);
-    const another = signal<string>(...);
     const isValid = signal<boolean>(...);
-    const inputs = computed(() => ({ user: this.user(), another: this.another() }));
 
     function isValidChange() { /** ... **/ }
     function makeAdmin() { /** ... **/ }
   },
   template: `
-    <!-- spread inputs -->
-
     <UserDetail
-      { ...inputs() }
+      user={ user() }
       bind:valid={ isValid }
       on:validChange={ isValidChange() }
       on:makeAdmin={ makeAdmin() } />`,
@@ -101,7 +97,6 @@ export interface User { /** ... **/ }
 
 export const UserDetail = component(({
   user = input<User>(),
-  another = input<string>(),
   valid = model<boolean>(),
   makeAdmin = output<boolean>(),
 }) => ({
@@ -260,9 +255,7 @@ export const MenuConsumer = component(() => ({
       <MyMenuItem>{ item.desc }</MyHeader>
     }
 
-    <!-- can omit input names if they match -->
-
-    <Menu items={ items() } { menuItem } />`,
+    <Menu items={ items() } menuItem={ menuItem } />`,
 }));
 
 // -- Menu in @mylib/menu --------------------------
@@ -359,7 +352,7 @@ export const TextSearchConsumer = component(() => ({
 // -- TextSearch -----------------------------------
 import { component, signal, DirProps } from '@angular/core';
 
-// Note: DirProps is not correct (just idea)
+// Note: DirProps is just an idea
 export const TextSearch = component(({
   withTooltip = input<DirProps<{ message: string }>>(),
   tooltipMsg = input<string>(),
