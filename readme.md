@@ -420,13 +420,13 @@ export const Parent = component(() => ({
   },
   template: `
     <div
-      bind:this={ el }
-      use:tooltip(message={ 'something' } bind:this={ tlp })>
+      ref:this={ el }
+      use:tooltip(message={ 'something' } ref:this={ tlp })>
         Something
     </div>
 
-    <Child bind:many={ manyComp } />
-    <Child bind:many={ manyComp } />
+    <Child ref:many={ manyComp } />
+    <Child ref:many={ manyComp } />
 
     <button on:click={ tlp().toggle() }> Toggle tlp </button>`,
 }));
