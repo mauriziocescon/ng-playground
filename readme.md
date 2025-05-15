@@ -20,8 +20,9 @@ Component structure and element bindings:
 ```ts
 import { component, signal, linkedSignal, input, output } from '@angular/core';
 
+// Standard deconstruction: default + rename (alias)
 export const TextSearch = component(({
-  value = input.required<string>(),
+  text: value = input.required<string>(),
   valueChange = output<string>(),
 }) => ({
   script: () => {
@@ -64,6 +65,24 @@ export const TextSearch = component(({
   valueChange = output<string>(),
 }) => ({
   script: () => { /** ... **/ },
+  templateUrl: `./text-search.html`,
+  styleUrl: `./text-search.css`,
+}));
+```
+
+Props:
+```ts
+import { component, InputSignal, OutputRef, Props, mapProps, booleanAttribute } from '@angular/core';
+
+interface CheckboxProps extends Props {
+  value: InputSignal<any>;
+  valueChange: OutputRef<string>;
+}
+
+export const Checkbox = component((props: Props) => ({
+  script: () => {
+    const { value, valueChange } = mapProps(props, { value: { transform: booleanAttribute }});
+  },
   templateUrl: `./text-search.html`,
   styleUrl: `./text-search.css`,
 }));
@@ -283,14 +302,12 @@ Reusable fragments:
 import { component, input, fragment } from '@angular/core';
 import { Tree, Node } from '@mylib/tree';
 
-interface CustomNode extends Node { /** ... ** / }
+interface CustomNode extends Node { /** ... **/ }
 
-/**
-* Reusable fragment: can read state in the template,
-* but cannot set it!
-*
-* Note: no inputs / outputs / injection / ...
-*/
+// Reusable fragment: can read state in the template,
+// but cannot set it!
+//
+// Note: no inputs / outputs / injection / ...
 const myNode = fragment((node: CustomNode) => ({
   template: `
     <div class="my-node">
@@ -333,39 +350,53 @@ export const Tree = component(({
 }));
 ```
 
-Directives passed as inputs and attached dynamically (difficult point):
+Directives passed as inputs and attached dynamically (wrapped components):
 ```ts
 import { component, signal } from '@angular/core';
-import { tooltip } from '@mylib/tooltip';
-import { TextSearch } from './text-search';
 
-export const TextSearchConsumer = component(() => ({
+import { Button } from '@mylib/button';
+import { tooltip } from '@mylib/tooltip';
+
+export const ButtonConsumer = component(() => ({
   script: () => {
     const tooltipMsg = signal('');
+    const valid = signal(false);
+
+    function doSomething() { /** ... **/ }
   },
   template: `
     <!-- ... -->
 
-    <TextSearch withTooltip={ tooltip } tooltipMsg={ tooltipMsg() } />`,
+    <Button
+      use:tooltip(message={ tooltipMsg() })
+      disabled={ !valid() }
+      on:click={ doSomething() }>
+      click / hover me
+    </Button>`,
 }));
 
-// -- TextSearch -----------------------------------
-import { component, signal, DirProps } from '@angular/core';
+// -- button in @mylib/button --------------------
+import { component, Props, InputSignal, OutputRef, ModelSignal } from '@angular/core';
+import { Render } from '@angular/common';
 
 // Note: DirProps is just an idea
-export const TextSearch = component(({
-  withTooltip = input<DirProps<{ message: string }>>(),
-  tooltipMsg = input<string>(),
-}) => ({
+interface ButtonProps extends Props {
+  children: InputSignal<Fragment<void>>;
+  tooltip: DirProps<{ message: string }>,
+  disabled: ModelSignal<boolean | undefined>;
+  click: OutputRef<void>;
+}
+
+export const Button = component((props: ButtonProps) => ({
   script: () => {
-    const tooltip = withTooltip();
+    const { children, others... } = props;
   },
   template: `
-    <!-- ... -->
+    <!-- bind others to button, directives included -->
 
-    <!-- tooltip === undefined => not applied -->
-
-    <div use:tooltip(message={ tooltipMsg() })> Something </div>`,
+    <button bind:this={ others }>
+      <Render fragment={ children() } />
+    </button>`,
 }));
 ```
 
@@ -437,35 +468,31 @@ Better ergonomics around types / tokens:
 ```ts
 import { component, inject, provide, provideForRoot, injectionToken, input } from '@angular/core';
 
-/**
-* define a default implementation (no need for an explicit interface)
-* the token must be provided somewhere
-*/
+// define a default implementation (no need for an explicit interface)
+// the token must be provided somewhere
 const compToken = injectionToken('desc', {
-   factory: (initialValue?: Signal<number>) => {
-     const counter = signal(initialValue ? initialValue() : 0);
+  factory: (initialValue?: Signal<number>) => {
+    const counter = signal(initialValue ? initialValue() : 0);
 
-     return {
-       value: counter.asReadonly(),
-       decrease: () => counter.update(v => v - 1),
-       increase: () => counter.update(v => v + 1),
-     };
-   },
+    return {
+      value: counter.asReadonly(),
+      decrease: () => counter.update(v => v - 1),
+      increase: () => counter.update(v => v + 1),
+    };
+  },
 });
 
-/**
-* root provider (similar for platform)
-*/
+// root provider (similar for platform)
 const rootToken = provideForRoot('desc', {
-   factory: (initialValue?: Signal<number>) => {
-     const counter = signal(initialValue ? initialValue() : 0);
+  factory: (initialValue?: Signal<number>) => {
+    const counter = signal(initialValue ? initialValue() : 0);
 
-     return {
-       value: counter.asReadonly(),
-       decrease: () => counter.update(v => v - 1),
-       increase: () => counter.update(v => v + 1),
-     };
-   },
+    return {
+      value: counter.asReadonly(),
+      decrease: () => counter.update(v => v - 1),
+      increase: () => counter.update(v => v + 1),
+    };
+  },
 });
 
 export const Counter = component(({
@@ -513,5 +540,5 @@ export const AdminLinkWithTooltip = component(({
 to `read` anything from `injector` tree,
 - multiple `directives` applied to the same element: as for the previous point, no way for a directive to inject other ones applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy));
 if needed, it should be an explicit operation with a `ref` passed as an `input`,
-- `directives` attached to the host (components): not possible anymore; there might be some cases where
-the concept of the host makes sense (debatable).
+- `directives` attached to the host (components): not possible anymore, but you can pass directives as inputs,
+- parent component styling children (difficult point): this should be based on css-variables.
