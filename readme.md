@@ -85,8 +85,8 @@ export const Checkbox = component((props: CheckboxProps) => ({
   script: () => {
     const { value, valueChange } = mapProps(props, { value: { transform: booleanAttribute }});
   },
-  templateUrl: `./text-search.html`,
-  styleUrl: `./text-search.css`,
+  templateUrl: `./checkbox.html`,
+  styleUrl: `./checkbox.css`,
 }));
 ```
 
