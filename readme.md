@@ -21,8 +21,8 @@ Component structure and element bindings:
 import { component, signal, linkedSignal, input, output } from '@angular/core';
 
 /**
-* Standard deconstruction: default + rename (alias)
-*/
+ * Standard deconstruction: default + rename (alias)
+ */
 export const TextSearch = component(({
   text: value = input.required<string>(),
   valueChange = output<string>(),
@@ -81,7 +81,7 @@ interface CheckboxProps extends Props {
   valueChange: OutputRef<string>;
 }
 
-export const Checkbox = component((props: Props) => ({
+export const Checkbox = component((props: CheckboxProps) => ({
   script: () => {
     const { value, valueChange } = mapProps(props, { value: { transform: booleanAttribute }});
   },
@@ -207,7 +207,7 @@ export const Counter = component(({
 ```
 
 ## Composition with fragments and directives
-Fragments are very similar to [`svelte snippets`](https://svelte.dev/docs/svelte/snippet). Shortly, functions returning html markup. Note that the returned markup is opaque: cannot manipulate it similarly to [`legacy react Children (must read)`](https://react.dev/reference/react/Children#alternatives) and [`solid children`](https://www.solidjs.com/tutorial/props_children).
+Fragments are very similar to [`svelte snippets`](https://svelte.dev/docs/svelte/snippet): functions returning html markup. Note that the returned markup is opaque: cannot manipulate it similarly to [`react Children (legacy)`](https://react.dev/reference/react/Children#alternatives) and [`solid children`](https://www.solidjs.com/tutorial/props_children).
 
 Implicit children fragment (where + when) and binding context:
 ```ts
@@ -307,11 +307,11 @@ import { Tree, Node } from '@mylib/tree';
 interface CustomNode extends Node { /** ... **/ }
 
 /**
-* Reusable fragment: can read state in the template,
-* but cannot set it!
-*
-* Note: no inputs / outputs / injection / ...
-*/
+ * Reusable fragment: can read state in the template,
+ * but cannot set it!
+ *
+ * Note: no inputs / outputs / injection / ...
+ */
 const myNode = fragment((node: CustomNode) => ({
   template: `
     <div class="my-node">
@@ -473,9 +473,9 @@ Better ergonomics around types / tokens:
 import { component, inject, provide, provideForRoot, injectionToken, input } from '@angular/core';
 
 /**
-* define a default implementation (no need for an explicit interface)
-* the token must be provided somewhere
-*/
+ * define a default implementation (no need for an explicit interface)
+ * the token must be provided somewhere
+ */
 const compToken = injectionToken('desc', {
   factory: (initialValue?: Signal<number>) => {
     const counter = signal(initialValue ? initialValue() : 0);
@@ -489,8 +489,8 @@ const compToken = injectionToken('desc', {
 });
 
 /**
-* root provider (similar for platform)
-*/
+ * root provider (similar for platform)
+ */
 const rootToken = provideForRoot('desc', {
   factory: (initialValue?: Signal<number>) => {
     const counter = signal(initialValue ? initialValue() : 0);
