@@ -7,7 +7,7 @@ Points:
     - `fragment`: a duo `template` / `style` that captures some markup for reusability,
     - `directive`: a `script` that can change the appearance or behavior of DOM elements.
 2. ts expressions with `{}`: bindings + text interpolation,
-3. extra bindings for DOM elements: `class:`, `style:`, `attr:`, `bind:`, `use:`, `on:`,
+3. extra bindings for DOM elements: `class:`, `style:`, `attr:`, `bind:`, `on:`,
 4. hostless components + ts lexical scoping for templates,
 5. component inputs: lifted up + immediately available,
 6. composition with fragments and directives,
@@ -142,9 +142,9 @@ export const TextSearch = component(() => ({
     <!-- ... -->
 
     <!-- grouping / encapsulation of directive data (if any):
-         use:directive( ... ) -->
+         @directive( ... ) -->
 
-    <div use:tooltip(
+    <div @tooltip(
       message={ text() }
       bind:valid={ valid }
       on:dismiss={ doSomething() }
@@ -354,7 +354,7 @@ export const Tree = component(({
 }));
 ```
 
-Directives passed as inputs and attached dynamically (wrapped components):
+Directives passed as inputs and attached dynamically:
 ```ts
 import { component, signal } from '@angular/core';
 
@@ -372,10 +372,10 @@ export const ButtonConsumer = component(() => ({
     <!-- ... -->
 
     <Button
-      use:tooltip(message={ tooltipMsg() })
+      @tooltip(message={ tooltipMsg() })
       disabled={ !valid() }
       on:click={ doSomething() }>
-      click / hover me
+        Click / Hover me
     </Button>`,
 }));
 
@@ -383,10 +383,9 @@ export const ButtonConsumer = component(() => ({
 import { component, Props, InputSignal, OutputRef, ModelSignal } from '@angular/core';
 import { Render } from '@angular/common';
 
-// Note: DirProps is just an idea
 interface ButtonProps extends Props {
   children: InputSignal<Fragment<void>>;
-  tooltip: DirProps<{ message: string }>,
+  tooltip: DirProps<{ message: string }>; // Note: DirProps is just an idea
   disabled: ModelSignal<boolean | undefined>;
   click: OutputRef<void>;
 }
@@ -456,7 +455,7 @@ export const Parent = component(() => ({
   template: `
     <div
       ref:this={ el }
-      use:tooltip(message={ 'something' } ref:this={ tlp })>
+      @tooltip(message={ 'something' } ref:this={ tlp })>
         Something
     </div>
 
@@ -532,7 +531,7 @@ export const AdminLinkWithTooltip = component(({
   template: `
     <MatButton:a
       href="/admin"
-      use:MatTooltip(message={ tooltipMessage() } disabled={ hasPermissions() })>
+      @MatTooltip(message={ tooltipMessage() } disabled={ hasPermissions() })>
         Admin
     </MatButton:a>`,
 }));
