@@ -392,7 +392,7 @@ interface ButtonProps extends Props {
 
 export const Button = component((props: ButtonProps) => ({
   script: () => {
-    const { children, others... } = props;
+    const { children, ...others } = props;
   },
   template: `
     <!-- bind others to button, directives included -->
