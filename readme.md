@@ -20,7 +20,9 @@ Component structure and element bindings:
 ```ts
 import { component, signal, linkedSignal, input, output } from '@angular/core';
 
-// Standard deconstruction: default + rename (alias)
+/**
+* Standard deconstruction: default + rename (alias)
+*/
 export const TextSearch = component(({
   text: value = input.required<string>(),
   valueChange = output<string>(),
@@ -304,10 +306,12 @@ import { Tree, Node } from '@mylib/tree';
 
 interface CustomNode extends Node { /** ... **/ }
 
-// Reusable fragment: can read state in the template,
-// but cannot set it!
-//
-// Note: no inputs / outputs / injection / ...
+/**
+* Reusable fragment: can read state in the template,
+* but cannot set it!
+*
+* Note: no inputs / outputs / injection / ...
+*/
 const myNode = fragment((node: CustomNode) => ({
   template: `
     <div class="my-node">
@@ -468,8 +472,10 @@ Better ergonomics around types / tokens:
 ```ts
 import { component, inject, provide, provideForRoot, injectionToken, input } from '@angular/core';
 
-// define a default implementation (no need for an explicit interface)
-// the token must be provided somewhere
+/**
+* define a default implementation (no need for an explicit interface)
+* the token must be provided somewhere
+*/
 const compToken = injectionToken('desc', {
   factory: (initialValue?: Signal<number>) => {
     const counter = signal(initialValue ? initialValue() : 0);
@@ -482,7 +488,9 @@ const compToken = injectionToken('desc', {
   },
 });
 
-// root provider (similar for platform)
+/**
+* root provider (similar for platform)
+*/
 const rootToken = provideForRoot('desc', {
   factory: (initialValue?: Signal<number>) => {
     const counter = signal(initialValue ? initialValue() : 0);
