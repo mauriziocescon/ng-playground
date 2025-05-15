@@ -74,7 +74,7 @@ export const TextSearch = component(({
 
 Props:
 ```ts
-import { component, InputSignal, OutputRef, Props, mapProps, booleanAttribute } from '@angular/core';
+import { component, InputSignal, OutputRef, Props, propsMap, booleanAttribute } from '@angular/core';
 
 interface CheckboxProps extends Props {
   value: InputSignal<any>;
@@ -83,7 +83,7 @@ interface CheckboxProps extends Props {
 
 export const Checkbox = component((props: CheckboxProps) => ({
   script: () => {
-    const { value, valueChange } = mapProps(props, { value: { transform: booleanAttribute }});
+    const { value, valueChange } = propsMap(props, { value: { transform: booleanAttribute }});
   },
   templateUrl: `./checkbox.html`,
   styleUrl: `./checkbox.css`,
