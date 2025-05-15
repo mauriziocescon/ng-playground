@@ -354,7 +354,7 @@ export const Tree = component(({
 }));
 ```
 
-Directives passed as inputs and attached dynamically:
+Directives passed as inputs and bound to an element:
 ```ts
 import { component, signal } from '@angular/core';
 
