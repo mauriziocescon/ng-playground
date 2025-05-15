@@ -549,4 +549,4 @@ to `read` anything from `injector` tree,
 - multiple `directives` applied to the same element: as for the previous point, no way for a directive to inject other ones applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy));
 if needed, it should be an explicit operation with a `ref` passed as an `input`,
 - `directives` attached to the host (components): not possible anymore, but you can pass directives as inputs,
-- parent component styling children (difficult point): this should be based on css-variables.
+- parent component styling children (difficult point): this should probably be based on css-variables similarly to [`svelte`](https://svelte.dev/docs/svelte/custom-properties).
