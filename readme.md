@@ -10,7 +10,7 @@ Points:
 3. extra bindings for DOM elements: `class:`, `style:`, `attr:`, `bind:`, `on:`,
 4. hostless components + ts lexical scoping for templates,
 5. component inputs: lifted up + immediately available,
-6. composition with fragments + directives + bind:this={ props },
+6. composition with fragments + directives + `bind:this={ props }`,
 7. template ref,
 8. lifecycle hooks: after** + onDestroy,
 9. DI enhancements.
@@ -203,7 +203,7 @@ export const Counter = component(({
 }));
 ```
 
-## Composition with fragments + directives + bind:this={ props }
+## Composition with fragments + directives + `bind:this={ props }`
 Fragments are very similar to [`svelte snippets`](https://svelte.dev/docs/svelte/snippet): functions returning html markup. Note that the returned markup is opaque: cannot manipulate it similarly to [`react Children (legacy)`](https://react.dev/reference/react/Children) and [`solid children`](https://www.solidjs.com/tutorial/props_children).
 
 Implicit children fragment (where + when) and binding context:
