@@ -429,21 +429,26 @@ const Child = component(() => ({
 export const Parent = component(() => ({
   script: () => {
     // readonly signal
-    const el = ref<ElementRef<HTMLDivElement>>();
+    const el = ref<ElementRef<HTMLDivElement>>('el');
 
-    // can only use what's returned by Child.script
-    const manyComp = ref<{ text: Signal<string> }[]>();
-    const tlp = ref<{ toggle: () => void }>();
+    // 1. can only use what's returned by Child.script
+    // 2. templates only lookup: cannot retrieve providers
+    //    defined in the Child comp tree
+    const manyComp = ref<{ text: Signal<string> }[]>('manyComp', { any: true });
+    const manyComp2 = ref(Child, { any: true });
+
+    const tlp = ref<{ toggle: () => void }>('tlp');
+    const tlp2 = ref(tooltip);
   },
   template: `
     <div
-      ref:this={ el }
-      @tooltip(message={ 'something' } ref:this={ tlp })>
+      ref:this="el"
+      @tooltip(message={ 'something' } ref:this="tlp")>
         Something
     </div>
 
-    <Child ref:many={ manyComp } />
-    <Child ref:many={ manyComp } />
+    <Child ref:many="manyComp" />
+    <Child ref:many="manyComp" />
 
     <button on:click={ tlp().toggle() }> Toggle tlp </button>`,
 }));
@@ -526,8 +531,7 @@ export const AdminLinkWithTooltip = component(({
 - `ng-template` (`let-*` shorthands + `ngTemplateGuard_*`): likely replaced by `fragments`,
 - structural directives: likely replaced by `fragments`,
 - `Ng**Outlet` + `ng-container`: likely not needed anymore cause components are hostless,
-- `queries`: likely not needed anymore; if they stay, it would be nice to improve the retrieval of data: no way
-to `read` anything from `injector` tree,
+- `queries`: if `ref` makes sense, likely not needed anymore; if they stay, it would be nice to improve the retrieval of data: no way to `read` anything from `injector` tree,
 - multiple `directives` applied to the same element: as for the previous point, no way for a directive to inject other ones applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy));
 if needed, it should be an explicit operation with a `ref` passed as an `input`,
 - `directives` attached to the host (components): not possible anymore, but you can pass directives as inputs,
