@@ -10,7 +10,7 @@ Points:
 3. extra bindings for DOM elements: `class:`, `style:`, `attr:`, `bind:`, `on:`,
 4. hostless components + ts lexical scoping for templates,
 5. component inputs: lifted up + immediately available,
-6. composition with fragments and directives,
+6. composition with fragments + directives + bind:this={ props },
 7. template ref,
 8. lifecycle hooks: after** + onDestroy,
 9. DI enhancements.
@@ -20,11 +20,8 @@ Component structure and element bindings:
 ```ts
 import { component, signal, linkedSignal, input, output } from '@angular/core';
 
-/**
- * Standard deconstruction: default + rename (alias)
- */
 export const TextSearch = component(({
-  text: value = input.required<string>(),
+  text: value = input.required<string>(), // types + default + rename (alias)
   valueChange = output<string>(),
 }) => ({
   script: () => {
@@ -41,11 +38,10 @@ export const TextSearch = component(({
     };
   },
   template: `
-    <label class:danger={ isDanger() }>Text:</label>
-
     <!-- 2way binding for input:
          bind:property={ var } on:propertyChange={ varChange() } -->
 
+    <label class:danger={ isDanger() }>Text:</label>
     <input type="text" bind:value={ text } on:valueChange={ textChange() } />
 
     <button disabled={ text().length === 0 } on:click={ text.set('') }>
@@ -78,12 +74,14 @@ import { component, InputSignal, OutputRef, Props, propsMap, booleanAttribute } 
 
 interface CheckboxProps extends Props {
   value: InputSignal<any>;
-  valueChange: OutputRef<string>;
+  valueChange: OutputRef<boolean>;
 }
 
 export const Checkbox = component((props: CheckboxProps) => ({
   script: () => {
-    const { value, valueChange } = propsMap(props, { value: { transform: booleanAttribute }});
+    const { value, valueChange } = propsMap(props, {
+      value: { transform: booleanAttribute, required: true },
+    });
   },
   templateUrl: `./checkbox.html`,
   styleUrl: `./checkbox.css`,
@@ -141,8 +139,7 @@ export const TextSearch = component(() => ({
   template: `
     <!-- ... -->
 
-    <!-- grouping / encapsulation of directive data (if any):
-         @directive( ... ) -->
+    <!-- grouping / encapsulation of directive data: @directive( ... ) -->
 
     <div @tooltip(
       message={ text() }
@@ -206,7 +203,7 @@ export const Counter = component(({
 }));
 ```
 
-## Composition with fragments and directives
+## Composition with fragments + directives + bind:this={ props }
 Fragments are very similar to [`svelte snippets`](https://svelte.dev/docs/svelte/snippet): functions returning html markup. Note that the returned markup is opaque: cannot manipulate it similarly to [`react Children (legacy)`](https://react.dev/reference/react/Children) and [`solid children`](https://www.solidjs.com/tutorial/props_children).
 
 Implicit children fragment (where + when) and binding context:
