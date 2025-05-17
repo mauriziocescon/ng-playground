@@ -54,7 +54,7 @@ export const TextSearch = component(({
 }));
 ```
 
-Props + external files: 
+Props and external files: 
 ```ts
 import { component, InputSignal, OutputRef, Props, propsMap, booleanAttribute } from '@angular/core';
 
