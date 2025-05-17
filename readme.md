@@ -516,9 +516,9 @@ export const AdminLinkWithTooltip = component(({
 - `ng-content`: replaced by `fragments`,
 - `ng-template` (`let-*` shorthands + `ngTemplateGuard_*`): likely replaced by `fragments`,
 - structural directives: likely replaced by `fragments`,
-- `Ng**Outlet` + `ng-container`: likely not needed anymore cause components are hostless,
+- `Ng**Outlet` + `ng-container`: likely replaced by the new things, 
 - `queries`: if `ref` makes sense, likely not needed anymore; if they stay, it would be nice to improve the retrieval of data: no way to `read` anything from `injector` tree,
 - multiple `directives` applied to the same element: as for the previous point, no way for a directive to inject other ones applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy));
 if needed, it should be an explicit operation with a `ref` passed as an `input`,
-- `directives` attached to the host (components): not possible anymore, but you can pass directives as inputs,
+- `directives` attached to the host (components): not possible anymore, but you can pass directives as inputs and use `bind:this={ props }`,
 - parent component styling children (difficult point): this should probably be based on css-variables similarly to [`svelte`](https://svelte.dev/docs/svelte/custom-properties).
