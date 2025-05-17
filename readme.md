@@ -139,7 +139,7 @@ export const TextSearch = component(() => ({
   template: `
     <!-- ... -->
 
-    <!-- grouping / encapsulation of directive data: @directive( ... ) -->
+    <!-- encapsulation of directive data: @directive( ... ) -->
 
     <div @tooltip(
       message={ text() }
@@ -208,19 +208,17 @@ Fragments are very similar to [`svelte snippets`](https://svelte.dev/docs/svelte
 
 Implicit children fragment (where + when) and binding context:
 ```ts
-import { component, computed } from '@angular/core';
+import { component } from '@angular/core';
 import { Menu, MenuItem } from '@mylib/menu';
 
 export const MenuConsumer = component(() => ({
-  script: () => {
-    const items = computed(() => [{ id: '1', desc: 'First' }, { id: '2', desc: 'Second' }]);
-  },
+  script: () => { /** ... **/ },
   template: `
     <!-- ... -->
 
     <Menu>
-      <MenuItem>{ items()[0].desc }</MenuItem>
-      <MenuItem>{ items()[1].desc }</MenuItem>
+      <MenuItem> First </MenuItem>
+      <MenuItem> Second </MenuItem>
     </Menu>`,
 }));
 
@@ -234,14 +232,10 @@ export const Menu = component(({
   script: () => { /** ... **/ },
   template: `
     <!-- ... -->
+    <!--  no need to have an explicit anchor point like ng-container -->
 
     @if (children()) {
-
-      <!--  similar to NgTemplateOutlet: no need
-            to have an anchor point like ng-container -->
-
       <Render fragment={ children() } />
-
     } @else {
        <!-- ... -->
     }`,
@@ -258,7 +252,7 @@ export const MenuItem = component(({
 
 Customising components:
 ```ts
-import { component } from '@angular/core';
+import { component, computed } from '@angular/core';
 import { Menu } from '@mylib/menu';
 import { MyMenuItem } from './my-menu-item';
 
@@ -382,14 +376,16 @@ import { Render } from '@angular/common';
 
 interface ButtonProps extends Props {
   children: InputSignal<Fragment<void>>;
-  tooltip: DirProps<{ message: string }>; // Note: DirProps is just an idea
+  tooltip: DirProps<{ message: string }> | undefined; // Note: DirProps is just an idea
   disabled: ModelSignal<boolean | undefined>;
   click: OutputRef<void>;
 }
 
 export const Button = component((props: ButtonProps) => ({
   script: () => {
-    const { children, ...others } = props;
+    const { children, ...others } = propsMap(props, {
+      children: { required: true },
+    });
   },
   template: `
     <!-- bind others to button, directives included -->
