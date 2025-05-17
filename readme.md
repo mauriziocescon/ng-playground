@@ -408,7 +408,7 @@ export const Something = component(() => ({
 ```
 
 ## Template ref
-Retrieving references of elements / components / directives:
+Retrieving references of elements / components / directives (runtime):
 ```ts
 import { component, ref, Signal } from '@angular/core';
 import { tooltip } from '@mylib/tooltip';
