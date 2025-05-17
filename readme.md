@@ -214,8 +214,6 @@ import { Menu, MenuItem } from '@mylib/menu';
 export const MenuConsumer = component(() => ({
   script: () => { /** ... **/ },
   template: `
-    <!-- ... -->
-
     <Menu>
       <MenuItem> First </MenuItem>
       <MenuItem> Second </MenuItem>
@@ -231,7 +229,6 @@ export const Menu = component(({
 }) => ({
   script: () => { /** ... **/ },
   template: `
-    <!-- ... -->
     <!--  no need to have an explicit anchor point like ng-container -->
 
     @if (children()) {
@@ -261,8 +258,6 @@ export const MenuConsumer = component(() => ({
     const items = computed(() => [{ id: '1', desc: 'First' }, { id: '2', desc: 'Second' }]);
   },
   template: `
-    <!-- ... -->
-
     @fragment menuItem(item: { id: string, desc: string }) {
       <MyMenuItem>{ item.desc }</MyHeader>
     }
@@ -280,8 +275,6 @@ export const Menu = component(({
 }) => ({
   script: () => { /** ... **/ },
   template: `
-    <!-- ... -->
-
     <h1> Total items: { items().length } </h1>
 
     @for (item of items(); track item.id) {
@@ -360,8 +353,6 @@ export const ButtonConsumer = component(() => ({
     function doSomething() { /** ... **/ }
   },
   template: `
-    <!-- ... -->
-
     <Button
       @tooltip(message={ tooltipMsg() })
       disabled={ !valid() }
@@ -432,8 +423,7 @@ const Child = component(() => ({
       text: text.asReadonly(),
     };
   },
-  template: `
-    <!-- ... -->`,
+  template: `<!-- ... -->`,
 }));
 
 export const Parent = component(() => ({
