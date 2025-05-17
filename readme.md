@@ -54,21 +54,7 @@ export const TextSearch = component(({
 }));
 ```
 
-External files:
-```ts
-import { component, input, output } from '@angular/core';
-
-export const TextSearch = component(({
-  value = input.required<string>(),
-  valueChange = output<string>(),
-}) => ({
-  script: () => { /** ... **/ },
-  templateUrl: `./text-search.html`,
-  styleUrl: `./text-search.css`,
-}));
-```
-
-Props:
+Props + external files: 
 ```ts
 import { component, InputSignal, OutputRef, Props, propsMap, booleanAttribute } from '@angular/core';
 
