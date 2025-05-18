@@ -65,7 +65,7 @@ interface CheckboxProps extends Props {
 
 export const Checkbox = component((props: CheckboxProps) => ({
   script: () => {
-    const { newValue, newValueChange } = propsMap(props, {
+    const { value, valueChange } = propsMap(props, {
       value: { transform: booleanAttribute, required: true },
     });
   },
