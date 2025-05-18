@@ -54,7 +54,7 @@ export const TextSearch = component(({
 }));
 ```
 
-Props and external files: 
+Props and external files:
 ```ts
 import { component, InputSignal, OutputRef, Props, propsMap, booleanAttribute } from '@angular/core';
 
@@ -441,55 +441,7 @@ export const Parent = component(() => ({
 ```
 
 ## DI enhancements
-Better ergonomics around types / tokens:
-```ts
-import { component, inject, provide, provideForRoot, injectionToken, input } from '@angular/core';
-
-/**
- * define a default implementation (no need for an explicit interface)
- * the token must be provided somewhere
- */
-const compToken = injectionToken('desc', {
-  factory: (initialValue?: Signal<number>) => {
-    const counter = signal(initialValue ? initialValue() : 0);
-
-    return {
-      value: counter.asReadonly(),
-      decrease: () => counter.update(v => v - 1),
-      increase: () => counter.update(v => v + 1),
-    };
-  },
-});
-
-/**
- * root provider (similar for platform)
- */
-const rootToken = provideForRoot('desc', {
-  factory: (initialValue?: Signal<number>) => {
-    const counter = signal(initialValue ? initialValue() : 0);
-
-    return {
-      value: counter.asReadonly(),
-      decrease: () => counter.update(v => v - 1),
-      increase: () => counter.update(v => v + 1),
-    };
-  },
-});
-
-export const Counter = component(({
-  initialValue = input<number>(),
-}) => ({
-  providers: [
-    provide({ token: compToken, useFactory: () => compToken.factory(initialValue) }),
-  ],
-  script: () => {
-    const rootCounter = inject(rootToken);
-    const compCounter = inject(compToken);
-    // ...
-  },
-  // ...
-}));
-```
+[`See`](https://github.com/mauriziocescon/ng-playground/blob/main/di.md)
 
 ## Backward compatibility
 Still can use legacy concepts for composition:
@@ -516,7 +468,7 @@ export const AdminLinkWithTooltip = component(({
 - `ng-content`: replaced by `fragments`,
 - `ng-template` (`let-*` shorthands + `ngTemplateGuard_*`): likely replaced by `fragments`,
 - structural directives: likely replaced by `fragments`,
-- `Ng**Outlet` + `ng-container`: likely replaced by the new things, 
+- `Ng**Outlet` + `ng-container`: likely replaced by the new things,
 - `queries`: if `ref` makes sense, likely not needed anymore; if they stay, it would be nice to improve the retrieval of data: no way to `read` anything from `injector` tree,
 - multiple `directives` applied to the same element: as for the previous point, no way for a directive to inject other ones applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy));
 if needed, it should be an explicit operation with a `ref` passed as an `input`,

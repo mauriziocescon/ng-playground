@@ -1,3 +1,37 @@
+## Inputs
+Inputs lifted up for providers init:
+```ts
+import { component, linkedSignal, input, WritableSignal, provide, inject } from '@angular/core';
+
+class CounterStore {
+  private readonly counter: WritableSignal<number>;
+  readonly value = this.counter.asReadonly();
+
+  constructor(c: Signal<number>) {
+    this.counter = linkedSignal(() => c());
+  }
+
+  decrease() { /** ... **/ }
+  increase() { /** ... **/ }
+}
+
+export const Counter = component(({
+  c = input<number>(),
+}) => ({
+  providers: [
+    provide({ token: CounterStore, useFactory: () => new CounterStore(c) }),
+  ],
+  script: () => {
+    const store = inject(CounterStore);
+  },
+  template: `
+    <h1>Counter</h1>
+    <div>Value: { store.value() }</div>
+    <button on:click={ store.decrease() }> - </button>
+    <button on:click={ store.increase() }> + </button>`,
+}));
+```
+
 ## DI enhancements
 Better ergonomics around types / tokens:
 ```ts
