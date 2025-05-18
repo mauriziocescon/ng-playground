@@ -278,7 +278,7 @@ interface CustomNode extends Node { /** ... **/ }
 
 /**
  * Reusable fragment: can read state in the template,
- * but cannot set it!
+ * but cannot set it! Importable from another file.
  *
  * Note: no inputs / outputs / injection / ...
  */
