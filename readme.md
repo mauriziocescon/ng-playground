@@ -441,7 +441,7 @@ export const Parent = component(() => ({
 ```
 
 ## DI enhancements
-[`See`](https://github.com/mauriziocescon/ng-playground/blob/main/di.md)
+[`See DI enhancements`](https://github.com/mauriziocescon/ng-playground/blob/main/di.md)
 
 ## Backward compatibility
 Still can use legacy concepts for composition:
