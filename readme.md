@@ -324,7 +324,7 @@ export const Tree = component(({
 }));
 ```
 
-Directives passed as inputs and bound to an element using `bind:this={ props }`:
+Directives passed as inputs and bound to an element using `bind:this={ props }` (react props spread):
 ```ts
 import { component, signal } from '@angular/core';
 
