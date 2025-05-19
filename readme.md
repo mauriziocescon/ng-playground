@@ -60,13 +60,13 @@ import { component, InputSignal, OutputRef, propsMap, booleanAttribute } from '@
 
 interface CheckboxProps {
   value: InputSignal<any>;
-  valueChange: OutputRef<boolean>;
+  valueChange?: OutputRef<boolean>;
 }
 
 export const Checkbox = component((props: CheckboxProps) => ({
   script: () => {
     const { value, valueChange } = propsMap(props, {
-      value: { transform: booleanAttribute, required: true },
+      value: { transform: booleanAttribute },
     });
   },
   templateUrl: `./checkbox.html`,
