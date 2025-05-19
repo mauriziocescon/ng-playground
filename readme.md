@@ -56,9 +56,9 @@ export const TextSearch = component(({
 
 Props and external files:
 ```ts
-import { component, InputSignal, OutputRef, Props, propsMap, booleanAttribute } from '@angular/core';
+import { component, InputSignal, OutputRef, propsMap, booleanAttribute } from '@angular/core';
 
-interface CheckboxProps extends Props {
+interface CheckboxProps {
   value: InputSignal<any>;
   valueChange: OutputRef<boolean>;
 }
