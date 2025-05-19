@@ -10,7 +10,7 @@ Points:
 3. extra bindings for DOM elements: `class:`, `style:`, `attr:`, `bind:`, `on:`,
 4. hostless components + ts lexical scoping for templates,
 5. component inputs: lifted up + immediately available,
-6. composition with fragments + directives + `bind:this={ props }`,
+6. composition with fragments and directives,
 7. template ref,
 8. lifecycle hooks: after** + onDestroy,
 9. DI enhancements.
