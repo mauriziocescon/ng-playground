@@ -348,14 +348,14 @@ export const ButtonConsumer = component(() => ({
 }));
 
 // -- button in @mylib/button --------------------
-import { component, Props, InputSignal, OutputRef, ModelSignal } from '@angular/core';
+import { component, InputSignal, OutputRef, ModelSignal } from '@angular/core';
 import { Render } from '@angular/common';
 
-interface ButtonProps extends Props {
+interface ButtonProps {
   children: InputSignal<Fragment<void>>;
-  tooltip: DirProps<{ message: string }> | undefined; // Note: DirProps is just an idea
-  disabled: ModelSignal<boolean | undefined>;
-  click: OutputRef<void>;
+  tooltip?: DirProps<{ message: string }>; // Note: DirProps is just an idea
+  disabled?: ModelSignal<boolean>;
+  click?: OutputRef<void>;
 }
 
 export const Button = component((props: ButtonProps) => ({
