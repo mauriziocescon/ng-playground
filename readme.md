@@ -103,7 +103,7 @@ export interface User { /** ... **/ }
 export const UserDetail = component(({
   user = input<User>(),
   valid = model<boolean>(),
-  makeAdmin = output<boolean>(),
+  makeAdmin = output<void>(),
 }) => ({
   // ...
 }));
