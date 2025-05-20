@@ -191,7 +191,7 @@ class CounterStore {
 }
 
 export const Counter = component(({
-  c = input<number>(),
+  c = input.required<number>(),
 }) => ({
   providers: [
     provide({ token: CounterStore, useFactory: () => new CounterStore(c) }),
@@ -208,7 +208,7 @@ export const Counter = component(({
 ```
 
 ## Composition with fragments and directives
-Fragments are very similar to [`svelte snippets`](https://svelte.dev/docs/svelte/snippet): functions returning html markup. Returned markup is opaque: cannot manipulate it similarly to [`react Children (legacy)`](https://react.dev/reference/react/Children) and [`solid children`](https://www.solidjs.com/tutorial/props_children).
+Fragments are very similar to [`svelte snippets`](https://svelte.dev/docs/svelte/snippet): functions returning html markup. Returned markup is opaque: cannot manipulate it similarly to [`react Children (legacy)`](https://react.dev/reference/react/Children) or [`solid children`](https://www.solidjs.com/tutorial/props_children).
 
 Implicit children fragment (where + when) and binding context:
 ```ts
@@ -374,14 +374,11 @@ export const Button = component(({
   disabled = input<boolean>(false),
   click = output<void>(),
 }) => ({
-  script: () => {
-    const bindings = toBindings({ inputs: { disabled }, outupts: { click }});
-  },
+  script: () => { /** ... **/ },
   template: `
-    <!-- bind inputs / outputs
-         fallthrough directives (tooltip) from the consumer -->
+    <!-- fallthrough directives (tooltip) from the consumer -->
 
-    <button **={ bindings } @** >
+    <button @** disabled={ disabled() } >
       <Render fragment={ children() } />
     </button>`,
 }));
@@ -486,5 +483,5 @@ export const AdminLinkWithTooltip = component(({
 - `queries`: if `ref` makes sense, likely not needed anymore; if they stay, it would be nice to improve the retrieval of data: no way to `read` anything from `injector` tree,
 - multiple `directives` applied to the same element: as for the previous point, no way for a directive to inject other ones applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy));
 if needed, it should be an explicit operation with a `ref` passed as an `input`,
-- `directives` attached to the host (components): not possible anymore, but you can pass directives as inputs and use `**={ bindings }` (or equivalent mechanism),
+- `directives` attached to the host (components): not possible anymore, but you can pass directives as inputs and use `@**` (or equivalent mechanism),
 - parent component styling children (difficult point): this should probably be based on css-variables similarly to [`svelte`](https://svelte.dev/docs/svelte/custom-properties).
