@@ -109,6 +109,70 @@ export const UserDetail = component(({
 }));
 ```
 
+Props and external files:
+```ts
+import { component, signal } from '@angular/core';
+import { Checkbox } from './checkbox';
+
+export const CheckboxConsumer = component() => ({
+  script: () => {
+    const value = signal<boolen>(false);
+    function valueChange() { /** ... **/ }
+  },
+  template: `
+    <!-- in general:
+         1) value={ false } ====> value = () => false
+         2) - ==================> value = () => input()
+         3) value={ value() } ==> value = () => value()
+         4) { value } ========> value = () => value()
+    -->
+
+    <Checkbox value={ false } />
+    <Checkbox />
+    <Checkbox value={ value() } valueChange={ valueChange } />
+    <Checkbox { value } on:{ valueChange() } />`,
+}));
+
+// -- Checkbox -----------------------------------
+import { component, InputSignal, OutputRef, propsMap, booleanAttribute, Signal } from '@angular/core';
+
+// Cannot have anything else than
+interface CheckboxProps {
+  value?: InputSignal<any>;
+  valueChange?: (v: boolean) => void;
+
+  another: InputSignal<string>;
+}
+
+export const Checkbox = component((props: CheckboxProps) => ({
+  script: () => {
+    const { value, valueChange } = propsMap(props, {
+      value: { default: false, transform: booleanAttribute },
+      valueChange: { default: (v: boolean) => void }
+    });
+
+    const len = computed(() => props.another());
+    const tt = computed(() => props.another());
+
+    function doing() {}
+    function event() {}
+  },
+  template: `
+    <!-- ... -->
+
+    <div>L = {len()}</div>
+    <Comp {len} />
+    <Comp len={tt()} event={doing} />
+    <Comp len={tt()} {event} />
+
+    <input type="checkbox" bind:value={ value } valueChange={ valueChange } />
+    <div> Value: { value() } </div>`,
+
+  templateUrl: `./checkbox.html`,
+  styleUrl: `./checkbox.css`,
+}));
+```
+
 ## Element directives
 Change the appearance or behavior of DOM elements:
 ```ts
@@ -130,7 +194,7 @@ export const TextSearch = component(() => ({
     <div @tooltip(
       message={ text() }
       bind:valid={ valid }
-      on:dismiss={ () => doSomething() }
+      on:dismiss={ doSomething }
     )>
       Value: { text() }
     </div>`,
@@ -360,14 +424,12 @@ interface ButtonProps {
 
 export const Button = component((props: ButtonProps) => ({
   script: () => {
-    const { children, ...others } = propsMap(props, {
-      children: { required: true },
-    });
+    const { children, ...others } = props;
   },
   template: `
     <!-- bind others to button, directives included -->
 
-    <button bind:this={ others }>
+    <button bind:**={ others } on:**={ others } >
       <Render fragment={ children() } />
     </button>`,
 }));
