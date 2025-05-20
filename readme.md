@@ -39,12 +39,12 @@ export const TextSearch = component(({
   },
   template: `
     <!-- 2way binding for input:
-         bind:property={ var } on:propertyChange={ varChange() } -->
+         bind:property={ var } on:propertyChange={ (v) => func(v) } -->
 
     <label class:danger={ isDanger() }>Text:</label>
-    <input type="text" bind:value={ text } on:valueChange={ textChange() } />
+    <input type="text" bind:value={ text } on:valueChange={ textChange } />
 
-    <button disabled={ text().length === 0 } on:click={ text.set('') }>
+    <button disabled={ text().length === 0 } on:click={ () => text.set('') }>
       { `Reset ${text()}` }
     </button>`,
   style: `
@@ -91,8 +91,8 @@ export const UserDetailConsumer = component(() => ({
     <UserDetail
       user={ user() }
       bind:valid={ isValid }
-      on:validChange={ isValidChange() }
-      on:makeAdmin={ makeAdmin() } />`,
+      on:validChange={ () => isValidChange() }
+      on:makeAdmin={ makeAdmin } />`,
 }));
 
 // -- UserDetail -----------------------------------
@@ -130,7 +130,7 @@ export const TextSearch = component(() => ({
     <div @tooltip(
       message={ text() }
       bind:valid={ valid }
-      on:dismiss={ doSomething() }
+      on:dismiss={ () => doSomething() }
     )>
       Value: { text() }
     </div>`,
@@ -184,8 +184,8 @@ export const Counter = component(({
   template: `
     <h1>Counter</h1>
     <div>Value: { store.value() }</div>
-    <button on:click={ store.decrease() }> - </button>
-    <button on:click={ store.increase() }> + </button>`,
+    <button on:click={ () => store.decrease() }> - </button>
+    <button on:click={ () => store.increase() }> + </button>`,
 }));
 ```
 
@@ -342,7 +342,7 @@ export const ButtonConsumer = component(() => ({
     <Button
       @tooltip(message={ tooltipMsg() })
       disabled={ !valid() }
-      on:click={ doSomething() }>
+      on:click={ doSomething }>
         Click / Hover me
     </Button>`,
 }));
@@ -436,7 +436,7 @@ export const Parent = component(() => ({
     <Child ref:many="manyComp" />
     <Child ref:many="manyComp" />
 
-    <button on:click={ tlp().toggle() }> Toggle tlp </button>`,
+    <button on:click={ () => tlp().toggle() }> Toggle tlp </button>`,
 }));
 ```
 
