@@ -56,14 +56,14 @@ export const TextSearch = component(({
 
 External files:
 ```ts
-import { component, input, output, propsMap, booleanAttribute } from '@angular/core';
+import { component, input, output, inputsMap, booleanAttribute } from '@angular/core';
 
 export const Checkbox = component(({
   value: v = input.required<any>(),
   valueChange = output<boolean>(),
 }) => ({
   script: () => {
-    const { value } = propsMap(props, { v: { transform: booleanAttribute }});
+    const { value } = inputsMap({ v: { transform: booleanAttribute }});
     // ...
   },
   templateUrl: `./checkbox.html`,
@@ -321,7 +321,7 @@ export const Tree = component(({
 }));
 ```
 
-Directives passed as inputs and bound to an element (difficult point):
+Directives passed as inputs and bound to an element:
 ```ts
 import { component, signal } from '@angular/core';
 
@@ -345,23 +345,22 @@ export const ButtonConsumer = component(() => ({
 }));
 
 // -- button in @mylib/button --------------------
-import { component, input, model, output, dir } from '@angular/core';
+import { component, input, output, toBindings } from '@angular/core';
 import { Render } from '@angular/common';
 
 export const Button = component(({
   children = input.required<Fragment<void>>(),
-  tooltip = dir<{ message: string }>(), // Note: dir is just an idea (difficult point)
-  disabled = model<boolean>(),
+  disabled = input<boolean>(false),
   click = output<void>(),
 }) => ({
   script: () => {
-    const inputs = { tooltip: tooltip() , disabled: disabled };
-    const outupts = { click };
+    const bindings = toBindings({ inputs: { disabled }, outupts: { click }});
   },
   template: `
-    <!-- bind inputs / outputs to button, directives included -->
+    <!-- bind inputs / outputs
+         fallthrough directives (tooltip) from the consumer -->
 
-    <button bind:**={ inputs } on:**={ outputs } >
+    <button **={ bindings } @** >
       <Render fragment={ children() } />
     </button>`,
 }));
@@ -466,5 +465,5 @@ export const AdminLinkWithTooltip = component(({
 - `queries`: if `ref` makes sense, likely not needed anymore; if they stay, it would be nice to improve the retrieval of data: no way to `read` anything from `injector` tree,
 - multiple `directives` applied to the same element: as for the previous point, no way for a directive to inject other ones applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy));
 if needed, it should be an explicit operation with a `ref` passed as an `input`,
-- `directives` attached to the host (components): not possible anymore, but you can pass directives as inputs and use `bind:**={ ... }` (or equivalent mechanism),
+- `directives` attached to the host (components): not possible anymore, but you can pass directives as inputs and use `**={ bindings }` (or equivalent mechanism),
 - parent component styling children (difficult point): this should probably be based on css-variables similarly to [`svelte`](https://svelte.dev/docs/svelte/custom-properties).
