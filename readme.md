@@ -61,7 +61,7 @@ External files:
 import { component, input, output } from '@angular/core';
 
 export const Checkbox = component(({
-  value: v = input.required<any>(),
+  value = input.required<any>(),
   valueChange = output<boolean>(),
 }) => ({
   script: () => { /** ... **/ },
@@ -155,7 +155,7 @@ export const tooltip = directive(({
 Transforms data declaratively in template expressions:
 ```ts
 import { component, signal } from '@angular/core';
-import { currency, uppercase, half } from '@mylib/pipes/currency';
+import { currency, uppercase, half } from '@mylib/pipes';
 
 export const ItemPrice = component(({
   price = input.required<number>(),
@@ -176,7 +176,7 @@ export const ItemPrice = component(({
 ## Inputs
 Inputs lifted up for providers init:
 ```ts
-import { component, linkedSignal, input, WritableSignal, provide, inject } from '@angular/core';
+import { component, linkedSignal, input, Signal, WritableSignal, provide, inject } from '@angular/core';
 
 class CounterStore {
   private readonly counter: WritableSignal<number>;
