@@ -130,7 +130,7 @@ export const TextSearch = component(() => ({
     <div @tooltip(
       message={ text() }
       bind:valid={ valid }
-      on:dismiss={ () => doSomething() }
+      on:dismiss={ doSomething }
     )>
       Value: { text() }
     </div>`,
