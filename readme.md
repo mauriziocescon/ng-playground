@@ -349,13 +349,13 @@ import { component, input, model, output, dir } from '@angular/core';
 import { Render } from '@angular/common';
 
 export const Button = component(({
-  children = input.required<Fragment<void>>,
+  children = input.required<Fragment<void>>(),
   tooltip = dir<{ message: string }>(), // Note: dir is just an idea (difficult point)
   disabled = model<boolean>(),
   click = output<void>(),
 }) => ({
   script: () => {
-    const inputs = { tooltip: tooltip() , disabled: disabled() };
+    const inputs = { tooltip: tooltip() , disabled: disabled };
     const outupts = { click };
   },
   template: `
