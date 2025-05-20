@@ -63,7 +63,7 @@ export const Checkbox = component(({
   valueChange = output<boolean>(),
 }) => ({
   script: () => {
-    const { value } = inputsMap({ v: { transform: booleanAttribute }});
+    const { v: value } = inputsMap({ v: { transform: booleanAttribute }});
     // ...
   },
   templateUrl: `./checkbox.html`,
