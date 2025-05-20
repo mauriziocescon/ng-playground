@@ -5,7 +5,8 @@ Points:
 1. building blocks as functions:
     - `component`: a treble `script` / `template` / `style`,
     - `fragment`: a duo `template` / `style` that captures some markup for reusability,
-    - `directive`: a `script` that can change the appearance or behavior of DOM elements.
+    - `directive`: a `script` that can change the appearance or behavior of DOM elements,
+    - `pipe`: a `script` for transforming data declaratively in template expressions.
 2. ts expressions with `{}`: bindings + text interpolation,
 3. extra bindings for DOM elements: `class:`, `style:`, `attr:`, `model:`, `on:`,
 4. hostless components + ts lexical scoping for templates,
@@ -13,7 +14,8 @@ Points:
 6. composition with fragments and directives,
 7. template ref,
 8. lifecycle hooks: after** + onDestroy,
-9. DI enhancements.
+9. DI enhancements,
+10. Pros&Cons.
 
 ## Components
 Component structure and element bindings:
@@ -56,16 +58,13 @@ export const TextSearch = component(({
 
 External files:
 ```ts
-import { component, input, output, inputsMap, booleanAttribute } from '@angular/core';
+import { component, input, output } from '@angular/core';
 
 export const Checkbox = component(({
   value: v = input.required<any>(),
   valueChange = output<boolean>(),
 }) => ({
-  script: () => {
-    const { v: value } = inputsMap({ v: { transform: booleanAttribute }});
-    // ...
-  },
+  script: () => { /** ... **/ },
   templateUrl: `./checkbox.html`,
   styleUrl: `./checkbox.css`,
 }));
@@ -149,6 +148,28 @@ export const tooltip = directive(({
     // exposed as public
     return { /** ... **/ };
   },
+}));
+```
+
+## Pipes
+Transforms data declaratively in template expressions:
+```ts
+import { component, signal } from '@angular/core';
+import { currency, uppercase, half } from '@mylib/pipes/currency';
+
+export const ItemPrice = component(({
+  price = input.required<number>(),
+  discount = input<boolean>(false),
+}) => ({
+  script: () => { /** ... **/ },
+  template: `
+    <!-- ... -->
+
+    @if (discount()) {
+      <div>Price: { @currency(amount()) }</div>
+    } @else {
+      <div>Price: { @currency(@half(amount())) }</div>
+    }`,
 }));
 ```
 
