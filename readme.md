@@ -7,7 +7,7 @@ Points:
     - `fragment`: a duo `template` / `style` that captures some markup for reusability,
     - `directive`: a `script` that can change the appearance or behavior of DOM elements.
 2. ts expressions with `{}`: bindings + text interpolation,
-3. extra bindings for DOM elements: `class:`, `style:`, `attr:`, `bind:`, `on:`,
+3. extra bindings for DOM elements: `class:`, `style:`, `attr:`, `model:`, `on:`,
 4. hostless components + ts lexical scoping for templates,
 5. component inputs: lifted up + immediately available,
 6. composition with fragments and directives,
@@ -39,10 +39,10 @@ export const TextSearch = component(({
   },
   template: `
     <!-- 2way binding for input:
-         bind:property={ var } on:propertyChange={ (v) => func(v) } -->
+         model:property={ var } on:propertyChange={ (v) => func(v) } -->
 
     <label class:danger={ isDanger() }>Text:</label>
-    <input type="text" bind:value={ text } on:valueChange={ textChange } />
+    <input type="text" model:value={ text } on:valueChange={ textChange } />
 
     <button disabled={ text().length === 0 } on:click={ () => text.set('') }>
       { `Reset ${text()}` }
@@ -54,20 +54,17 @@ export const TextSearch = component(({
 }));
 ```
 
-Props and external files:
+External files:
 ```ts
-import { component, InputSignal, OutputRef, propsMap, booleanAttribute } from '@angular/core';
+import { component, input, output, propsMap, booleanAttribute } from '@angular/core';
 
-interface CheckboxProps {
-  value: InputSignal<any>;
-  valueChange?: OutputRef<boolean>;
-}
-
-export const Checkbox = component((props: CheckboxProps) => ({
+export const Checkbox = component(({
+  value: v = input.required<any>(),
+  valueChange = output<boolean>(),
+}) => ({
   script: () => {
-    const { value, valueChange } = propsMap(props, {
-      value: { transform: booleanAttribute },
-    });
+    const { value } = propsMap(props, { v: { transform: booleanAttribute }});
+    // ...
   },
   templateUrl: `./checkbox.html`,
   styleUrl: `./checkbox.css`,
@@ -90,7 +87,7 @@ export const UserDetailConsumer = component(() => ({
   template: `
     <UserDetail
       user={ user() }
-      bind:valid={ isValid }
+      model:valid={ isValid }
       on:validChange={ () => isValidChange() }
       on:makeAdmin={ makeAdmin } />`,
 }));
@@ -129,7 +126,7 @@ export const TextSearch = component(() => ({
 
     <div @tooltip(
       message={ text() }
-      bind:valid={ valid }
+      model:valid={ valid }
       on:dismiss={ doSomething }
     )>
       Value: { text() }
@@ -324,7 +321,7 @@ export const Tree = component(({
 }));
 ```
 
-Directives passed as inputs and bound to an element using `bind:this={ props }` (react props spread equivalent):
+Directives passed as inputs and bound to an element (difficult point):
 ```ts
 import { component, signal } from '@angular/core';
 
@@ -348,26 +345,23 @@ export const ButtonConsumer = component(() => ({
 }));
 
 // -- button in @mylib/button --------------------
-import { component, InputSignal, OutputRef, ModelSignal } from '@angular/core';
+import { component, input, model, output, dir } from '@angular/core';
 import { Render } from '@angular/common';
 
-interface ButtonProps {
-  children: InputSignal<Fragment<void>>;
-  tooltip?: DirProps<{ message: string }>; // Note: DirProps is just an idea
-  disabled?: ModelSignal<boolean>;
-  click?: OutputRef<void>;
-}
-
-export const Button = component((props: ButtonProps) => ({
+export const Button = component(({
+  children = input.required<Fragment<void>>,
+  tooltip = dir<{ message: string }>(), // Note: dir is just an idea (difficult point)
+  disabled = model<boolean>(),
+  click = output<void>(),
+}) => ({
   script: () => {
-    const { children, ...others } = propsMap(props, {
-      children: { required: true },
-    });
+    const inputs = { tooltip: tooltip() , disabled: disabled() };
+    const outupts = { click };
   },
   template: `
-    <!-- bind others to button, directives included -->
+    <!-- bind inputs / outputs to button, directives included -->
 
-    <button bind:this={ others }>
+    <button bind:**={ inputs } on:**={ outputs } >
       <Render fragment={ children() } />
     </button>`,
 }));
@@ -472,5 +466,5 @@ export const AdminLinkWithTooltip = component(({
 - `queries`: if `ref` makes sense, likely not needed anymore; if they stay, it would be nice to improve the retrieval of data: no way to `read` anything from `injector` tree,
 - multiple `directives` applied to the same element: as for the previous point, no way for a directive to inject other ones applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy));
 if needed, it should be an explicit operation with a `ref` passed as an `input`,
-- `directives` attached to the host (components): not possible anymore, but you can pass directives as inputs and use `bind:this={ props }`,
+- `directives` attached to the host (components): not possible anymore, but you can pass directives as inputs and use `bind:**={ ... }` (or equivalent mechanism),
 - parent component styling children (difficult point): this should probably be based on css-variables similarly to [`svelte`](https://svelte.dev/docs/svelte/custom-properties).
