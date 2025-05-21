@@ -19,7 +19,7 @@ class CounterStore {
  * provide function for types safety
  */
 export const Counter = component(({
-  c = input<number>(),
+  c = input<number>() as const,
 }) => ({
   providers: [
     provide({ token: CounterStore, useFactory: () => new CounterStore(c) }),
@@ -75,7 +75,7 @@ const rootToken = provideForRoot('desc', {
  * provide compToken at Counter level using the default factory
  */
 export const Counter = component(({
-  initialValue = input<number>(),
+  initialValue = input<number>() as const,
 }) => ({
   providers: [
     provide({ token: compToken, useFactory: () => compToken.factory(initialValue) }),

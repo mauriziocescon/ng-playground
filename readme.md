@@ -23,8 +23,8 @@ Component structure and element bindings:
 import { component, signal, linkedSignal, input, output } from '@angular/core';
 
 export const TextSearch = component(({
-  text: value = input.required<string>(), // types + default + rename (alias)
-  valueChange = output<string>(),
+  text: value = input.required<string>() as const,
+  valueChange = output<string>() as const,
 }) => ({
   script: () => {
     const text = linkedSignal(() => value());
@@ -58,11 +58,11 @@ export const TextSearch = component(({
 
 External files:
 ```ts
-import { component, input, output } from '@angular/core';
+import { component, input, output, booleanAttribute } from '@angular/core';
 
 export const Checkbox = component(({
-  value = input.required<any>(),
-  valueChange = output<boolean>(),
+  value = input.required<any>({ transform: booleanAttribute }) as const,
+  valueChange = output<boolean>() as const,
 }) => ({
   script: () => { /** ... **/ },
   templateUrl: `./checkbox.html`,
@@ -97,9 +97,9 @@ import { component, input, model, output } from '@angular/core';
 export interface User { /** ... **/ }
 
 export const UserDetail = component(({
-  user = input<User>(),
-  valid = model<boolean>(),
-  makeAdmin = output<void>(),
+  user = input<User>() as const,
+  valid = model<boolean>() as const,
+  makeAdmin = output<void>() as const,
 }) => ({
   // ...
 }));
@@ -136,9 +136,9 @@ export const TextSearch = component(() => ({
 import { directive, input, model, output, inject, ElementRef, Renderer2 } from '@angular/core';
 
 export const tooltip = directive(({
-  message = input.required<string>(),
-  valid = model<boolean>(),
-  dismiss = output<void>(),
+  message = input.required<string>() as const,
+  valid = model<boolean>() as const,
+  dismiss = output<void>() as const,
 }) => ({
   script: () => {
     const elRef = inject(ElementRef);
@@ -158,8 +158,8 @@ import { component, signal } from '@angular/core';
 import { currency, uppercase, half } from '@mylib/pipes';
 
 export const ItemPrice = component(({
-  price = input.required<number>(),
-  discount = input<boolean>(false),
+  price = input.required<number>() as const,
+  discount = input<boolean>(false) as const,
 }) => ({
   script: () => { /** ... **/ },
   template: `
@@ -191,7 +191,7 @@ class CounterStore {
 }
 
 export const Counter = component(({
-  c = input.required<number>(),
+  c = input.required<number>() as const,
 }) => ({
   providers: [
     provide({ token: CounterStore, useFactory: () => new CounterStore(c) }),
@@ -229,7 +229,7 @@ import { component, input, Fragment } from '@angular/core';
 import { Render } from '@angular/common';
 
 export const Menu = component(({
-  children = input<Fragment<void>>(),
+  children = input<Fragment<void>>() as const,
 }) => ({
   script: () => { /** ... **/ },
   template: `
@@ -243,7 +243,7 @@ export const Menu = component(({
 }));
 
 export const MenuItem = component(({
-  children = input.required<Fragment<void>>(),
+  children = input.required<Fragment<void>>() as const,
 }) => ({
   script: () => { /** ... **/ },
   template: `
@@ -274,8 +274,8 @@ import { component, input, Fragment } from '@angular/core';
 import { Render } from '@angular/common';
 
 export const Menu = component(({
-  items = input.required<{ id: string, desc: string }[]>(),
-  menuItem = input.required<Fragment<[{ id: string, desc: string }]>>(),
+  items = input.required<{ id: string, desc: string }[]>() as const,
+  menuItem = input.required<Fragment<[{ id: string, desc: string }]>>() as const,
 }) => ({
   script: () => { /** ... **/ },
   template: `
@@ -313,7 +313,7 @@ const myNode = fragment((node: CustomNode) => ({
 }));
 
 export const TreeConsumer = component(({
-  nodes = input.required<CustomNode[]>(),
+  nodes = input.required<CustomNode[]>() as const,
 }) => ({
   template: `
     <Tree nodes={ nodes() } custumNode={ myNode } />`,
@@ -326,8 +326,8 @@ import { Render } from '@angular/common';
 export interface Node { /** ... **/ }
 
 export const Tree = component(({
-  nodes = input.required<Node[]>(),
-  custumNode = input<Fragment<[Node]>>(),
+  nodes = input.required<Node[]>() as const,
+  custumNode = input<Fragment<[Node]>>() as const,
 }) => ({
   template: `
     <!-- ... -->
@@ -370,9 +370,9 @@ import { component, input, output, toBindings } from '@angular/core';
 import { Render } from '@angular/common';
 
 export const Button = component(({
-  children = input.required<Fragment<void>>(),
-  disabled = input<boolean>(false),
-  click = output<void>(),
+  children = input.required<Fragment<void>>() as const,
+  disabled = input<boolean>(false) as const,
+  click = output<void>() as const,
 }) => ({
   script: () => { /** ... **/ },
   template: `
@@ -462,8 +462,8 @@ import { MatButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 
 export const AdminLinkWithTooltip = component(({
-  tooltipMessage = input.required<string>(),
-  hasPermissions = input.required<boolean>(),
+  tooltipMessage = input.required<string>() as const,
+  hasPermissions = input.required<boolean>() as const,
 }) => ({
   template: `
     <MatButton:a
