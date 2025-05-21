@@ -106,7 +106,7 @@ export interface User { /** ... **/ }
 
 export const UserDetail = component(({
   user = input<User>(),
-  valid = model<boolean>(),
+  email = model<string>(),
   makeAdmin = output<void>(),
 }) => ({
   // ...
