@@ -8,7 +8,7 @@ Points:
     - `directive`: a `script` that can change the appearance or behavior of DOM elements,
     - `pipe`: a `script` for transforming data declaratively in template expressions,
 2. ts expressions with `{}`: bindings + text interpolation,
-3. extra bindings for DOM elements: `class:`, `style:`, `attr:`, `model:`, `on:`,
+3. extra bindings for DOM elements: `class:`, `style:`, `attr:`, `bind:`, `on:`,
 4. hostless components + ts lexical scoping for templates,
 5. component inputs: lifted up + immediately available,
 6. composition with fragments and directives,
@@ -30,7 +30,7 @@ import { component, signal, linkedSignal, input, output } from '@angular/core';
  * inputs have parent data
  */
 export const TextSearch = component(({
-  text: value = input.required<string>(), // definition + types
+  value = input.required<string>(), // definitions + types
   valueChange = output<string>(),
 }) => ({
   script: () => {
@@ -47,11 +47,10 @@ export const TextSearch = component(({
     };
   },
   template: `
-    <!-- 2way binding for input:
-         model:property={ var } on:propertyChange={ (v) => func(v) } -->
+    <!-- 2way binding for inputs: bind:property={ var } -->
 
     <label class:danger={ isDanger() }>Text:</label>
-    <input type="text" model:value={ text } on:valueChange={ textChange } />
+    <input type="text" bind:value={ text } on:input={ textChange } />
 
     <button disabled={ text().length === 0 } on:click={ () => text.set('') }>
       { `Reset ${text()}` }
@@ -85,16 +84,18 @@ import { UserDetail, User } from './user-detail';
 export const UserDetailConsumer = component(() => ({
   script: () => {
     const user = signal<User>(...);
-    const isValid = signal<boolean>(...);
+    const email = signal<string>(...);
 
-    function isValidChange() { /** ... **/ }
+    function processEmail(email: string) { /** ... **/ }
     function makeAdmin() { /** ... **/ }
   },
   template: `
+    <!-- 2way binding for comp: bind:input={ var } -->
+
     <UserDetail
       user={ user() }
-      model:valid={ isValid }
-      on:validChange={ () => isValidChange() }
+      bind:email={ email }
+      on:emailChange={ (email: string) => processEmail(email) }
       on:makeAdmin={ makeAdmin } />`,
 }));
 
@@ -116,13 +117,15 @@ export const UserDetail = component(({
 Change the appearance or behavior of DOM elements:
 ```ts
 import { component, signal } from '@angular/core';
+import { model } from '@angular/common';
 import { tooltip } from '@mylib/tooltip';
 
 export const TextSearch = component(() => ({
   script: () => {
     const text = signal('');
-    const valid = signal(false);
+    const message = signal('Message');
 
+    function valueChange() { /** ... **/ }
     function doSomething() { /** ... **/ }
   },
   template: `
@@ -130,21 +133,19 @@ export const TextSearch = component(() => ({
 
     <!-- encapsulation of directive data: @directive( ... ) -->
 
-    <div @tooltip(
-      message={ text() }
-      model:valid={ valid }
-      on:dismiss={ doSomething }
-    )>
-      Value: { text() }
-    </div>`,
+    <input
+      type="text
+      @model( bind:value={ text } on:valueChange={ valueChange })"
+      @tooltip( message={ message() } on:dismiss={ doSomething } ) />
+
+    <p> Value: { text() } </p>`,
 }));
 
 // -- tooltip in @mylib/tooltip --------------------
-import { directive, input, model, output, inject, ElementRef, Renderer2 } from '@angular/core';
+import { directive, input, output, inject, ElementRef, Renderer2 } from '@angular/core';
 
 export const tooltip = directive(({
   message = input.required<string>(),
-  valid = model<boolean>(),
   dismiss = output<void>(),
 }) => ({
   script: () => {
