@@ -6,7 +6,7 @@ Points:
     - `component`: a treble `script` / `template` / `style`,
     - `fragment`: a duo `template` / `style` that captures some markup for reusability,
     - `directive`: a `script` that can change the appearance or behavior of DOM elements,
-    - `pipe`: a `script` for transforming data declaratively in template expressions.
+    - `pipe`: a `script` for transforming data declaratively in template expressions,
 2. ts expressions with `{}`: bindings + text interpolation,
 3. extra bindings for DOM elements: `class:`, `style:`, `attr:`, `model:`, `on:`,
 4. hostless components + ts lexical scoping for templates,
@@ -27,10 +27,10 @@ import { component, signal, linkedSignal, input, output } from '@angular/core';
  * (no "props decostruction")
  *
  * by the time script is called,
- * inputs are init with parent data
+ * inputs have parent data
  */
 export const TextSearch = component(({
-  text: value = input.required<string>(),
+  text: value = input.required<string>(), // definition + types
   valueChange = output<string>(),
 }) => ({
   script: () => {
