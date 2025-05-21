@@ -22,6 +22,13 @@ Component structure and element bindings:
 ```ts
 import { component, signal, linkedSignal, input, output } from '@angular/core';
 
+/**
+ * text / valueChange are always created
+ * (no "props decostruction")
+ *
+ * by the time script is called,
+ * inputs are init with parent data
+ */
 export const TextSearch = component(({
   text: value = input.required<string>(),
   valueChange = output<string>(),
