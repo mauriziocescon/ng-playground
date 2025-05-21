@@ -178,6 +178,20 @@ export const ItemPrice = component(({
       <div>Price: { @currency(@half(amount())) }</div>
     }`,
 }));
+
+// -- currency in @mylib/pipes --------------------
+import { pipe, inject, LOCALE_ID } from '@angular/core';
+
+export const currency = pipe(() => ({
+  script: () => {
+    const localeId = inject(LOCALE_ID);
+
+    return (
+      value: number | string | null | undefined,
+      digitsInfo?: string,
+      locale?: string) => { /** ... **/ };
+  },
+}));
 ```
 
 ## Inputs
