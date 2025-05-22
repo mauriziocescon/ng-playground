@@ -30,8 +30,8 @@ export const Counter = component(({
   template: `
     <h1>Counter</h1>
     <div>Value: { store.value() }</div>
-    <button on:click={ store.decrease() }> - </button>
-    <button on:click={ store.increase() }> + </button>`,
+    <button on:click={ () => store.decrease() }> - </button>
+    <button on:click={ () => store.increase() }> + </button>`,
 }));
 ```
 
