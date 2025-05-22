@@ -10,12 +10,12 @@ Points:
 2. ts expressions with `{}`: bindings + text interpolation,
 3. extra bindings for DOM elements: `class:`, `style:`, `attr:`, `bind:`, `on:`,
 4. hostless components + ts lexical scoping for templates,
-5. component inputs: lifted up + immediately available,
+5. component inputs: lifted up + immediately available in the script,
 6. composition with fragments and directives,
 7. template ref,
 8. lifecycle hooks: after** + onDestroy,
 9. DI enhancements,
-10. Pros&Cons.
+10. Concepts affected by these changes.
 
 ## Components
 Component structure and element bindings:
@@ -47,7 +47,7 @@ export const TextSearch = component(({
     };
   },
   template: `
-    <!-- 2way binding for inputs: bind:property={ var } -->
+    <!-- 2way binding for input / select / textarea: bind:property={ var } -->
 
     <label class:danger={ isDanger() }>Text:</label>
     <input type="text" bind:value={ text } on:input={ textChange } />
