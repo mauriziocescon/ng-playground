@@ -24,7 +24,7 @@ import { component, signal, linkedSignal, input, output } from '@angular/core';
 
 /**
  * text / valueChange are always created
- * (no "props decostruction")
+ * (no real "props decostruction")
  *
  * by the time script is called,
  * inputs have parent data
@@ -90,7 +90,7 @@ export const UserDetailConsumer = component(() => ({
     function makeAdmin() { /** ... **/ }
   },
   template: `
-    <!-- 2way binding for comp: bind:input={ var } -->
+    <!-- 2way binding for comp: bind:model={ var } -->
 
     <UserDetail
       user={ user() }
