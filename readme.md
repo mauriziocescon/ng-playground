@@ -1,5 +1,5 @@
 # Anatomy of signal components
-**Note: just personal thoughts from a DEV perspective on [the future of angular](https://myconf.dev/videos/2024-keynote-session-the-future-of-angular) (template level). Strongly inspired by svelte / solid.**
+**Note: just personal thoughts from a DEV perspective on [the future of angular](https://myconf.dev/videos/2024-keynote-session-the-future-of-angular) (template level). Strongly inspired by svelte.**
 
 Points:
 1. building blocks as functions:
@@ -522,7 +522,7 @@ alternatively something like [`v-bind`](https://vuejs.org/guide/components/props
 - can reassign inputs / outputs inside script:
   - https://github.com/microsoft/TypeScript/issues/18497
   - https://eslint.org/docs/latest/rules/no-param-reassign
-- there isn't any obvious shortcut for passing props (see svelte):
+- there isn't any obvious shortcut for passing props (see svelte / vue):
 ```ts
 <User user={ user() } bind:address={ address } on:userChange={ userChange } />
 
