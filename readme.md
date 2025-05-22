@@ -518,10 +518,10 @@ alternatively something like [`v-bind`](https://vuejs.org/guide/components/props
 <User user={ user() } bind:address={ address } on:userChange={ userChange } />
 
 <!-- maybe something like "matching the name"?
-     error in case of string interpolation or similar --->
+     error in case of string interpolation or similar -->
 <User { user() } bind:{ address } on:{ userChange } />
 ```
 - can reassign inputs / outputs inside script:
   - https://github.com/microsoft/TypeScript/issues/18497
   - https://eslint.org/docs/latest/rules/no-param-reassign
-- parent component styling children (difficult point): maybe something based on css-variables similarly to [`svelte`](https://svelte.dev/docs/svelte/custom-properties)?
+- parent component styling children (difficult point): maybe something based on css-variables similarly to [`svelte`](https://svelte.dev/docs/svelte/custom-properties)? Alternatevely, directives could support style `https://github.com/angular/angular/issues/17766`.
