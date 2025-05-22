@@ -517,7 +517,8 @@ alternatively something like [`v-bind`](https://vuejs.org/guide/components/props
 ```ts
 <User user={ user() } bind:address={ address } on:userChange={ userChange } />
 
-<!-- maybe something like "matching the name"? error in case of string interpolation or similar --->
+<!-- maybe something like "matching the name"?
+     error in case of string interpolation or similar --->
 <User { user() } bind:{ address } on:{ userChange } />
 ```
 - can reassign inputs / outputs inside script:
