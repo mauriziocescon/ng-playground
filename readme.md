@@ -497,13 +497,34 @@ export const AdminLinkWithTooltip = component(({
 ```
 
 ## Concepts affected by these changes
-
 - `ng-content`: replaced by `fragments`,
 - `ng-template` (`let-*` shorthands + `ngTemplateGuard_*`): likely replaced by `fragments`,
 - structural directives: likely replaced by `fragments`,
 - `Ng**Outlet` + `ng-container`: likely replaced by the new things,
 - `queries`: if `ref` makes sense, likely not needed anymore; if they stay, it would be nice to improve the retrieval of data: no way to `read` anything from `injector` tree,
-- multiple `directives` applied to the same element: as for the previous point, no way for a directive to inject other ones applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy));
-if needed, it should be an explicit operation with a `ref` passed as an `input`,
+- multiple `directives` applied to the same element: as for the previous point, it would be nice to avoid directives injeciton when applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy)); instead, it should be an explicit operation with a `ref` passed as an `input`,
 - `directives` attached to the host (components): not possible anymore, but you can pass directives as inputs and use `@**` (or equivalent mechanism),
 - parent component styling children (difficult point): this should probably be based on css-variables similarly to [`svelte`](https://svelte.dev/docs/svelte/custom-properties).
+
+## Pros&Cons
+Pros
+- multiple components in the same file and not file based names,
+- works very well with DI.
+
+Cons
+- inputs are created (then syncronised) any time a component / directive
+is created rather than derived from already existing signals (solid / svelte).
+This is great for interoperability, but it comes with the drawback
+that there isn't any concept of props object: inputs / outputs
+must be created within the component / directive. This implies
+there's nothing to spread for "wrapper components" (`<Button />`, ...),
+- can reassign inputs / outputs inside script:
+  - https://github.com/microsoft/TypeScript/issues/18497
+  - https://eslint.org/docs/latest/rules/no-param-reassign
+- there isn't any obvious shortcut for passing props (see svelte):
+```ts
+<User user={ user() } bind:address={ address } on:userChange={ userChange } />
+
+<!-- maybe something like this? no string interpolation or similar --->
+<User { user() } bind:{ address } on:{ userChange } />
+```
