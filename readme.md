@@ -27,7 +27,7 @@ import { component, signal, linkedSignal, input, output } from '@angular/core';
  * (no real "props decostruction")
  *
  * by the time script is called,
- * inputs have parent data
+ * inputs are populated with parent data
  */
 export const TextSearch = component(({
   value = input.required<string>(), // definitions + types
