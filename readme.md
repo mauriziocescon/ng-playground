@@ -505,12 +505,7 @@ export const AdminLinkWithTooltip = component(({
 - multiple `directives` applied to the same element: as for the previous point, it would be nice to avoid directives injeciton when applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy)); instead, it should be an explicit operation with a `ref` passed as an `input`,
 - `directives` attached to the host (components): not possible anymore, but you can pass directives as inputs and use `@**` (or equivalent mechanism).
 
-## Pros&Cons
-Pros
-- multiple components in the same file and no file-based names,
-- works very well with DI.
-
-Cons
+Unresolved issues:
 - inputs are created (then syncronised) any time a component / directive
 is created rather than derived from already existing signals (solid / svelte).
 This is great for interoperability, but it comes with the drawback
