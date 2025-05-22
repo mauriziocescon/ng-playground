@@ -198,13 +198,13 @@ export const currency = pipe(() => ({
 ## Inputs
 Inputs lifted up for providers init:
 ```ts
-import { component, linkedSignal, input, Signal, WritableSignal, provide, inject } from '@angular/core';
+import { component, linkedSignal, input, WritableSignal, provide, inject } from '@angular/core';
 
 class CounterStore {
   private readonly counter: WritableSignal<number>;
   readonly value = this.counter.asReadonly();
 
-  constructor(c: Signal<number>) {
+  constructor(c = () => 0) {
     this.counter = linkedSignal(() => c());
   }
 
