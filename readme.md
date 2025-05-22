@@ -503,8 +503,7 @@ export const AdminLinkWithTooltip = component(({
 - `Ng**Outlet` + `ng-container`: likely replaced by the new things,
 - `queries`: if `ref` makes sense, likely not needed anymore; if they stay, it would be nice to improve the retrieval of data: no way to `read` anything from `injector` tree,
 - multiple `directives` applied to the same element: as for the previous point, it would be nice to avoid directives injeciton when applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy)); instead, it should be an explicit operation with a `ref` passed as an `input`,
-- `directives` attached to the host (components): not possible anymore, but you can pass directives as inputs and use `@**` (or equivalent mechanism),
-- parent component styling children (difficult point): this should probably be based on css-variables similarly to [`svelte`](https://svelte.dev/docs/svelte/custom-properties).
+- `directives` attached to the host (components): not possible anymore, but you can pass directives as inputs and use `@**` (or equivalent mechanism).
 
 ## Pros&Cons
 Pros
@@ -529,3 +528,4 @@ alternatively something like [`v-bind`](https://vuejs.org/guide/components/props
 <!-- maybe something like "matching the name"? error in case of string interpolation or similar --->
 <User { user() } bind:{ address } on:{ userChange } />
 ```
+- parent component styling children (difficult point): maybe something based on css-variables similarly to [`svelte`](https://svelte.dev/docs/svelte/custom-properties)?
