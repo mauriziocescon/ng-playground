@@ -369,6 +369,7 @@ Directives passed as inputs and bound to an element:
 import { component, signal } from '@angular/core';
 
 import { Button } from '@mylib/button';
+import { ripple } from '@mylib/ripple';
 import { tooltip } from '@mylib/tooltip';
 
 export const ButtonConsumer = component(() => ({
@@ -380,6 +381,7 @@ export const ButtonConsumer = component(() => ({
   },
   template: `
     <Button
+      @ripple
       @tooltip(message={ tooltipMsg() })
       disabled={ !valid() }
       on:click={ doSomething }>
@@ -400,7 +402,7 @@ export const Button = component(({
   template: `
     <!-- fallthrough directives (tooltip) from the consumer -->
 
-    <button @** disabled={ disabled() } >
+    <button @** disabled={ disabled() } on:click={ click }>
       <Render fragment={ children() } />
     </button>`,
 }));
@@ -512,7 +514,7 @@ This is great for interoperability, but it comes with the drawback
 that there isn't any props object: inputs / outputs must be created
 within the component / directive. This implies there's nothing
 to spread for "wrapper components" (`<Button />`, ...);
-alternatively something like [`v-bind`](https://vuejs.org/guide/components/props.html#binding-multiple-properties-using-an-object),
+alternatively something like vue [`fallthrough`](https://vuejs.org/guide/components/attrs.html),
 - there isn't any obvious short notation for passing props (see svelte / vue);
 ```ts
 <User user={ user() } bind:address={ address } on:userChange={ userChange } />
