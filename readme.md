@@ -508,7 +508,7 @@ export const AdminLinkWithTooltip = component(({
 
 ## Pros&Cons
 Pros
-- multiple components in the same file and not file based names,
+- multiple components in the same file and no file-based names,
 - works very well with DI.
 
 Cons
