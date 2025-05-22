@@ -515,9 +515,9 @@ Cons
 - inputs are created (then syncronised) any time a component / directive
 is created rather than derived from already existing signals (solid / svelte).
 This is great for interoperability, but it comes with the drawback
-that there isn't any concept of props object: inputs / outputs
-must be created within the component / directive. This implies
-there's nothing to spread for "wrapper components" (`<Button />`, ...);
+that there isn't any props object: inputs / outputs must be created
+within the component / directive. This implies there's nothing
+to spread for "wrapper components" (`<Button />`, ...);
 alternatively something like [`v-bind`](https://vuejs.org/guide/components/props.html#binding-multiple-properties-using-an-object),
 - can reassign inputs / outputs inside script:
   - https://github.com/microsoft/TypeScript/issues/18497
@@ -526,6 +526,6 @@ alternatively something like [`v-bind`](https://vuejs.org/guide/components/props
 ```ts
 <User user={ user() } bind:address={ address } on:userChange={ userChange } />
 
-<!-- maybe something like this? no string interpolation or similar --->
+<!-- maybe something like "matching the name"? error in case of string interpolation or similar --->
 <User { user() } bind:{ address } on:{ userChange } />
 ```
