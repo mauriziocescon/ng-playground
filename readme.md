@@ -1,5 +1,5 @@
 # Anatomy of signal components
-**Note: just personal thoughts from a DEV perspective on [the future of angular](https://myconf.dev/videos/2024-keynote-session-the-future-of-angular) (template level). Strongly inspired by svelte.**
+**Note: just personal thoughts from a DEV perspective on [the future of angular](https://myconf.dev/videos/2024-keynote-session-the-future-of-angular) (template level).**
 
 Points:
 1. building blocks as functions:
@@ -523,6 +523,7 @@ alternatively something like vue [`fallthrough`](https://vuejs.org/guide/compone
      error in case of string interpolation or similar -->
 <User { user() } bind:{ address } on:{ userChange } />
 ```
+- there isn't any obvious way to conditionally apply directives;
 - can reassign inputs / outputs inside script:
   - https://github.com/microsoft/TypeScript/issues/18497
   - https://eslint.org/docs/latest/rules/no-param-reassign
