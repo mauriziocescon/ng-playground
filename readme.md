@@ -174,9 +174,9 @@ export const ItemPrice = component(({
     <!-- ... -->
 
     @if (discount()) {
-      <div>Price: { @currency(amount()) }</div>
+      <div>Price: { @currency(price()) }</div>
     } @else {
-      <div>Price: { @currency(@half(amount())) }</div>
+      <div>Price: { @currency(@half(price())) }</div>
     }`,
 }));
 
