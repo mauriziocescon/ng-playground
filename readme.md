@@ -524,14 +524,14 @@ alternatively something like vue [`fallthrough`](https://vuejs.org/guide/compone
 <User user={ user() } bind:address={ address } on:userChange={ userChange } />
 
 // maybe something like "matching the name"?
-// error in case of string interpolation or similar -->
+// error in case of string interpolation or similar
 
 <User { user() } bind:{ address } on:{ userChange } />
 ```
 - there isn't any obvious way to conditionally apply directives;
 ```ts
 // maybe using the fact @ is special within {}?
-// might be tricky at parsing level -->
+// might be tricky at parsing level
 
 <Button { @tooltip(message={ tooltipMsg() }) && condition() }>
   Click / Hover me
