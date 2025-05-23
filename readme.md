@@ -187,7 +187,7 @@ import { pipe, computed, inject, LOCALE_ID } from '@angular/core';
 
 export const currency = pipe((
   value: () => number | string | undefined,
-  currencyCode: () => string | string | undefined,
+  currencyCode: (() => string) | string | undefined,
 ) => ({
   script: () => {
     const localeId = inject(LOCALE_ID);
