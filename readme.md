@@ -464,8 +464,6 @@ export const Parent = component(() => ({
     const tlp3 = ref(tooltip);
   },
   template: `
-    <!-- ref not passed as input within directives -->
-
     <div
       #el
       @ripple=#rpl
