@@ -403,7 +403,7 @@ export const Button = component(({
 }) => ({
   script: () => { /** ... **/ },
   template: `
-    <!-- fallthrough directives (tooltip) from the consumer -->
+    <!-- fallthrough directives (ripple / tooltip) from the consumer -->
 
     <button @** disabled={ disabled() } on:click={ click }>
       <Render fragment={ children() } />
@@ -508,8 +508,8 @@ export const AdminLinkWithTooltip = component(({
 - structural directives: likely replaced by `fragments`,
 - `Ng**Outlet` + `ng-container`: likely replaced by the new things,
 - `queries`: if `ref` makes sense, likely not needed anymore; if they stay, it would be nice to improve the retrieval of data: no way to `read` providers from `injector` tree,
-- multiple `directives` applied to the same element: as for the previous point, it would be nice to avoid directives injeciton when applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy)); instead, it should be an explicit operation with a `ref` passed as an `input`,
-- `directives` attached to the host (components): not possible anymore, but you can pass directives as inputs and use `@**` (or equivalent mechanism).
+- multiple `directives` applied to the same element: as for the previous point, it would be nice to avoid directives injeciton when applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy)); instead, it should be an explicit operation with a `#ref` passed as an `input`,
+- `directives` attached to the host (components): not possible anymore, but you can pass directives as inputs and use `@**` (or equivalent syntax).
 
 Unresolved points:
 - spread props: inputs are created (then syncronised) any time a component / directive
@@ -518,7 +518,26 @@ This is great for interoperability, but it comes with the drawback
 that there isn't any props object: inputs / outputs must be created
 within the component / directive. This implies there's nothing
 to spread for "wrapper components" (`<Button />`, ...);
-an alternative solution coulbe be something like vue [`fallthrough`](https://vuejs.org/guide/components/attrs.html),
+an alternative solution coulbe be something like vue [`fallthrough`](https://vuejs.org/guide/components/attrs.html) where inputs are passed using DI,
+```ts
+export const Button = component(({
+  children = input.fallthrough<Fragment<void>>(),
+  disabled = input.fallthrough<boolean>(false),
+  type = input.fallthrough<'button' | 'reset' | 'submit'>('button'),
+  click = output.fallthrough<void>(),
+}) => ({
+  script: () => {
+    const fallthrough = inject(FALLTROUGH);
+    // ...
+  },
+  template: `
+    <!-- fallthrough directives (ripple / tooltip) from the consumer -->
+
+    <button @** disabled={ disabled() } on:click={ click }>
+      <Render fragment={ children() } />
+    </button>`,
+}));
+```
 - there isn't any obvious short notation for passing props (see svelte / vue);
 ```ts
 <User user={ user() } bind:address={ address } on:userChange={ userChange } />
@@ -530,10 +549,9 @@ an alternative solution coulbe be something like vue [`fallthrough`](https://vue
 ```
 - there isn't any obvious way to conditionally apply directives;
 ```ts
-// maybe using the fact @ is special within {}?
-// might be tricky at parsing level
+// maybe using another ()?
 
-<Button { @tooltip(message={ tooltipMsg() }) && condition() }>
+<Button (@tooltip(message={ tooltipMsg() }) && { condition() })>
   Click / Hover me
 </Button>
 ```
