@@ -519,7 +519,7 @@ This is great for interoperability, but it comes with the drawback
 that there isn't any props object: inputs / outputs must be created
 within the component / directive. This implies there's nothing
 to spread for "wrapper components" (`<Button />`, ...);
-alternatively something like vue [`fallthrough`](https://vuejs.org/guide/components/attrs.html),
+an alternative solution coulbe be something like vue [`fallthrough`](https://vuejs.org/guide/components/attrs.html),
 - there isn't any obvious short notation for passing props (see svelte / vue);
 ```ts
 <User user={ user() } bind:address={ address } on:userChange={ userChange } />
