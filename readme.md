@@ -162,8 +162,8 @@ export const tooltip = directive(({
 ## Pipes
 Transforms data declaratively in template expressions:
 ```ts
-import { component, signal } from '@angular/core';
-import { currency, uppercase, half } from '@mylib/pipes';
+import { component, input, signal } from '@angular/core';
+import { currency, half } from '@mylib/pipes';
 
 export const ItemPrice = component(({
   price = input.required<number>(),
@@ -183,16 +183,17 @@ export const ItemPrice = component(({
 }));
 
 // -- currency in @mylib/pipes --------------------
-import { pipe, inject, LOCALE_ID } from '@angular/core';
+import { pipe, computed, inject, LOCALE_ID } from '@angular/core';
 
-export const currency = pipe(() => ({
+export const currency = pipe((
+  value: Signal<number | string | null | undefined>,
+  currencyCode: Signal<string | undefined>,
+) => ({
   script: () => {
     const localeId = inject(LOCALE_ID);
+    // ...
 
-    return (
-      value: number | string | null | undefined,
-      digitsInfo?: string,
-      locale?: string) => { /** ... **/ };
+    return computed( /** ... **/ );
   },
 }));
 ```
