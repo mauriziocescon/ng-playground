@@ -176,9 +176,9 @@ export const ItemPrice = component(({
     <!-- @ has special meaning within {} (only exception) -->
 
     @if (discount()) {
-      <div>Price: { @currency(price(), 'EUR') }</div>
+      <div>Price: { @currency(price, 'EUR') }</div>
     } @else {
-      <div>Price: { @currency(@half(price()), 'EUR') }</div>
+      <div>Price: { @currency(@half(price), 'EUR') }</div>
     }`,
 }));
 
@@ -186,8 +186,8 @@ export const ItemPrice = component(({
 import { pipe, computed, inject, LOCALE_ID } from '@angular/core';
 
 export const currency = pipe((
-  value: Signal<number | string | null | undefined>,
-  currencyCode: Signal<string | undefined>,
+  value: () => number | string | undefined,
+  currencyCode: () => string | string | undefined,
 ) => ({
   script: () => {
     const localeId = inject(LOCALE_ID);
