@@ -176,9 +176,9 @@ export const ItemPrice = component(({
     <!-- @ has special meaning within {} (only exception) -->
 
     @if (discount()) {
-      <div>Price: { @currency(price()) }</div>
+      <div>Price: { @currency(price(), 'EUR') }</div>
     } @else {
-      <div>Price: { @currency(@half(price())) }</div>
+      <div>Price: { @currency(@half(price()), 'EUR') }</div>
     }`,
 }));
 
