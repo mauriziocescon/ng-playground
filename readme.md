@@ -551,7 +551,7 @@ export const Button = component(({
 ```ts
 // maybe using another ()?
 
-<Button (@tooltip(message={ tooltipMsg() }) && { condition() })>
+<Button (@tooltip(message={ tooltipMsg() }) && { enabled() })>
   Click / Hover me
 </Button>
 ```
