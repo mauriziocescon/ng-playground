@@ -160,7 +160,7 @@ export const tooltip = directive(({
 ```
 
 ## Pipes
-Transforms data declaratively in template expressions:
+Declaratively transforms data in template expressions:
 ```ts
 import { component, input, signal } from '@angular/core';
 import { currency, half } from '@mylib/pipes';
