@@ -173,6 +173,8 @@ export const ItemPrice = component(({
   template: `
     <!-- ... -->
 
+    <!-- @ has special meaning within {} (only exception) -->
+
     @if (discount()) {
       <div>Price: { @currency(price()) }</div>
     } @else {
