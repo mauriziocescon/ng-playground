@@ -460,22 +460,23 @@ export const Parent = component(() => ({
     const manyComp = ref<{ text: Signal<string> }[]>('manyComp', { any: true });
     const manyComp2 = ref(Child, { any: true });
 
-    const tlp = ref<{ toggle: () => void }>('tlp');
-    const tlp2 = ref(tooltip);
+    const tlp2 = ref<{ toggle: () => void }>('tlp');
+    const tlp3 = ref(tooltip);
   },
   template: `
     <!-- ref not passed as input within directives -->
 
     <div
-      ref:this="el"
-      @tooltip(message={ 'something' } ref:this="tlp")>
+      #el
+      @ripple=#rpl
+      @tooltip(message={ 'something' })=#tlp>
         Something
     </div>
 
-    <Child ref:many="manyComp" />
-    <Child ref:many="manyComp" />
+    <Child #manyComp />
+    <Child #manyComp />
 
-    <button on:click={ () => tlp().toggle() }> Toggle tlp </button>`,
+    <button on:click={ () => tlp.toggle() }> Toggle tlp </button>`,
 }));
 ```
 
