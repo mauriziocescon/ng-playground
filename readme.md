@@ -464,6 +464,8 @@ export const Parent = component(() => ({
     const tlp2 = ref(tooltip);
   },
   template: `
+    <!-- ref not passed as input within directives -->
+
     <div
       ref:this="el"
       @tooltip(message={ 'something' } ref:this="tlp")>
@@ -526,6 +528,13 @@ alternatively something like vue [`fallthrough`](https://vuejs.org/guide/compone
 <User { user() } bind:{ address } on:{ userChange } />
 ```
 - there isn't any obvious way to conditionally apply directives;
+```ts
+<!-- maybe using the fact @ is special within {}?
+     might be tricky at parsing level -->
+<Button { @tooltip(message={ tooltipMsg() }) && condition() }>
+  Click / Hover me
+</Button>
+```
 - can reassign inputs / outputs inside script:
   - https://github.com/microsoft/TypeScript/issues/18497
   - https://eslint.org/docs/latest/rules/no-param-reassign
