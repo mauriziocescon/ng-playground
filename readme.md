@@ -518,7 +518,7 @@ This is great for interoperability, but it comes with the drawback
 that there isn't any props object: inputs / outputs must be created
 within the component / directive. This implies a potential object to spread
 must be created inside script for "wrapper components" (`<Button />`, ...);
-an alternative solution coulbe be something like vue [`fallthrough`](https://vuejs.org/guide/components/attrs.html) where inputs are passed using DI,
+an alternative solution coulbe be something like vue [`fallthrough`](https://vuejs.org/guide/components/attrs.html) where inputs are aggregated using DI,
 ```ts
 export const Button = component(({
   children = input.required<Fragment<void>>(),
