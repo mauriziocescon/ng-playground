@@ -6,7 +6,7 @@ Points:
     - `component`: a treble `script` / `template` / `style`,
     - `fragment`: a duo `template` / `style` that captures some markup for reusability,
     - `directive`: a `script` that can change the appearance or behavior of DOM elements,
-    - `pipe`: a `script` for transforming data declaratively in template expressions,
+    - `derivation`: a `script` for transforming data declaratively in template expressions,
 2. ts expressions with `{}`: bindings + text interpolation,
 3. extra bindings for DOM elements: `class:`, `style:`, `attr:`, `bind:`, `on:`,
 4. hostless components + ts lexical scoping for templates,
@@ -159,35 +159,44 @@ export const tooltip = directive(({
 }));
 ```
 
-## Pipes
-Declaratively transforms data in template expressions:
+## Derivations
+Declaratively transforms data within templates:
 ```ts
 import { component, input, signal } from '@angular/core';
-import { currency, half } from '@mylib/pipes';
+import { bestSellers, memo, currency, half } from '@mylib/derivations';
 
-export const ItemPrice = component(({
-  price = input.required<number>(),
-  discount = input<boolean>(false),
+interface Item { /** ... **/ }
+
+export const Items = component(({
+  items = input.required<Item[]>(),
 }) => ({
   script: () => { /** ... **/ },
   template: `
     <!-- ... -->
 
-    <!-- @ has special meaning within {} (only exception) -->
+    @let filteredItems = bestSellers(items());
 
-    @if (discount()) {
-      <div>Price: { @currency(price, 'EUR') }</div>
-    } @else {
-      <div>Price: { @currency(@half(price), 'EUR') }</div>
+    @for (item of filteredItems(); trask item.id) {
+      @let memoItem = memo(item);
+
+      <Item [item]="memoItem()" />
+
+      @if (memoItem().discount) {
+        @let price = currency(half(memoItem().price), 'EUR');
+        <div>Price: {{ price() }}</div>
+      } @else {
+        @let price = currency(memoItem().price, 'EUR');
+        <div>Price: {{ price() }}</div>
+      }
     }`,
 }));
 
-// -- currency in @mylib/pipes --------------------
-import { pipe, computed, inject, LOCALE_ID } from '@angular/core';
+// -- currency in @mylib/derivations --------------------
+import { derivation, computed, inject, LOCALE_ID } from '@angular/core';
 
-export const currency = pipe((
+export const currency = derivation((
   value: () => number | string | undefined,
-  currencyCode: (() => string) | string | undefined,
+  currencyCode: string | undefined,
 ) => ({
   script: () => {
     const localeId = inject(LOCALE_ID);
