@@ -195,8 +195,8 @@ export const Items = component(({
 import { derivation, computed, inject, LOCALE_ID } from '@angular/core';
 
 export const currency = derivation((
-  value: () => number | string | undefined,
-  currencyCode: string | undefined,
+  value = input.required<number | string | undefined>(),
+  currencyCode = input<string | undefined>(undefined),
 ) => ({
   script: () => {
     const localeId = inject(LOCALE_ID);
@@ -535,7 +535,7 @@ export const Button = component(({
   type = input<'button' | 'reset' | 'submit'>('button'),
   click = output<void>(),
 }) => ({
-  fallthrough: true, 
+  fallthrough: true,
   script: () => {
     const fallthrough = inject(FALLTROUGH);
     // ...
