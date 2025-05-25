@@ -193,8 +193,8 @@ export const Items = component(({
 import { derivation, computed, inject, LOCALE_ID } from '@angular/core';
 
 export const currency = derivation((
-  value = input.required<number | string | undefined>(),
-  currencyCode = input<string | undefined>(undefined),
+  value: () => number | string | undefined,
+  currencyCode: () => string | undefined,
 ) => ({
   script: () => {
     const localeId = inject(LOCALE_ID);
