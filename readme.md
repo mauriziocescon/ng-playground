@@ -179,8 +179,6 @@ export const Items = component(({
     @for (item of filteredItems(); trask item.id) {
       @let memoItem = memo(item);
 
-      <Item [item]="memoItem()" />
-
       @if (memoItem().discount) {
         @let price = currency(half(memoItem().price), 'EUR');
         <div>Price: {{ price() }}</div>
