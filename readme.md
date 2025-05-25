@@ -176,7 +176,7 @@ export const Items = component(({
 
     @let filteredItems = bestSellers(items());
 
-    @for (item of filteredItems(); trask item.id) {
+    @for (item of filteredItems(); track item.id) {
       @let memoItem = memo(item);
 
       @if (memoItem().discount) {
