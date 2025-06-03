@@ -174,33 +174,36 @@ export const Items = component(({
   template: `
     <!-- ... -->
 
-    @let filteredItems = bestSellers(items());
+    @const filteredItems = bestSellers(items);
 
     @for (item of filteredItems(); track item.id) {
-      @let memoItem = memo(item);
+      @const memoItem = memo(() => item);
 
       @if (memoItem().discount) {
-        @let price = currency(half(memoItem().price), 'EUR');
+        @const price = currency(half(() => memoItem().price), () => 'EUR');
         <div>Price: {{ price() }}</div>
       } @else {
-        @let price = currency(memoItem().price, 'EUR');
+        @const price = currency(() => memoItem().price, () => 'EUR');
         <div>Price: {{ price() }}</div>
       }
     }`,
 }));
 
 // -- currency in @mylib/derivations --------------------
-import { derivation, computed, inject, LOCALE_ID } from '@angular/core';
+import { derivation, computed, Signal, inject, LOCALE_ID } from '@angular/core';
 
-export const currency = derivation((
-  value: () => number | string | undefined,
-  currencyCode: () => string | undefined,
-) => ({
+export const currency = derivation(() => ({
   script: () => {
     const localeId = inject(LOCALE_ID);
-    // ...
 
-    return computed( /** ... **/ );
+    return (
+      value: () => (number | string | undefined),
+      currencyCode: (() => string) | undefined,
+    ) => {
+      // ...
+
+      return computed( /** ... **/ );
+    }
   },
 }));
 ```
