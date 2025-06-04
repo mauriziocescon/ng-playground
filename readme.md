@@ -542,8 +542,12 @@ export const Button = component(({
   template: `
     <!-- fallthrough directives (ripple / tooltip) from the consumer -->
 
-    <button @** **={fallthrough.inputs} bind:**={fallthrough.twoWay} on:**={fallthrough.outputs}>
-      <Render fragment={children()} />
+    <button
+      @**
+      **={fallthrough.inputs}
+      bind:**={fallthrough.twoWay}
+      on:**={fallthrough.outputs}>
+        <Render fragment={children()} />
     </button>`,
 }));
 ```
