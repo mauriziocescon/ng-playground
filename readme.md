@@ -13,9 +13,8 @@ Points:
 5. component inputs: lifted up + immediately available in the script,
 6. composition with fragments and directives,
 7. template ref,
-8. lifecycle hooks: after** + onDestroy,
-9. DI enhancements,
-10. Concepts affected by these changes.
+8. DI enhancements,
+9. Concepts affected by these changes.
 
 ## Components
 Component structure and element bindings:
@@ -47,13 +46,13 @@ export const TextSearch = component(({
     };
   },
   template: `
-    <!-- 2way binding for input / select / textarea: bind:property={ var } -->
+    <!-- 2way binding for input / select / textarea: bind:property={var} -->
 
-    <label class:danger={ isDanger() }>Text:</label>
-    <input type="text" bind:value={ text } on:input={ textChange } />
+    <label class:danger={isDanger()}>Text:</label>
+    <input type="text" bind:value={text} on:input={textChange} />
 
-    <button disabled={ text().length === 0 } on:click={ () => text.set('') }>
-      { `Reset ${text()}` }
+    <button disabled={text().length === 0} on:click={() => text.set('')}>
+      {`Reset ${text()}`}
     </button>`,
   style: `
     .danger {
@@ -90,13 +89,13 @@ export const UserDetailConsumer = component(() => ({
     function makeAdmin() { /** ... **/ }
   },
   template: `
-    <!-- 2way binding for comp: bind:model={ var } -->
+    <!-- 2way binding for comp: bind:model={var} -->
 
     <UserDetail
-      user={ user() }
-      bind:email={ email }
-      on:emailChange={ (email: string) => processEmail(email) }
-      on:makeAdmin={ makeAdmin } />`,
+      user={user()}
+      bind:email={email}
+      on:emailChange={(email: string) => processEmail(email)}
+      on:makeAdmin={makeAdmin} />`,
 }));
 
 // -- UserDetail -----------------------------------
@@ -134,11 +133,11 @@ export const TextSearch = component(() => ({
     <!-- encapsulation of directive data: @directive( ... ) -->
 
     <input
-      type="text
-      @model( bind:value={ text } on:valueChange={ valueChange })"
-      @tooltip( message={ message() } on:dismiss={ doSomething } ) />
+      type="text"
+      @model(bind:value={text} on:valueChange={valueChange})
+      @tooltip(message={message()} on:dismiss={doSomething}) />
 
-    <p> Value: { text() } </p>`,
+    <p> Value: {text()} </p>`,
 }));
 
 // -- tooltip in @mylib/tooltip --------------------
@@ -181,10 +180,10 @@ export const Items = component(({
 
       @if (memoItem().discount) {
         @const price = currency(half(() => memoItem().price), () => 'EUR');
-        <div>Price: {{ price() }}</div>
+        <div>Price: {price()}</div>
       } @else {
         @const price = currency(() => memoItem().price, () => 'EUR');
-        <div>Price: {{ price() }}</div>
+        <div>Price: {price()}</div>
       }
     }`,
 }));
@@ -236,9 +235,9 @@ export const Counter = component(({
   },
   template: `
     <h1>Counter</h1>
-    <div>Value: { store.value() }</div>
-    <button on:click={ () => store.decrease() }> - </button>
-    <button on:click={ () => store.increase() }> + </button>`,
+    <div>Value: {store.value()}</div>
+    <button on:click={() => store.decrease()}> - </button>
+    <button on:click={() => store.increase()}> + </button>`,
 }));
 ```
 
@@ -271,7 +270,7 @@ export const Menu = component(({
     <!--  no need to have an explicit anchor point like ng-container -->
 
     @if (children()) {
-      <Render fragment={ children() } />
+      <Render fragment={children()} />
     } @else {
        <!-- ... -->
     }`,
@@ -282,7 +281,7 @@ export const MenuItem = component(({
 }) => ({
   script: () => { /** ... **/ },
   template: `
-    <Render fragment={ children() } />`,
+    <Render fragment={children()} />`,
 }));
 ```
 
@@ -297,11 +296,11 @@ export const MenuConsumer = component(() => ({
     const items = computed(() => [{ id: '1', desc: 'First' }, { id: '2', desc: 'Second' }]);
   },
   template: `
-    @fragment menuItem(item: { id: string, desc: string }) {
-      <MyMenuItem>{ item.desc }</MyHeader>
+    @fragment menuItem(item: {id: string, desc: string}) {
+      <MyMenuItem>{item.desc}</MyHeader>
     }
 
-    <Menu items={ items() } menuItem={ menuItem } />`,
+    <Menu items={items()} menuItem={menuItem} />`,
 }));
 
 // -- Menu in @mylib/menu --------------------------
@@ -314,10 +313,10 @@ export const Menu = component(({
 }) => ({
   script: () => { /** ... **/ },
   template: `
-    <h1> Total items: { items().length } </h1>
+    <h1> Total items: {items().length} </h1>
 
     @for (item of items(); track item.id) {
-      <Render fragment={ children() } params={ [item] } />
+      <Render fragment={children()} params={[item]} />
     }`,
 }));
 ```
@@ -339,7 +338,7 @@ const myNode = fragment((node: CustomNode) => ({
   template: `
     <div class="my-node">
       <span>Custom node: </span>
-      <span class:red={ node.desc === 'unknown' }>{ node.desc }</span>
+      <span class:red={node.desc === 'unknown'}>{node.desc}</span>
     </div>`,
   style: `
     .red {
@@ -351,7 +350,7 @@ export const TreeConsumer = component(({
   nodes = input.required<CustomNode[]>(),
 }) => ({
   template: `
-    <Tree nodes={ nodes() } custumNode={ myNode } />`,
+    <Tree nodes={nodes()} custumNode={myNode} />`,
 }));
 
 // -- tree in @mylib/tree --------------------------
@@ -369,7 +368,7 @@ export const Tree = component(({
 
     @for (node of nodes(); track node.id) {
       @if (custumNode()) {
-        <Render fragment={ custumNode() } params={ [node] } />
+        <Render fragment={custumNode()} params={[node]} />
       } @else {
         <!-- ... -->
       }
@@ -395,9 +394,9 @@ export const ButtonConsumer = component(() => ({
   template: `
     <Button
       @ripple
-      @tooltip(message={ tooltipMsg() })
-      disabled={ !valid() }
-      on:click={ doSomething }>
+      @tooltip(message={tooltipMsg()})
+      disabled={!valid()}
+      on:click={doSomething}>
         Click / Hover me
     </Button>`,
 }));
@@ -415,8 +414,8 @@ export const Button = component(({
   template: `
     <!-- fallthrough directives (ripple / tooltip) from the consumer -->
 
-    <button @** disabled={ disabled() } on:click={ click }>
-      <Render fragment={ children() } />
+    <button @** disabled={disabled()} on:click={click}>
+      <Render fragment={children()} />
     </button>`,
 }));
 ```
@@ -437,7 +436,7 @@ export const Something = component(() => ({
   template: `
     <!-- ... -->
 
-    <Dynamic component={ comp() } inputs={ inputs() } />`,
+    <Dynamic component={comp()} inputs={inputs()} />`,
 }));
 ```
 
@@ -478,14 +477,14 @@ export const Parent = component(() => ({
     <div
       #el
       @ripple=#rpl
-      @tooltip(message={ 'something' })=#tlp>
+      @tooltip(message={'something'})=#tlp>
         Something
     </div>
 
     <Child #manyComp />
     <Child #manyComp />
 
-    <button on:click={ () => tlp.toggle() }> Toggle tlp </button>`,
+    <button on:click={() => tlp.toggle()}> Toggle tlp </button>`,
 }));
 ```
 
@@ -506,7 +505,7 @@ export const AdminLinkWithTooltip = component(({
   template: `
     <MatButton:a
       href="/admin"
-      @MatTooltip(message={ tooltipMessage() } disabled={ hasPermissions() })>
+      @MatTooltip(message={tooltipMessage()} disabled={hasPermissions()})>
         Admin
     </MatButton:a>`,
 }));
@@ -544,25 +543,25 @@ export const Button = component(({
   template: `
     <!-- fallthrough directives (ripple / tooltip) from the consumer -->
 
-    <button @** disabled={ disabled() } on:click={ click }>
-      <Render fragment={ children() } />
+    <button @** disabled={disabled()} on:click={click}>
+      <Render fragment={children()} />
     </button>`,
 }));
 ```
 - there isn't any obvious short notation for passing props (see svelte / vue);
 ```ts
-<User user={ user() } bind:address={ address } on:userChange={ userChange } />
+<User user={user()} bind:address={address} on:userChange={userChange} />
 
 // maybe something like "matching the name"?
 // error in case of string interpolation or similar
 
-<User { user() } bind:{ address } on:{ userChange } />
+<User {user()} bind:{address} on:{userChange} />
 ```
 - there isn't any obvious way to conditionally apply directives;
 ```ts
 // maybe using another ()?
 
-<Button (@tooltip(message={ tooltipMsg() }) && { enabled() })>
+<Button (@tooltip(message={tooltipMsg()}) && {enabled()})>
   Click / Hover me
 </Button>
 ```
