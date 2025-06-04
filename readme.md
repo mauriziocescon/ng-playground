@@ -179,7 +179,7 @@ export const Items = component(({
       @let memoItem = @memo(() => item);
 
       @if (memoItem().discount) {
-        @let price = @currency(half(() => memoItem().price), () => 'EUR');
+        @let price = @currency(@half(() => memoItem().price), () => 'EUR');
         <div>Price: {price()}</div>
       } @else {
         @let price = @currency(() => memoItem().price, () => 'EUR');
