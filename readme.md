@@ -525,7 +525,7 @@ Unresolved points:
 is created rather than derived from already existing signals (solid / svelte).
 This is great for interoperability, but it comes with the drawback
 that there isn't any props object: inputs / outputs must be created
-within the component / directive. For "wrapper components" (`<Button />`, ...);
+within the component / directive. For "wrapper components" (`<Button />`, ...)
 an alternative solution coulbe be something like vue [`fallthrough`](https://vuejs.org/guide/components/attrs.html) where inputs are aggregated using DI,
 ```ts
 export const Button = component(({
@@ -542,7 +542,7 @@ export const Button = component(({
   template: `
     <!-- fallthrough directives (ripple / tooltip) from the consumer -->
 
-    <button @** disabled={disabled()} on:click={click}>
+    <button @** **={fallthrough.inputs} bind:**={fallthrough.twoWay} on:**={fallthrough.outputs}>
       <Render fragment={children()} />
     </button>`,
 }));
