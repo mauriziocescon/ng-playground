@@ -534,12 +534,12 @@ export const Button = component(({
   type = input<'button' | 'reset' | 'submit'>('button'),
   click = output<void>(),
 }) => ({
-  fallthrough: true,
   script: () => {
     const fallthrough = inject(FALLTROUGH);
     // ...
   },
   template: `
+
     <button
       @**
       **={fallthrough.inputs}
