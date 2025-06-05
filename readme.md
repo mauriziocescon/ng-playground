@@ -48,7 +48,7 @@ export const TextSearch = component(({
   template: `
     <!-- 2way binding for input / select / textarea: bind:property={var} -->
 
-    <label class:danger={isDanger()}>Text: </label>
+    <label class:danger={isDanger()}> Text: </label>
     <input type="text" bind:value={text} on:input={textChange} />
 
     <button disabled={text().length === 0} on:click={() => text.set('')}>
