@@ -414,7 +414,7 @@ export const Button = component(({
   template: `
     <!-- fallthrough directives (ripple / tooltip) from the consumer -->
 
-    <button @** disabled={disabled()} on:click={click}>
+    <button @** disabled={disabled()} on:click={() => click.emit()}>
       <Render fragment={children()} />
     </button>`,
 }));
@@ -540,8 +540,6 @@ export const Button = component(({
     // ...
   },
   template: `
-    <!-- fallthrough directives (ripple / tooltip) from the consumer -->
-
     <button
       @**
       **={fallthrough.inputs}
