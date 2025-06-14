@@ -173,16 +173,16 @@ export const Items = component(({
   template: `
     <!-- ... -->
 
-    @let filteredItems = @bestSellers(items);
+    @const filteredItems = @bestSellers(items);
 
     @for (item of filteredItems(); track item.id) {
-      @let memoItem = @memo(() => item);
+      @const memoItem = @memo(() => item);
 
       @if (memoItem().discount) {
-        @let price = @currency(@half(() => memoItem().price), () => 'EUR');
+        @const price = @currency(@half(() => memoItem().price), () => 'EUR');
         <div>Price: {price()}</div>
       } @else {
-        @let price = @currency(() => memoItem().price, () => 'EUR');
+        @const price = @currency(() => memoItem().price, () => 'EUR');
         <div>Price: {price()}</div>
       }
     }`,
