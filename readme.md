@@ -189,7 +189,7 @@ export const Items = component(({
 }));
 
 // -- currency in @mylib/derivations --------------------
-import { derivation, computed, Signal, inject, LOCALE_ID } from '@angular/core';
+import { derivation, computed, inject, LOCALE_ID } from '@angular/core';
 
 export const currency = derivation(() => ({
   script: () => {
