@@ -6,7 +6,7 @@ Points:
     - `component`: a treble `script` / `template` / `style`,
     - `fragment`: a duo `template` / `style` that captures some markup for reusability,
     - `directive`: a `script` that can change the appearance or behavior of DOM elements,
-    - `derivation`: a `script` for transforming data declaratively in template expressions,
+    - `derivation`: a `script` for creating computeds in templates,
 2. ts expressions with `{}`: bindings + text interpolation,
 3. extra bindings for DOM elements: `class:`, `style:`, `attr:`, `bind:`, `on:`,
 4. hostless components + ts lexical scoping for templates,
