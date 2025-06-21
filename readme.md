@@ -116,7 +116,6 @@ export const UserDetail = component(({
 Change the appearance or behavior of DOM elements:
 ```ts
 import { component, signal } from '@angular/core';
-import { model } from '@angular/common';
 import { tooltip } from '@mylib/tooltip';
 
 export const TextSearch = component(() => ({
@@ -134,7 +133,7 @@ export const TextSearch = component(() => ({
 
     <input
       type="text"
-      @model(bind:value={text} on:valueChange={valueChange})
+      bind:value={text} on:input={valueChange}
       @tooltip(message={message()} on:dismiss={doSomething}) />
 
     <p> Value: {text()} </p>`,
