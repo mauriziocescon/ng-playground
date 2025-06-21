@@ -22,7 +22,7 @@ Component structure and element bindings:
 import { component, signal, linkedSignal, input, output } from '@angular/core';
 
 /**
- * text / valueChange are always created
+ * value / valueChange are always created
  * (no real "props decostruction")
  *
  * by the time script is called,
