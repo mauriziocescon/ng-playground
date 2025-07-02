@@ -22,13 +22,6 @@
   bind:compTwoWay={compTwoWay}
   on:compTwoWayChange={compTwoWayChange()}
   @myDir(dirInput={dirValue()} on:dirOutput={output()} bind:twoWay={someValue}) />
-
-<MyComponent
-  compInput={compValue()}
-  on:compOutput={compFunc()}
-  bind:compTwoWay={compTwoWay}
-  on:compTwoWayChange={compTwoWayChange()}
-  use:myDir(dirInput={dirValue()} on:dirOutput={output()} bind:twoWay={someValue}) />
 ```
 
 ```html
@@ -51,12 +44,12 @@
 <User user={user()} @tooltip(bind:message={msg} on:messageChange={() => doSomething()}) />
 
 @if (valid()) {
-    <MatButton:a
-       id="fff"
-       href="/admin"
-       @hasRipple
-       @tooltip(message="cannot navigate" disabled={hasPermissions()})>
-          Admin
-    </MatButton:a>
+  <MatButton:a
+    id="fff"
+    href="/admin"
+    @hasRipple
+    @tooltip(message="cannot navigate" disabled={hasPermissions()})>
+      Admin
+  </MatButton:a>
 }
 ```
