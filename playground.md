@@ -32,44 +32,30 @@
 ```
 
 ```html
-<input [(ngModel)]="text" />
-<input @NgModel([(ngModel)]="text") />
-<input @bind(value={text}) />
 <input bind:value={text} />
-
-<input [(ngModel)]="text" (ngModelChange)="textChanges()"/>
-<input @NgModel([(ngModel)]="text" (ngModelChange)="textChanges()") />
-<input bind:value={text} on:valueChange={textChanges()} />
-
-<div [tooltip] [message]="shortText()">{{ text() }}</div>
-<div @tooltip([message]="shortText()")>{{ text() }}</div>
-<div use:tooltip(message={shortText()})>{ text() }</div>
-
-<span (click)="callMethod()">{{ text() }}</span>
-<span on:click={callMethod()}>{ text() }</span>
-
-<input type="text" on:keyup.enter={callMethod($event)} />
-
-<ul [attr.role]="listRole()"></ul>
+<span on:click={() => callMethod()}>{text()}</span>
+<input type="text" on:keyup.enter={($event) => callMethod($event)} />
 <ul attr:role={listRole()}></ul>
-
-<ul [class.expanded]="isExpanded()"></ul>
 <ul class:expanded={isExpanded()}></ul>
-
-<section [style.height.px]="sectionHeightInPixels()"></section>
 <section style:height.px={sectionHeightInPixels()}></section>
 
+<example-cmp animate:out="fancy-animation-class" />
+<example-cmp animate:out={myDynamicCSSClasses()}" />
+<other-example-cmp animate:out={() => animateFn($event)} />
+
+<div @tooltip(message={shortText()})>{text()}</div>
+
 <User user={user()} bind:someModel={x} />
-<User user={user()} bind:someModel={x} on:someModelChange={method()} />
-<User user={user()} use:tooltip(message={msg()} on:dismiss={dismiss()}) />
-<User user={user()} use:tooltip(bind:message={msg} on:messageChange={doSomething()}) />
+<User user={user()} bind:someModel={x} on:someModelChange={method} />
+<User user={user()} @tooltip(message={msg()} on:dismiss={() => dismiss()}) />
+<User user={user()} @tooltip(bind:message={msg} on:messageChange={() => doSomething()}) />
 
 @if (valid()) {
     <MatButton:a
        id="fff"
        href="/admin"
-       use:hasRipple
-       use:tooltip(message="cannot navigate" disabled={hasPermissions()})>
+       @hasRipple
+       @tooltip(message="cannot navigate" disabled={hasPermissions()})>
           Admin
     </MatButton:a>
 }

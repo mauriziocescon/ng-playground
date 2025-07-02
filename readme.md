@@ -8,7 +8,7 @@ Points:
     - `directive`: a `script` that can change the appearance or behavior of DOM elements,
     - `derivation`: a `script` for creating computeds in templates,
 2. ts expressions with `{}`: bindings + text interpolation,
-3. extra bindings for DOM elements: `class:`, `style:`, `attr:`, `bind:`, `on:`,
+3. extra bindings for DOM elements: `class:`, `style:`, `attr:`, `bind:`, `on:`, `animate:`,
 4. hostless components + ts lexical scoping for templates,
 5. component inputs: lifted up + immediately available in the script,
 6. composition with fragments and directives,
