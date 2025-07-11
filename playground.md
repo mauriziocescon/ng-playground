@@ -20,7 +20,7 @@
   on:compOutput={compFunc()}
   bind:compTwoWay={compTwoWay}
   on:compTwoWayChange={compTwoWayChange()}
-  @myDir(dirInput={dirValue()} on:dirOutput={() => output()} bind:twoWay={someValue}) />
+  @myDir(dirInput={dirValue()} on:dirOutput={() => output()} bind:dirTwoWay={someValue}) />
 ```
 
 ```html
