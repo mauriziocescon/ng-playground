@@ -470,7 +470,7 @@ export const Parent = component(() => ({
     // 2. templates only lookup: cannot retrieve providers
     //    defined in the Child comp tree
     const aComp = ref<{ text: Signal<string> }>('aComp');
-    const manyComp = ref(Child, { many: true });
+    const manyComp = ref<Child[]>(Child, { many: true });
 
     const tlp2 = ref<{ toggle: () => void }>('tlp');
     const tlp3 = ref(tooltip);
@@ -528,7 +528,7 @@ is created rather than derived from already existing signals (solid / svelte).
 This is great for interoperability, but it comes with the drawback
 that there isn't any props object: inputs / outputs must be created
 within the component / directive. For "wrapper components" (`<Button />`, ...)
-an alternative solution coulbe be something like vue [`fallthrough`](https://vuejs.org/guide/components/attrs.html) where inputs are aggregated using DI,
+an alternative solution coulbe be something like vue [`fallthrough`](https://vuejs.org/guide/components/attrs.html) where props are aggregated using DI,
 ```ts
 export const Button = component(({
   children = input.required<Fragment<void>>(),
