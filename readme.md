@@ -315,7 +315,7 @@ export const Menu = component(({
     <h1> Total items: {items().length} </h1>
 
     @for (item of items(); track item.id) {
-      <Render fragment={children()} params={[item]} />
+      <Render fragment={menuItem()} params={[item]} />
     }`,
 }));
 ```
