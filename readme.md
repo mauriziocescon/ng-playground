@@ -541,7 +541,6 @@ export const Button = component(({
     // ...
   },
   template: `
-
     <button
       @**
       **={fallthrough.inputs}
