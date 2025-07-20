@@ -40,7 +40,7 @@ export const TextSearch = component(({
       valueChange.emit(text());
     }
 
-    // exposed as public: inject(TextSearch), ...
+    // exposed as public interface
     return {
       text: text.asReadonly(),
     };
