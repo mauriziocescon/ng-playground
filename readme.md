@@ -466,8 +466,8 @@ export const Parent = component(() => ({
     // 1. can only use what's returned by Child.script
     // 2. templates only lookup: cannot retrieve providers
     //    defined in the Child comp tree
-    const manyComp = ref<{ text: Signal<string> }[]>('manyComp', { any: true });
-    const manyComp2 = ref(Child, { any: true });
+    const aComp = ref<{ text: Signal<string> }>('aComp');
+    const manyComp = ref(Child, { many: true });
 
     const tlp2 = ref<{ toggle: () => void }>('tlp');
     const tlp3 = ref(tooltip);
@@ -480,8 +480,8 @@ export const Parent = component(() => ({
         Something
     </div>
 
-    <Child #manyComp />
-    <Child #manyComp />
+    <Child #aComp />
+    <Child />
 
     <button on:click={() => tlp.toggle()}> Toggle tlp </button>`,
 }));
