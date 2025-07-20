@@ -470,7 +470,7 @@ export const Parent = component(() => ({
     // 2. templates only lookup: cannot retrieve providers
     //    defined in the Child comp tree
     const aComp = ref<{ text: Signal<string> }>('aComp');
-    const manyComp = ref<Child[]>(Child, { many: true });
+    const manyComp = ref<{ text: Signal<string> }[]>(Child, { many: true });
 
     const tlp2 = ref<{ toggle: () => void }>('tlp');
     const tlp3 = ref(tooltip);
