@@ -296,7 +296,7 @@ export const MenuConsumer = component(() => ({
   },
   template: `
     @fragment menuItem(item: {id: string, desc: string}) {
-      <MyMenuItem>{item.desc}</MyHeader>
+      <MyMenuItem>{item.desc}</MyMenuItem>
     }
 
     <Menu items={items()} menuItem={menuItem} />`,
