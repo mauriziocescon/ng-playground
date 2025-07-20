@@ -89,7 +89,7 @@ export const UserDetailConsumer = component(() => ({
     function makeAdmin() { /** ... **/ }
   },
   template: `
-    <!-- 2way binding for comp: bind:model={var} on:modelChange={func()} -->
+    <!-- 2way binding for comp: bind:model={var} on:modelChange={func} -->
 
     <UserDetail
       user={user()}
