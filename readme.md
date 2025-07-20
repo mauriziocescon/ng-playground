@@ -245,15 +245,18 @@ Fragments are very similar to [`svelte snippets`](https://svelte.dev/docs/svelte
 
 Implicit children fragment (where + when) and binding context:
 ```ts
-import { component } from '@angular/core';
+import { component, signal } from '@angular/core';
 import { Menu, MenuItem } from '@mylib/menu';
 
 export const MenuConsumer = component(() => ({
-  script: () => { /** ... **/ },
+  script: () => {
+    const first = signal('First');
+    const second = signal('Second');
+  },
   template: `
     <Menu>
-      <MenuItem> First </MenuItem>
-      <MenuItem> Second </MenuItem>
+      <MenuItem>{first()}</MenuItem>
+      <MenuItem>{second()}</MenuItem>
     </Menu>`,
 }));
 
