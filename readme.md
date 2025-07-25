@@ -85,7 +85,7 @@ export const UserDetailConsumer = component(() => ({
     const user = signal<User>(...);
     const email = signal<string>(...);
 
-    function processEmail(email: string) { /** ... **/ }
+    function processEmail() { /** ... **/ }
     function makeAdmin() { /** ... **/ }
   },
   template: `
@@ -94,7 +94,7 @@ export const UserDetailConsumer = component(() => ({
     <UserDetail
       user={user()}
       bind:email={email}
-      on:emailChange={(email: string) => processEmail(email)}
+      on:emailChange={() => processEmail()}
       on:makeAdmin={makeAdmin} />`,
 }));
 
@@ -523,12 +523,8 @@ export const AdminLinkWithTooltip = component(({
 - `directives` attached to the host (components): not possible anymore, but you can pass directives as inputs and use `@**` (or equivalent syntax).
 
 Unresolved points:
-- spread props: inputs are created (then syncronised) any time a component / directive
-is created rather than derived from already existing signals (solid / svelte).
-This is great for interoperability, but it comes with the drawback
-that there isn't any props object: inputs / outputs must be created
-within the component / directive. For "wrapper components" (`<Button />`, ...)
-an alternative solution coulbe be something like vue [`fallthrough`](https://vuejs.org/guide/components/attrs.html) where props are aggregated using DI,
+- spread props: this (together with fragments and directives passed as inputs) is an important point in the context of "wrapper components" (`<Button />`). At the moment, inputs are created (then syncronised) any time a component / directive is created rather than derived from already existing signals (solid / svelte).
+This is great for interoperability, but it implies there isn't any props object to spread. An alternative solution coulbe be something like vue [`fallthrough`](https://vuejs.org/guide/components/attrs.html) where props are aggregated using DI,
 ```ts
 export const Button = component(({
   children = input.required<Fragment<void>>(),
@@ -546,7 +542,7 @@ export const Button = component(({
       **={fallthrough.inputs}
       bind:**={fallthrough.twoWay}
       on:**={fallthrough.outputs}>
-        <Render fragment={children()} />
+        <Render fragment={fallthrough.children()} />
     </button>`,
 }));
 ```
