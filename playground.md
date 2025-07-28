@@ -31,9 +31,9 @@
 <ul class:expanded={isExpanded()}></ul>
 <section style:height.px={sectionHeightInPixels()}></section>
 
-<example-cmp animate:out="fancy-animation-class" />
-<example-cmp animate:out={myDynamicCSSClasses()}" />
-<other-example-cmp animate:out={() => animateFn($event)} />
+<example-cmp animate:leave="fancy-animation-class" />
+<example-cmp animate:leave={myDynamicCSSClasses()}" />
+<other-example-cmp animate:leave={() => animateFn($event)} />
 
 <div @tooltip(message={shortText()})>{text()}</div>
 
