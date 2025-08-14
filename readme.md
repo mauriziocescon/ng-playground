@@ -70,7 +70,7 @@ export const Checkbox = component(({
   valueChange = output<boolean>(),
 }) => ({
   script: () => { /** ... **/ },
-  templateUrl: `./checkbox.html`,
+  templateUrl: `./checkbox.ng.html`,
   styleUrl: `./checkbox.css`,
 }));
 ```
