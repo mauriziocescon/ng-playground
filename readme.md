@@ -2,11 +2,12 @@
 **Note: just personal thoughts from a DEV perspective on [the future of angular](https://myconf.dev/videos/2024-keynote-session-the-future-of-angular) (template level).**
 
 Points:
-1. building blocks as functions:
+1. building blocks as functions: 
     - `component`: a treble `script` / `template` / `style`,
     - `fragment`: a duo `template` / `style` that captures some markup for reusability,
     - `directive`: a `script` that can change the appearance or behavior of DOM elements,
     - `derivation`: a `script` for creating computeds in templates,
+    - `**.ng` files,
 2. ts expressions with `{}`: bindings + text interpolation,
 3. extra bindings for DOM elements: `class:`, `style:`, `attr:`, `bind:`, `on:`, `animate:`,
 4. hostless components + ts lexical scoping for templates,
