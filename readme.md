@@ -62,7 +62,7 @@ export const TextSearch = component(({
 }));
 ```
 
-External files:
+External template / style files:
 ```ts
 import { component, input, output, booleanAttribute } from '@angular/core';
 
