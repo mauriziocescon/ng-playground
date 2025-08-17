@@ -134,7 +134,8 @@ export const TextSearch = component(() => ({
 
     <input
       type="text"
-      bind:value={text} on:input={valueChange}
+      bind:value={text} 
+      on:input={valueChange}
       @tooltip(message={message()} on:dismiss={doSomething}) />
 
     <p>Value: {text()}</p>`,
