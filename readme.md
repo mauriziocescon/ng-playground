@@ -2,7 +2,7 @@
 **Note: just personal thoughts from a DEV perspective on [the future of angular](https://myconf.dev/videos/2024-keynote-session-the-future-of-angular) (template level).**
 
 Points:
-1. building blocks as functions: 
+1. building blocks as functions:
     - `component`: a treble `script` / `template` / `style`,
     - `fragment`: a duo `template` / `style` that captures some markup for reusability,
     - `directive`: a `script` that can change the appearance or behavior of DOM elements,
@@ -134,7 +134,7 @@ export const TextSearch = component(() => ({
 
     <input
       type="text"
-      bind:value={text} 
+      bind:value={text}
       on:input={valueChange}
       @tooltip(message={message()} on:dismiss={doSomething}) />
 
