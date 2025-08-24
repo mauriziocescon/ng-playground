@@ -380,7 +380,7 @@ export const Tree = component(({
 }));
 ```
 
-Directives passed as inputs and bound to an element:
+Directives passed as inputs and bound to an element at runtime:
 ```ts
 import { component, signal } from '@angular/core';
 
@@ -557,7 +557,7 @@ export const Button = component(({
 
 <User {user()} bind:{address} on:{userChange} />
 ```
-- there isn't any obvious way to conditionally apply directives;
+- there isn't any obvious way to conditionally apply directives at runtime;
 ```ts
 // maybe using another ()?
 
