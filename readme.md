@@ -495,6 +495,9 @@ export const Parent = component(() => ({
 ## DI enhancements
 See [`DI enhancements`](https://github.com/mauriziocescon/ng-playground/blob/main/di.md)
 
+## Custom elements
+More or less like right now.
+
 ## Backward compatibility
 Still can use legacy concepts for composition:
 ```ts
