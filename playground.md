@@ -52,3 +52,40 @@
   </MatButton:a>
 }
 ```
+
+```ts
+export Generic = component(({
+  items = input.required<Item[]>(),
+}) => ({
+  script: () => {
+    function goTo(item: Item) {
+      // ..
+    }
+  },
+  template: `
+    @fragment card(item: Item) {
+      <Card on:click={goTo(item)}>
+        <HStack width={100}>
+          <Img url={item.url} />
+          <VStack>
+            <Title item={item.title} />
+            <Description item={item.description} />
+          </VStack>
+        </HStack>
+      </Card>
+    }
+    <List items={items()} item={card} />
+
+    <List items={items()} @fragment(item(i) {
+      <Card on:click={goTo(i)}>
+        <HStack width={100}>
+          <Img url={i.url} />
+          <VStack>
+            <Title item={i.title} />
+            <Description item={i.description} />
+          </VStack>
+        </HStack>
+      </Card>
+    }) />`,
+}));
+```
