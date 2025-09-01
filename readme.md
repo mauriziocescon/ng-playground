@@ -308,7 +308,7 @@ export const MenuConsumer = component(() => ({
 
     <Menu items={items()} menuItem={menuItem} />
 
-    <!-- or inline definition -->
+    <!-- inline definition -->
 
     <Menu items={items()} menuItem=@fragment(item) => {
       <MyMenuItem>{item.desc}</MyMenuItem>
