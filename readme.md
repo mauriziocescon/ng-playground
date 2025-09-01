@@ -300,19 +300,11 @@ export const MenuConsumer = component(() => ({
     const items = computed(() => [{ id: '1', desc: 'First' }, { id: '2', desc: 'Second' }]);
   },
   template: `
-    <!-- separate definition -->
-
-    @fragment menuItem = (item: {id: string, desc: string}) => {
+    @fragment menuItem(item: {id: string, desc: string}) {
       <MyMenuItem>{item.desc}</MyMenuItem>
     }
 
-    <Menu items={items()} menuItem={menuItem} />
-
-    <!-- inline definition -->
-
-    <Menu items={items()} menuItem=@fragment(item) => {
-      <MyMenuItem>{item.desc}</MyMenuItem>
-    } />`,
+    <Menu items={items()} menuItem={menuItem} />`,
 }));
 
 // -- Menu in @mylib/menu --------------------------
