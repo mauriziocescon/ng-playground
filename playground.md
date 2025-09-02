@@ -66,23 +66,37 @@ export Generic = component(({
     @fragment card(item: Item) {
       <Card on:click={goTo(item)}>
         <HStack width={100}>
-          <Img url={item.url} />
+          <Img url={item.imgUrl} />
           <VStack>
-            <Title item={item.title} />
-            <Description item={item.description} />
+            <Title title={item.title} />
+            <Description description={item.description} />
           </VStack>
         </HStack>
       </Card>
     }
     <List items={items()} item={card} />
 
+    <List items={items()}>
+      @fragment item(i: Item) {
+        <Card on:click={goTo(i)}>
+          <HStack width={100}>
+            <Img url={i.imgUrl} />
+            <VStack>
+              <Title title={i.title} />
+              <Description description={i.description} />
+            </VStack>
+          </HStack>
+        </Card>
+      }
+    </List>
+
     <List items={items()} @fragment(item(i) {
       <Card on:click={goTo(i)}>
         <HStack width={100}>
-          <Img url={i.url} />
+          <Img url={i.imgUrl} />
           <VStack>
-            <Title item={i.title} />
-            <Description item={i.description} />
+            <Title title={i.title} />
+            <Description description={i.description} />
           </VStack>
         </HStack>
       </Card>
