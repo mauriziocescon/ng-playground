@@ -562,12 +562,14 @@ import type { HTMLButtonAttributes } from '@angular/core';
 
 export const Button = component(({
   children = input.required<Fragment<void>>(),
+  /**
+   * whatever is not matching inputs / outputs
+   * defined explicitly (like children).
+   */
   attributes = attributes<HTMLButtonAttributes>(),
 }) => ({
   template: `
-    <button
-      @**
-      bind:**={fallthrough}>
+    <button @** **={fallthrough}>
         <Render fragment={children()} />
     </button>`,
 }));
