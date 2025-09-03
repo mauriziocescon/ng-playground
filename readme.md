@@ -303,8 +303,16 @@ export const MenuConsumer = component(() => ({
     @fragment menuItem(item: {id: string, desc: string}) {
       <MyMenuItem>{item.desc}</MyMenuItem>
     }
+    <Menu items={items()} menuItem={menuItem} />
 
-    <Menu items={items()} menuItem={menuItem} />`,
+    <!-- equivalently: inside comp => implicitly become an input
+
+      <Menu items={items()}>
+        @fragment menuItem(item: {id: string, desc: string}) {
+          <MyMenuItem>{item.desc}</MyMenuItem>
+        }
+      </Menu>
+    -->`,
 }));
 
 // -- Menu in @mylib/menu --------------------------
@@ -383,7 +391,6 @@ export const Tree = component(({
 Directives passed as inputs and bound to an element at runtime:
 ```ts
 import { component, signal } from '@angular/core';
-
 import { Button } from '@mylib/button';
 import { ripple } from '@mylib/ripple';
 import { tooltip } from '@mylib/tooltip';
@@ -526,24 +533,41 @@ export const AdminLinkWithTooltip = component(({
 
 Unresolved points:
 - `spread props`: this (together with fragments and directives passed as inputs) is an important point in the context of "wrapper components" (`<Button ... />`). At the moment, inputs are created (then syncronised) any time a component / directive is created rather than derived from already existing signals (solid / svelte).
-This is great for interoperability, but it implies there isn't any props object to spread. An alternative solution coulbe be something like vue [`fallthrough`](https://vuejs.org/guide/components/attrs.html) where props are aggregated using DI;
+This is great for interoperability, but it implies there isn't any props object to spread. An alternative solution coulbe be something like vue [`fallthrough`](https://vuejs.org/guide/components/attrs.html) where props (properties / attributes / events) are aggregated using a new type called `attributes`;
 ```ts
+import { component, signal } from '@angular/core';
+import { Button } from '@mylib/button';
+import { ripple } from '@mylib/ripple';
+import { tooltip } from '@mylib/tooltip';
+
+export const ButtonConsumer = component(() => ({
+  script: () => {
+    const tooltipMsg = signal('');
+    const valid = signal(false);
+
+    function doSomething() { /** ... **/ }
+  },
+  template: `
+    <Button
+      @ripple
+      @tooltip(message={tooltipMsg()})
+      disabled={!valid()}
+      on:click={doSomething}>
+        Click / Hover me
+    </Button>`,
+}));
+
+// -- button in @mylib/button --------------------
 import type { HTMLButtonAttributes } from '@angular/core';
 
 export const Button = component(({
   children = input.required<Fragment<void>>(),
   attributes = attributes<HTMLButtonAttributes>(),
 }) => ({
-  script: () => {
-    const fallthrough = inject(FALLTROUGH);
-    // ...
-  },
   template: `
     <button
       @**
-      **={fallthrough()}
-      model:**={fallthrough.twoWay}
-      on:**={fallthrough.outputs}>
+      bind:**={fallthrough}>
         <Render fragment={children()} />
     </button>`,
 }));
