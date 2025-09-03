@@ -9,7 +9,7 @@ Points:
     - `derivation`: a `script` for creating computeds in templates,
     - `**.ng` files,
 2. ts expressions with `{}`: bindings + text interpolation,
-3. extra bindings for DOM elements: `class:`, `style:`, `attr:`, `bind:`, `on:`, `animate:`,
+3. extra bindings for DOM elements: `on:`, `model:`, `class:`, `style:`, `attr:`, `animate:`,
 4. hostless components + ts lexical scoping for templates,
 5. component inputs: lifted up + immediately available in the script,
 6. composition with fragments and directives,
@@ -47,10 +47,10 @@ export const TextSearch = component(({
     };
   },
   template: `
-    <!-- 2way binding for input / select / textarea: bind:property={var} -->
+    <!-- 2way binding for input / select / textarea: model:property={var} -->
 
     <label class:danger={isDanger()}> Text: </label>
-    <input type="text" bind:value={text} on:input={textChange} />
+    <input type="text" model:value={text} on:input={textChange} />
 
     <button disabled={text().length === 0} on:click={() => text.set('')}>
       {`Reset ${text()}`}
@@ -90,11 +90,11 @@ export const UserDetailConsumer = component(() => ({
     function makeAdmin() { /** ... **/ }
   },
   template: `
-    <!-- 2way binding for comp: bind:model={var} on:modelChange={func} -->
+    <!-- 2way binding for comp: model:name={var} on:nameChange={func} -->
 
     <UserDetail
       user={user()}
-      bind:email={email}
+      model:email={email}
       on:emailChange={() => processEmail()}
       on:makeAdmin={makeAdmin} />`,
 }));
@@ -134,7 +134,7 @@ export const TextSearch = component(() => ({
 
     <input
       type="text"
-      bind:value={text}
+      model:value={text}
       on:input={valueChange}
       @tooltip(message={message()} on:dismiss={doSomething}) />
 
@@ -406,7 +406,7 @@ export const ButtonConsumer = component(() => ({
 }));
 
 // -- button in @mylib/button --------------------
-import { component, input, output, toBindings } from '@angular/core';
+import { component, input, output } from '@angular/core';
 import { Render } from '@angular/common';
 
 export const Button = component(({
@@ -528,11 +528,11 @@ Unresolved points:
 - `spread props`: this (together with fragments and directives passed as inputs) is an important point in the context of "wrapper components" (`<Button ... />`). At the moment, inputs are created (then syncronised) any time a component / directive is created rather than derived from already existing signals (solid / svelte).
 This is great for interoperability, but it implies there isn't any props object to spread. An alternative solution coulbe be something like vue [`fallthrough`](https://vuejs.org/guide/components/attrs.html) where props are aggregated using DI;
 ```ts
+import type { HTMLButtonAttributes } from '@angular/core';
+
 export const Button = component(({
   children = input.required<Fragment<void>>(),
-  disabled = input<boolean>(false),
-  type = input<'button' | 'reset' | 'submit'>('button'),
-  click = output<void>(),
+  attributes = attributes<HTMLButtonAttributes>(),
 }) => ({
   script: () => {
     const fallthrough = inject(FALLTROUGH);
@@ -541,21 +541,21 @@ export const Button = component(({
   template: `
     <button
       @**
-      **={fallthrough.inputs}
-      bind:**={fallthrough.twoWay}
+      **={fallthrough()}
+      model:**={fallthrough.twoWay}
       on:**={fallthrough.outputs}>
-        <Render fragment={fallthrough.children()} />
+        <Render fragment={children()} />
     </button>`,
 }));
 ```
 - there isn't any obvious `short notation` for passing props (like svelte / vue);
 ```ts
-<User user={user()} bind:address={address} on:userChange={userChange} />
+<User user={user()} model:address={address} on:userChange={userChange} />
 
 // maybe something like "matching the name"?
 // error in case of string interpolation or similar
 
-<User {user()} bind:{address} on:{userChange} />
+<User {user()} model:{address} on:{userChange} />
 ```
 - there isn't any obvious way to conditionally apply directives at runtime;
 ```ts

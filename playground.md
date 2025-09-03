@@ -18,13 +18,13 @@
 <MyComponent
   compInput={compValue()}
   on:compOutput={compFunc()}
-  bind:compTwoWay={compTwoWay}
+  model:compTwoWay={compTwoWay}
   on:compTwoWayChange={compTwoWayChange()}
-  @myDir(dirInput={dirValue()} on:dirOutput={() => output()} bind:dirTwoWay={someValue}) />
+  @myDir(dirInput={dirValue()} on:dirOutput={() => output()} model:dirTwoWay={someValue}) />
 ```
 
 ```html
-<input bind:value={text} />
+<input model:value={text} />
 <span on:click={() => callMethod()}>{text()}</span>
 <input type="text" on:keyup.enter={($event) => callMethod($event)} />
 <ul attr:role={listRole()}></ul>
@@ -37,10 +37,10 @@
 
 <div @tooltip(message={shortText()})>{text()}</div>
 
-<User user={user()} bind:someModel={x} />
-<User user={user()} bind:someModel={x} on:someModelChange={method} />
+<User user={user()} model:someModel={x} />
+<User user={user()} model:someModel={x} on:someModelChange={method} />
 <User user={user()} @tooltip(message={msg()} on:dismiss={() => dismiss()}) />
-<User user={user()} @tooltip(bind:message={msg} on:messageChange={() => doSomething()}) />
+<User user={user()} @tooltip(model:message={msg} on:messageChange={() => doSomething()}) />
 
 @if (valid()) {
   <MatButton:a
