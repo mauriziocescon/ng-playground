@@ -305,14 +305,13 @@ export const MenuConsumer = component(() => ({
     }
     <Menu items={items()} menuItem={menuItem} />
 
-    <!-- equivalently: inside comp => implicitly become an input
+    <!-- equivalently: inside comp => implicitly become an input -->
 
-      <Menu items={items()}>
-        @fragment menuItem(item: {id: string, desc: string}) {
-          <MyMenuItem>{item.desc}</MyMenuItem>
-        }
-      </Menu>
-    -->`,
+    <Menu items={items()}>
+      @fragment menuItem(item: {id: string, desc: string}) {
+        <MyMenuItem>{item.desc}</MyMenuItem>
+      }
+    </Menu>`,
 }));
 
 // -- Menu in @mylib/menu --------------------------
@@ -574,7 +573,7 @@ export const Button = component(({
 }) => ({
   template: `
     <button @** bind:**={fallthrough()}>
-        <Render fragment={children()} />
+      <Render fragment={children()} />
     </button>`,
 }));
 ```
