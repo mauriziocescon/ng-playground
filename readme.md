@@ -532,7 +532,7 @@ export const AdminLinkWithTooltip = component(({
 - `directives` attached to the host (components): not possible anymore, but you can pass directives as inputs and use `@**` (or equivalent syntax).
 
 Unresolved points:
-- `spread props`: this (together with fragments and directives passed as inputs) is an important point in the context of "wrapper components" (`<Button ... />`). At the moment, inputs are created (then syncronised) any time a component / directive is created rather than derived from already existing signals (solid / svelte).
+- `spread props`: this (together with fragments and directives passed as inputs) is an important point in the context of "wrapping components" (`<Button ... />`). At the moment, inputs are created (then syncronised) any time a component / directive is created rather than derived from already existing signals (solid / svelte).
 This is great for interoperability, but it implies there isn't any props object to spread. An alternative solution coulbe be something like vue [`fallthrough`](https://vuejs.org/guide/components/attrs.html) where props (properties / attributes / events) are aggregated using a new type called `attributes`;
 ```ts
 import { component, signal } from '@angular/core';
