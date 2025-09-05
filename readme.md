@@ -307,11 +307,11 @@ export const MenuConsumer = component(() => ({
 
     <!-- equivalently: inside comp => implicitly become an input
 
-    <Menu items={items()}>
-      @fragment menuItem(item: {id: string, desc: string}) {
-        <MyMenuItem>{item.desc}</MyMenuItem>
-      }
-    </Menu>
+      <Menu items={items()}>
+        @fragment menuItem(item: {id: string, desc: string}) {
+          <MyMenuItem>{item.desc}</MyMenuItem>
+        }
+      </Menu>
     -->`,
 }));
 
