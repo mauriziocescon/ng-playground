@@ -549,6 +549,8 @@ export const ButtonConsumer = component(() => ({
   },
   template: `
     <Button
+      type="button"
+      style="background-color: cyan"
       @ripple
       @tooltip(message={tooltipMsg()})
       disabled={!valid()}
@@ -558,7 +560,7 @@ export const ButtonConsumer = component(() => ({
 }));
 
 // -- button in @mylib/button --------------------
-import type { HTMLButtonAttributes } from '@angular/core';
+import type { HTMLButtonAttributes } from '@angular/core/elements';
 
 export const Button = component(({
   children = input.required<Fragment<void>>(),
