@@ -548,9 +548,11 @@ export const ButtonConsumer = component(() => ({
     function doSomething() { /** ... **/ }
   },
   template: `
+    <!-- can pass down attributes, properties, event listeners either static or bound -->
     <Button
       type="button"
       style="background-color: cyan"
+      class={ valid() ? 'global-css-valid' : ''}
       @ripple
       @tooltip(message={tooltipMsg()})
       disabled={!valid()}
