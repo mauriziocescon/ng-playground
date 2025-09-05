@@ -572,7 +572,7 @@ export const Button = component(({
   attributes = attributes<HTMLButtonAttributes>(),
 }) => ({
   template: `
-    <button @** bind:**={fallthrough()}>
+    <button @** bind:**={attributes()}>
       <Render fragment={children()} />
     </button>`,
 }));
