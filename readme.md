@@ -30,7 +30,7 @@ import { component, signal, linkedSignal, input, output } from '@angular/core';
  * inputs are populated with parent data
  */
 export const TextSearch = component(({
-  value = input.required<string>(), // definitions + types
+  value = input.required<string>(), // definition + types
   valueChange = output<string>(),
 }) => ({
   script: () => {
@@ -256,6 +256,8 @@ export const MenuConsumer = component(() => ({
     const second = signal('Second');
   },
   template: `
+    <!-- markup inside comp tag => implicitly become an input called children -->
+
     <Menu>
       <MenuItem>{first()}</MenuItem>
       <MenuItem>{second()}</MenuItem>
@@ -303,15 +305,7 @@ export const MenuConsumer = component(() => ({
     @fragment menuItem(item: {id: string, desc: string}) {
       <MyMenuItem>{item.desc}</MyMenuItem>
     }
-    <Menu items={items()} menuItem={menuItem} />
-
-    <!-- equivalently: inside comp => implicitly become an input -->
-
-    <Menu items={items()}>
-      @fragment menuItem(item: {id: string, desc: string}) {
-        <MyMenuItem>{item.desc}</MyMenuItem>
-      }
-    </Menu>`,
+    <Menu items={items()} menuItem={menuItem} />`,
 }));
 
 // -- Menu in @mylib/menu --------------------------
@@ -422,7 +416,7 @@ export const Button = component(({
 }) => ({
   script: () => { /** ... **/ },
   template: `
-    <!-- fallthrough directives (ripple / tooltip) from the consumer -->
+    <!-- @** => fallthrough directives (ripple / tooltip) from the consumer -->
 
     <button @** disabled={disabled()} on:click={() => click.emit()}>
       <Render fragment={children()} />
