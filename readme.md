@@ -79,7 +79,7 @@ export const Checkbox = component(({
 Component bindings:
 ```ts
 import { component, signal } from '@angular/core';
-import { UserDetail, User } from './user-detail';
+import { UserDetail, User } from './user-detail.ng';
 
 export const UserDetailConsumer = component(() => ({
   script: () => {
@@ -273,7 +273,7 @@ export const Menu = component(({
 }) => ({
   script: () => { /** ... **/ },
   template: `
-    <!--  no need to have an explicit anchor point like ng-container -->
+    <!-- no need to have an explicit anchor point like ng-container -->
 
     @if (children()) {
       <Render fragment={children()} />
@@ -295,13 +295,15 @@ Customising components:
 ```ts
 import { component, computed } from '@angular/core';
 import { Menu } from '@mylib/menu';
-import { MyMenuItem } from './my-menu-item';
+import { MyMenuItem } from './my-menu-item.ng';
 
 export const MenuConsumer = component(() => ({
   script: () => {
     const items = computed(() => [{ id: '1', desc: 'First' }, { id: '2', desc: 'Second' }]);
   },
   template: `
+    <!-- menuItem inside <Menu></Menu> automatically becomes an input -->
+
     @fragment menuItem(item: {id: string, desc: string}) {
       <MyMenuItem>{item.desc}</MyMenuItem>
     }
@@ -322,61 +324,6 @@ export const Menu = component(({
 
     @for (item of items(); track item.id) {
       <Render fragment={menuItem()} params={[item]} />
-    }`,
-}));
-```
-
-Reusable fragments:
-```ts
-import { component, input, fragment } from '@angular/core';
-import { Tree, Node } from '@mylib/tree';
-
-interface CustomNode extends Node { /** ... **/ }
-
-/**
- * Reusable fragment: can read state in the template,
- * but cannot set it! Importable from another file.
- *
- * Note: no inputs / outputs / injection / ...
- */
-const myNode = fragment((node: CustomNode) => ({
-  template: `
-    <div class="my-node">
-      <span>Custom node: </span>
-      <span class:red={node.desc === 'unknown'}>{node.desc}</span>
-    </div>`,
-  style: `
-    .red {
-      color: red;
-    }`,
-}));
-
-export const TreeConsumer = component(({
-  nodes = input.required<CustomNode[]>(),
-}) => ({
-  template: `
-    <Tree nodes={nodes()} custumNode={myNode} />`,
-}));
-
-// -- tree in @mylib/tree --------------------------
-import { component, input, Fragment } from '@angular/core';
-import { Render } from '@angular/common';
-
-export interface Node { /** ... **/ }
-
-export const Tree = component(({
-  nodes = input.required<Node[]>(),
-  custumNode = input<Fragment<[Node]>>(),
-}) => ({
-  template: `
-    <!-- ... -->
-
-    @for (node of nodes(); track node.id) {
-      @if (custumNode()) {
-        <Render fragment={custumNode()} params={[node]} />
-      } @else {
-        <!-- ... -->
-      }
     }`,
 }));
 ```
@@ -428,8 +375,8 @@ Dynamic components:
 ```ts
 import { component, signal, computed } from '@angular/core';
 import { Dynamic } from '@angular/common';
-import { AComp } from './a-comp';
-import { BComp } from './b-comp';
+import { AComp } from './a-comp.ng';
+import { BComp } from './b-comp.ng';
 
 export const Something = component(() => ({
   script: () => {
