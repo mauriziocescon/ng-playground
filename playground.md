@@ -88,18 +88,6 @@ export Generic = component(({
           </HStack>
         </Card>
       }
-    </List>
-
-    <List items={items()} @fragment(item(i) {
-      <Card on:click={goTo(i)}>
-        <HStack width={100}>
-          <Img url={i.imgUrl} />
-          <VStack>
-            <Title title={i.title} />
-            <Description description={i.description} />
-          </VStack>
-        </HStack>
-      </Card>
-    }) />`,
+    </List>`,
 }));
 ```
