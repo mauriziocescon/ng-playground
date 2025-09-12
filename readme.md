@@ -489,6 +489,7 @@ export const ButtonConsumer = component(() => ({
   },
   template: `
     <!-- can pass down attributes, properties, event listeners either static or bound -->
+
     <Button
       type="button"
       style="background-color: cyan"
