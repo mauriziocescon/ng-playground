@@ -475,6 +475,58 @@ Unresolved points:
 - `spread props`: this (together with fragments and directives passed as inputs) is an important point in the context of "wrapping components" (`<Button ... />`). At the moment, inputs are created (then syncronised) any time a component / directive is created rather than derived from already existing signals (solid / svelte).
 This is great for interoperability, but it implies there isn't any props object to spread. An alternative solution coulbe be something like vue [`fallthrough`](https://vuejs.org/guide/components/attrs.html) where props (properties / attributes / events) are aggregated using a new type called `attributes`;
 ```ts
+import { component, input, model, output, computed } from '@angular/core';
+import { UserDetail, User, UserDetailProps } from './user-detail.ng';
+
+export const UserDetailConsumer = component(() => ({
+  script: () => {
+    const user = signal<User>(...);
+    const email = signal<string>(...);
+
+    function processEmail() { /** ... **/ }
+    function makeAdmin() { /** ... **/ }
+  },
+  template: `
+    <MyUserDetail
+      user={user()}
+      model:email={email}
+      on:emailChange={() => processEmail()}
+      on:makeAdmin={makeAdmin} />`,
+}));
+
+export const MyUserDetail = component(({
+  user = input<User>(),
+  /**
+   * whatever is not matching inputs / outputs
+   * defined explicitly (like user).
+   */
+  attributes = attributes<Omit<UserDetailProps, 'user'>>(),
+}) => ({
+  script: () => {
+    const other = computed(() => /** something depending on user **/)
+  },
+  template: `
+    <UserDetail
+      user={other()}
+      bind:**={attributes()} />`,
+}));
+
+// -- UserDetail -----------------------------------
+import { component, input, model, output, Props } from '@angular/core';
+
+export interface User { /** ... **/ }
+
+export type UserDetailProps = Props<UserDetail>;
+
+export const UserDetail = component(({
+  user = input<User>(),
+  email = model<string>(),
+  makeAdmin = output<void>(),
+}) => ({
+  // ...
+}));
+```
+```ts
 import { component, signal } from '@angular/core';
 import { Button } from '@mylib/button';
 import { ripple } from '@mylib/ripple';
@@ -507,64 +559,12 @@ import type { HTMLButtonAttributes } from '@angular/core/elements';
 
 export const Button = component(({
   children = input.required<Fragment<void>>(),
-  /**
-   * whatever is not matching inputs / outputs
-   * defined explicitly (like children).
-   */
   attributes = attributes<HTMLButtonAttributes>(),
 }) => ({
   template: `
     <button @** bind:**={attributes()}>
       <Render fragment={children()} />
     </button>`,
-}));
-```
-```ts
-import { component, input, model, output, computed } from '@angular/core';
-import { UserDetail, User, UserDetailProps } from './user-detail.ng';
-
-export const UserDetailConsumer = component(() => ({
-  script: () => {
-    const user = signal<User>(...);
-    const email = signal<string>(...);
-
-    function processEmail() { /** ... **/ }
-    function makeAdmin() { /** ... **/ }
-  },
-  template: `
-    <MyUserDetail
-      user={user()}
-      model:email={email}
-      on:emailChange={() => processEmail()}
-      on:makeAdmin={makeAdmin} />`,
-}));
-
-export const MyUserDetail = component(({
-  user = input<User>(),
-  attributes = attributes<Omit<UserDetailProps, 'user'>>(),
-}) => ({
-  script: () => {
-    const other = computed(() => /** something depending on user **/)
-  },
-  template: `
-    <UserDetail
-      user={other()}
-      bind:**={attributes()} />`,
-}));
-
-// -- UserDetail -----------------------------------
-import { component, input, model, output, Props } from '@angular/core';
-
-export interface User { /** ... **/ }
-
-export type UserDetailProps = Props<UserDetail>;
-
-export const UserDetail = component(({
-  user = input<User>(),
-  email = model<string>(),
-  makeAdmin = output<void>(),
-}) => ({
-  // ...
 }));
 ```
 - there isn't any obvious `short notation` for passing props (like svelte / vue);
