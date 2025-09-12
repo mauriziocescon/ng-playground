@@ -518,6 +518,54 @@ export const Button = component(({
     </button>`,
 }));
 ```
+```ts
+import { component, input, model, output, computed } from '@angular/core';
+import { UserDetail, User, UserDetailProps } from './user-detail.ng';
+
+export const UserDetailConsumer = component(() => ({
+  script: () => {
+    const user = signal<User>(...);
+    const email = signal<string>(...);
+
+    function processEmail() { /** ... **/ }
+    function makeAdmin() { /** ... **/ }
+  },
+  template: `
+    <MyUserDetail
+      user={user()}
+      model:email={email}
+      on:emailChange={() => processEmail()}
+      on:makeAdmin={makeAdmin} />`,
+}));
+
+export const MyUserDetail = component(({
+  user = input<User>(),
+  attributes = attributes<Omit<UserDetailProps, 'user'>>(),
+}) => ({
+  script: () => {
+    const other = computed(() => /** something depending on user **/)
+  },
+  template: `
+    <UserDetail
+      user={other()}
+      bind:**={attributes()} />`,
+}));
+
+// -- UserDetail -----------------------------------
+import { component, input, model, output, Props } from '@angular/core';
+
+export interface User { /** ... **/ }
+
+export type UserDetailProps = Props<UserDetail>;
+
+export const UserDetail = component(({
+  user = input<User>(),
+  email = model<string>(),
+  makeAdmin = output<void>(),
+}) => ({
+  // ...
+}));
+```
 - there isn't any obvious `short notation` for passing props (like svelte / vue);
 ```ts
 <User user={user()} model:address={address} on:userChange={userChange} />
