@@ -405,7 +405,7 @@ export const MyUserDetail = component(({
   attributes = attributes<Omit<UserDetailProps, 'user'>>(),
 }) => ({
   script: () => {
-    const other = computed(() => /** something depending on user or default value **/)
+    const other = computed(() => /** something depending on user or a default value **/)
   },
   template: `
     <UserDetail
