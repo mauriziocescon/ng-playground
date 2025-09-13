@@ -30,7 +30,7 @@ import { component, signal, linkedSignal, input, output } from '@angular/core';
  * inputs are populated with parent data
  */
 export const TextSearch = component(({
-  value = input.required<string>(), // definition + types
+  value = input.required<string>(), // definition + type
   valueChange = output<string>(),
 }) => ({
   script: () => {
@@ -405,7 +405,7 @@ export const MyUserDetail = component(({
   attributes = attributes<Omit<UserDetailProps, 'user'>>(),
 }) => ({
   script: () => {
-    const other = computed(() => /** something depending on user **/)
+    const other = computed(() => /** something depending on user or default value **/)
   },
   template: `
     <UserDetail
