@@ -9,10 +9,10 @@ Points:
     - `derivation`: a `script` for creating computeds in templates,
     - `**.ng` files,
 2. ts expressions with `{}`: bindings + text interpolation,
-3. extra bindings for DOM elements: `on:`, `model:`, `class:`, `style:`, `attr:`, `animate:`,
+3. extra bindings for DOM elements: `on:`, `model:`, `class:`, `style:`, `attr:`, `bind:`, `animate:`,
 4. hostless components + ts lexical scoping for templates,
 5. component inputs: lifted up + immediately available in the script,
-6. composition with fragments and directives,
+6. composition with fragments, directives and fallthrough attributes,
 7. template ref,
 8. DI enhancements,
 9. Concepts affected by these changes.
@@ -242,8 +242,12 @@ export const Counter = component(({
 }));
 ```
 
-## Composition with fragments and directives
+## Composition with fragments, directives and fallthrough attributes
 Fragments are very similar to [`svelte snippets`](https://svelte.dev/docs/svelte/snippet): functions returning html markup. Returned markup is opaque: cannot manipulate it similarly to [`react Children (legacy)`](https://react.dev/reference/react/Children) or [`solid children`](https://www.solidjs.com/tutorial/props_children).
+
+Directives follows very similar rules as [`svelte attachments`](https://svelte.dev/docs/svelte/@attach).
+
+Fallthrough attributes are inspired by the same concept in [`vue`](https://vuejs.org/guide/components/attrs.html) and covers the usual react `spread props` need. At the moment, inputs are created (then syncronised) any time a component / directive is created rather than derived from already existing signals (solid / svelte). This is great for interoperability, but it implies there isn't any props object to spread. Note the examples below are simplified.
 
 Implicit children fragment (where + when) and binding context:
 ```ts
@@ -371,6 +375,103 @@ export const Button = component(({
 }));
 ```
 
+Wrapping a component and passing inputs / outputs:
+```ts
+import { component, input, model, output, computed } from '@angular/core';
+import { UserDetail, User, UserDetailProps } from './user-detail.ng';
+
+export const UserDetailConsumer = component(() => ({
+  script: () => {
+    const user = signal<User>(...);
+    const email = signal<string>(...);
+
+    function processEmail() { /** ... **/ }
+    function makeAdmin() { /** ... **/ }
+  },
+  template: `
+    <MyUserDetail
+      user={user()}
+      model:email={email}
+      on:emailChange={() => processEmail()}
+      on:makeAdmin={makeAdmin} />`,
+}));
+
+export const MyUserDetail = component(({
+  user = input<User>(),
+  /**
+   * whatever is not matching inputs / outputs
+   * defined explicitly (like user).
+   */
+  attributes = attributes<Omit<UserDetailProps, 'user'>>(),
+}) => ({
+  script: () => {
+    const other = computed(() => /** something depending on user **/)
+  },
+  template: `
+    <UserDetail
+      user={other()}
+      bind:**={attributes()} />`,
+}));
+
+// -- UserDetail -----------------------------------
+import { component, input, model, output, Props } from '@angular/core';
+
+export interface User { /** ... **/ }
+
+export type UserDetailProps = Props<UserDetail>;
+
+export const UserDetail = component(({
+  user = input<User>(),
+  email = model<string>(),
+  makeAdmin = output<void>(),
+}) => ({
+  // ...
+}));
+```
+
+Wrapping a native element and passing attributes / properties / event listeners:
+```ts
+import { component, signal } from '@angular/core';
+import { Button } from '@mylib/button';
+import { ripple } from '@mylib/ripple';
+import { tooltip } from '@mylib/tooltip';
+
+export const ButtonConsumer = component(() => ({
+  script: () => {
+    const tooltipMsg = signal('');
+    const valid = signal(false);
+
+    function doSomething() { /** ... **/ }
+  },
+  template: `
+    <!-- can pass down attributes, properties, event listeners either static or bound -->
+
+    <Button
+      type="button"
+      style="background-color: cyan"
+      class={valid() ? 'global-css-valid' : ''}
+      @ripple
+      @tooltip(message={tooltipMsg()})
+      disabled={!valid()}
+      on:click={doSomething}>
+        Click / Hover me
+    </Button>`,
+}));
+
+// -- button in @mylib/button --------------------
+import type { HTMLButtonAttributes } from '@angular/core/elements';
+
+export const Button = component(({
+  children = input.required<Fragment<void>>(),
+  attributes = attributes<HTMLButtonAttributes>(),
+}) => ({
+  template: `
+    <button @** bind:**={attributes()}>
+      <Render fragment={children()} />
+    </button>`,
+}));
+```
+
 Dynamic components:
 ```ts
 import { component, signal, computed } from '@angular/core';
@@ -472,101 +573,6 @@ export const AdminLinkWithTooltip = component(({
 - `directives` attached to the host (components): not possible anymore, but you can pass directives as inputs and use `@**` (or equivalent syntax).
 
 Unresolved points:
-- `spread props`: this (together with fragments and directives passed as inputs) is an important point in the context of "wrapping components" (`<Button ... />`). At the moment, inputs are created (then syncronised) any time a component / directive is created rather than derived from already existing signals (solid / svelte).
-This is great for interoperability, but it implies there isn't any props object to spread. An alternative solution coulbe be something like vue [`fallthrough`](https://vuejs.org/guide/components/attrs.html) where props (properties / attributes / events) are aggregated using a new type called `attributes`;
-```ts
-import { component, input, model, output, computed } from '@angular/core';
-import { UserDetail, User, UserDetailProps } from './user-detail.ng';
-
-export const UserDetailConsumer = component(() => ({
-  script: () => {
-    const user = signal<User>(...);
-    const email = signal<string>(...);
-
-    function processEmail() { /** ... **/ }
-    function makeAdmin() { /** ... **/ }
-  },
-  template: `
-    <MyUserDetail
-      user={user()}
-      model:email={email}
-      on:emailChange={() => processEmail()}
-      on:makeAdmin={makeAdmin} />`,
-}));
-
-export const MyUserDetail = component(({
-  user = input<User>(),
-  /**
-   * whatever is not matching inputs / outputs
-   * defined explicitly (like user).
-   */
-  attributes = attributes<Omit<UserDetailProps, 'user'>>(),
-}) => ({
-  script: () => {
-    const other = computed(() => /** something depending on user **/)
-  },
-  template: `
-    <UserDetail
-      user={other()}
-      bind:**={attributes()} />`,
-}));
-
-// -- UserDetail -----------------------------------
-import { component, input, model, output, Props } from '@angular/core';
-
-export interface User { /** ... **/ }
-
-export type UserDetailProps = Props<UserDetail>;
-
-export const UserDetail = component(({
-  user = input<User>(),
-  email = model<string>(),
-  makeAdmin = output<void>(),
-}) => ({
-  // ...
-}));
-```
-```ts
-import { component, signal } from '@angular/core';
-import { Button } from '@mylib/button';
-import { ripple } from '@mylib/ripple';
-import { tooltip } from '@mylib/tooltip';
-
-export const ButtonConsumer = component(() => ({
-  script: () => {
-    const tooltipMsg = signal('');
-    const valid = signal(false);
-
-    function doSomething() { /** ... **/ }
-  },
-  template: `
-    <!-- can pass down attributes, properties, event listeners either static or bound -->
-
-    <Button
-      type="button"
-      style="background-color: cyan"
-      class={ valid() ? 'global-css-valid' : ''}
-      @ripple
-      @tooltip(message={tooltipMsg()})
-      disabled={!valid()}
-      on:click={doSomething}>
-        Click / Hover me
-    </Button>`,
-}));
-
-// -- button in @mylib/button --------------------
-import type { HTMLButtonAttributes } from '@angular/core/elements';
-
-export const Button = component(({
-  children = input.required<Fragment<void>>(),
-  attributes = attributes<HTMLButtonAttributes>(),
-}) => ({
-  template: `
-    <button @** bind:**={attributes()}>
-      <Render fragment={children()} />
-    </button>`,
-}));
-```
 - there isn't any obvious `short notation` for passing props (like svelte / vue);
 ```ts
 <User user={user()} model:address={address} on:userChange={userChange} />
@@ -580,7 +586,7 @@ export const Button = component(({
 ```ts
 // maybe using another ()?
 
-<Button (@tooltip(message={tooltipMsg()}) && {enabled()})>
+<Button ( @tooltip(message={tooltipMsg()}) && {enabled()} )>
   Click / Hover me
 </Button>
 ```
