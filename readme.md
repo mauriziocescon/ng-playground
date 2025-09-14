@@ -496,7 +496,7 @@ export const Something = component(() => ({
 ## Template ref
 Retrieving references of elements / components / directives (runtime):
 ```ts
-import { component, templateRef, Signal } from '@angular/core';
+import { component, ref, Signal } from '@angular/core';
 import { tooltip } from '@mylib/tooltip';
 
 const Child = component(() => ({
@@ -515,13 +515,13 @@ const Child = component(() => ({
 export const Parent = component(() => ({
   script: () => {
     // readonly signal
-    const el = templateRef<HTMLDivElement>('el');
+    const el = ref<HTMLDivElement>('el');
 
     // 1. can only use what's returned by Child.script
     // 2. templates only lookup: cannot retrieve providers
     //    defined in the Child comp tree
-    const child = templateRef('child');
-    const tlp = templateRef<{ toggle: () => void }>('tlp');
+    const child = ref('child');
+    const tlp = ref<{ toggle: () => void }>('tlp');
     const many = signal<{ text: Signal<string> }>([]);
   },
   template: `
@@ -570,7 +570,7 @@ export const AdminLinkWithTooltip = component(({
 - structural directives: likely replaced by `fragments`,
 - `Ng**Outlet` + `ng-container`: likely replaced by the new things,
 - `queries`: if `ref` makes sense, likely not needed anymore; if they stay, it would be nice to improve the retrieval of data: no way to `read` providers from `injector` tree,
-- multiple `directives` applied to the same element: as for the previous point, it would be nice to avoid directives injection when applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy)); instead, it should be an explicit operation with a `templateRef` passed as an `input`,
+- multiple `directives` applied to the same element: as for the previous point, it would be nice to avoid directives injection when applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy)); instead, it should be an explicit operation with a `ref` passed as an `input`,
 - in general, the concept of injecting components / directives should probably be revisited / restricted,
 - `directives` attached to the host (components): not possible anymore, but you can pass directives as inputs and use `@**` (or equivalent syntax).
 
