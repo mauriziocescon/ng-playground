@@ -377,7 +377,7 @@ export const Button = component(({
 
 Wrapping a component and passing inputs / outputs:
 ```ts
-import { component, input, model, output, computed } from '@angular/core';
+import { component, input, computed, attributes } from '@angular/core';
 import { UserDetail, User, UserDetailProps } from './user-detail.ng';
 
 export const UserDetailConsumer = component(() => ({
@@ -459,7 +459,8 @@ export const ButtonConsumer = component(() => ({
 }));
 
 // -- button in @mylib/button --------------------
-import type { HTMLButtonAttributes } from '@angular/core/elements';
+import { component, input, attributes } from '@angular/core';
+import { HTMLButtonAttributes } from '@angular/core/elements';
 
 export const Button = component(({
   children = input.required<Fragment<void>>(),
@@ -495,7 +496,7 @@ export const Something = component(() => ({
 ## Template ref
 Retrieving references of elements / components / directives (runtime):
 ```ts
-import { component, ref, Signal } from '@angular/core';
+import { component, templateRef, Signal } from '@angular/core';
 import { tooltip } from '@mylib/tooltip';
 
 const Child = component(() => ({
@@ -514,16 +515,14 @@ const Child = component(() => ({
 export const Parent = component(() => ({
   script: () => {
     // readonly signal
-    const el = ref<ElementRef<HTMLDivElement>>('el');
+    const el = templateRef<HTMLDivElement>('el');
 
     // 1. can only use what's returned by Child.script
     // 2. templates only lookup: cannot retrieve providers
     //    defined in the Child comp tree
-    const aComp = ref<{ text: Signal<string> }>('aComp');
-    const manyComp = ref<{ text: Signal<string> }[]>(Child, { many: true });
-
-    const tlp2 = ref<{ toggle: () => void }>('tlp');
-    const tlp3 = ref(tooltip);
+    const child = templateRef('child');
+    const tlp = templateRef<{ toggle: () => void }>('tlp');
+    const many = signal<{ text: Signal<string> }>([]);
   },
   template: `
     <div
@@ -533,10 +532,12 @@ export const Parent = component(() => ({
         Something
     </div>
 
-    <Child #aComp />
-    <Child />
+    <Child #child />
 
-    <button on:click={() => tlp.toggle()}> Toggle tlp </button>`,
+    <Child ref={(el) => many.update(v => [...v, el])} />
+    <Child ref={(el) => many.update(v => [...v, el])} />
+
+    <button on:click={() => tlp().toggle()}> Toggle tlp </button>`,
 }));
 ```
 
@@ -569,7 +570,8 @@ export const AdminLinkWithTooltip = component(({
 - structural directives: likely replaced by `fragments`,
 - `Ng**Outlet` + `ng-container`: likely replaced by the new things,
 - `queries`: if `ref` makes sense, likely not needed anymore; if they stay, it would be nice to improve the retrieval of data: no way to `read` providers from `injector` tree,
-- multiple `directives` applied to the same element: as for the previous point, it would be nice to avoid directives injeciton when applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy)); instead, it should be an explicit operation with a `#ref` passed as an `input`,
+- multiple `directives` applied to the same element: as for the previous point, it would be nice to avoid directives injection when applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy)); instead, it should be an explicit operation with a `templateRef` passed as an `input`,
+- in general, the concept of injecting components / directives should probably be revisited / restricted,
 - `directives` attached to the host (components): not possible anymore, but you can pass directives as inputs and use `@**` (or equivalent syntax).
 
 Unresolved points:
