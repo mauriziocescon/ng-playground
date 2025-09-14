@@ -522,7 +522,7 @@ export const Parent = component(() => ({
     //    defined in the Child comp tree
     const child = ref('child');
     const tlp = ref<{ toggle: () => void }>('tlp');
-    const many = signal<{ text: Signal<string> }>([]);
+    const many = signal<{ text: Signal<string> }[]>([]);
   },
   template: `
     <div
@@ -533,6 +533,8 @@ export const Parent = component(() => ({
     </div>
 
     <Child #child />
+
+    <!-- binding to a function -->
 
     <Child ref={(el) => many.update(v => [...v, el])} />
     <Child ref={(el) => many.update(v => [...v, el])} />
@@ -571,7 +573,7 @@ export const AdminLinkWithTooltip = component(({
 - `Ng**Outlet` + `ng-container`: likely replaced by the new things,
 - `queries`: if `ref` makes sense, likely not needed anymore; if they stay, it would be nice to improve the retrieval of data: no way to `read` providers from `injector` tree,
 - multiple `directives` applied to the same element: as for the previous point, it would be nice to avoid directives injection when applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy)); instead, it should be an explicit operation with a `ref` passed as an `input`,
-- in general, the concept of injecting components / directives should probably be revisited / restricted,
+- in general, the concept of injecting components / directives inside each others should probably be revisited / restricted,
 - `directives` attached to the host (components): not possible anymore, but you can pass directives as inputs and use `@**` (or equivalent syntax).
 
 Unresolved points:
