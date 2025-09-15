@@ -142,16 +142,17 @@ export const TextSearch = component(() => ({
 }));
 
 // -- tooltip in @mylib/tooltip --------------------
-import { directive, input, output, inject, Renderer2, elementRef, afterNextRender } from '@angular/core';
+import { directive, input, output, inject, Renderer2, ref, afterNextRender } from '@angular/core';
 
 export const tooltip = directive(({
   message = input.required<string>(),
   dismiss = output<void>(),
   /**
-   * Readonly signal automatically
-   * passed by the framework.
+   * Readonly signal managed by ng.
+   *
+   * elRef: name reserved to the framework
    */
-  elRef = elementRef<HTMLElement>(),
+  elRef = ref<HTMLElement>(),
 }) => ({
   script: () => {
     const renderer = inject(Renderer2);
@@ -280,6 +281,9 @@ import { component, input, Fragment } from '@angular/core';
 import { Render } from '@angular/common';
 
 export const Menu = component(({
+  /**
+   * children: name reserved to the framework
+   */
   children = input<Fragment<void>>(),
 }) => ({
   script: () => { /** ... **/ },
@@ -408,6 +412,8 @@ export const MyUserDetail = component(({
   /**
    * whatever is not matching inputs / outputs
    * defined explicitly (like user).
+   *
+   * attributes: name reserved to the framework
    */
   attributes = attributes<Omit<UserDetailProps, 'user'>>(),
 }) => ({
@@ -580,7 +586,7 @@ export const AdminLinkWithTooltip = component(({
 - `Ng**Outlet` + `ng-container`: likely replaced by the new things,
 - `queries`: if `ref` makes sense, likely not needed anymore; if they stay, it would be nice to improve the retrieval of data: no way to `read` providers from `injector` tree,
 - multiple `directives` applied to the same element: as for the previous point, it would be nice to avoid directives injection when applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy)); instead, it should be an explicit operation with a `ref` passed as an `input`,
-- in general, the concept of injecting components / directives inside each others should probably be revisited / restricted,
+- in general, the concept of injecting components / directives inside each others should probably be revisited / restricted cause it's not type-safe / statically analyzable and it's a bit omplicated; the downside is that some ng-reserved names are necessary,
 - `directives` attached to the host (components): not possible anymore, but you can pass directives as inputs and use `@**` (or equivalent syntax).
 
 Unresolved points:
