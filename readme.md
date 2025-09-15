@@ -509,7 +509,7 @@ export const Something = component(() => ({
 ## Template ref
 Retrieving references of elements / components / directives (runtime):
 ```ts
-import { component, ref, Signal } from '@angular/core';
+import { component, ref, Signal, signal } from '@angular/core';
 import { tooltip } from '@mylib/tooltip';
 
 const Child = component(() => ({
@@ -535,7 +535,7 @@ export const Parent = component(() => ({
     //    defined in the Child comp tree
     const child = ref('child');
     const tlp = ref<{ toggle: () => void }>('tlp');
-    const many = ref<{ text: Signal<string> }[]>([]);
+    const many = signal<{ text: Signal<string> }[]>([]);
   },
   template: `
     <div
