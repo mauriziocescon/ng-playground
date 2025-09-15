@@ -142,16 +142,23 @@ export const TextSearch = component(() => ({
 }));
 
 // -- tooltip in @mylib/tooltip --------------------
-import { directive, input, output, inject, ElementRef, Renderer2 } from '@angular/core';
+import { directive, input, output, inject, Renderer2, elementRef, afterNextRender } from '@angular/core';
 
 export const tooltip = directive(({
   message = input.required<string>(),
   dismiss = output<void>(),
+  /**
+   * Readonly signal automatically
+   * passed by the framework.
+   */
+  elRef = elementRef<HTMLElement>(),
 }) => ({
   script: () => {
-    const elRef = inject(ElementRef);
     const renderer = inject(Renderer2);
-    // ...
+
+    afterNextRender(() => {
+      // something with elRef
+    });
 
     // exposed as public
     return { /** ... **/ };
@@ -522,7 +529,7 @@ export const Parent = component(() => ({
     //    defined in the Child comp tree
     const child = ref('child');
     const tlp = ref<{ toggle: () => void }>('tlp');
-    const many = signal<{ text: Signal<string> }[]>([]);
+    const many = ref<{ text: Signal<string> }[]>([]);
   },
   template: `
     <div
