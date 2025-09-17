@@ -398,13 +398,17 @@ export const UserDetailConsumer = component(() => ({
 
     function processEmail() { /** ... **/ }
     function makeAdmin() { /** ... **/ }
+
+    const outputs = {
+      makeAdmin,
+      emailChange: () => processEmail()
+    };
   },
   template: `
     <MyUserDetail
-      user={user()}
-      model:email={email}
-      on:emailChange={() => processEmail()}
-      on:makeAdmin={makeAdmin} />`,
+      bind:**={{user}}
+      model:**={{email}}
+      on:**={outputs} />`,
 }));
 
 export const MyUserDetail = component(({
