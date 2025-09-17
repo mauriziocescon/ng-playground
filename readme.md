@@ -427,7 +427,9 @@ export const MyUserDetail = component(({
   template: `
     <UserDetail
       user={other()}
-      bind:**={attributes()} />`,
+      bind:**={attributes.bind}
+      model:**={attributes.model}
+      on:**={attributes.on} />`,
 }));
 
 // -- UserDetail -----------------------------------
@@ -484,7 +486,7 @@ export const Button = component(({
   attributes = attributes<HTMLButtonAttributes>(),
 }) => ({
   template: `
-    <button @** bind:**={attributes()}>
+    <button @** bind:**={attributes.bind} on:**={attributes.on}>
       <Render fragment={children()} />
     </button>`,
 }));
