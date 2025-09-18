@@ -24,6 +24,7 @@ import { component, signal, linkedSignal, input, output } from '@angular/core';
 
 /**
  * value / valueChange are always created
+ * for interoperability
  * (no real "props decostruction")
  *
  * by the time script is called,
