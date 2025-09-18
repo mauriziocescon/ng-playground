@@ -4,7 +4,7 @@
 Points:
 1. building blocks as functions:
     - `component`: a treble `script` / `template` / `style`,
-    - `fragment`: a duo `template` / `style` that captures some markup for reusability,
+    - `fragment`: a `template` that captures some markup for reusability,
     - `directive`: a `script` that can change the appearance or behavior of DOM elements,
     - `derivation`: a `script` for creating computeds in templates,
     - `**.ng` files,
