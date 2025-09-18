@@ -386,7 +386,7 @@ export const Button = component(({
 }));
 ```
 
-Wrapping a component and passing inputs / outputs:
+Wrapping components and passing inputs / outputs:
 ```ts
 import { component, input, computed, attributes } from '@angular/core';
 import { UserDetail, User, UserDetailProps } from './user-detail.ng';
@@ -448,7 +448,7 @@ export const UserDetail = component(({
 }));
 ```
 
-Wrapping a native element and passing attributes / properties / event listeners:
+Wrapping native elements and passing attributes / properties / event listeners:
 ```ts
 import { component, signal } from '@angular/core';
 import { Button } from '@mylib/button';
