@@ -48,6 +48,7 @@ export const TextSearch = component(({
     };
   },
   template: `
+    <!-- bind: can be omitted (default) while on: is mandatory -->
     <!-- 2way binding for input / select / textarea: model:property={var} -->
 
     <label class:danger={isDanger()}> Text: </label>
