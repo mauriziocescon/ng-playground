@@ -9,7 +9,7 @@ Points:
     - `derivation`: a `script` for creating computeds in templates,
     - `**.ng` files,
 2. ts expressions with `{}`: bindings + text interpolation,
-3. extra bindings for DOM elements: `on:`, `model:`, `class:`, `style:`, `attr:`, `bind:`, `animate:`,
+3. extra bindings for DOM elements: `bind:`, `on:`, `model:`, `class:`, `style:`, `attr:`, `animate:`,
 4. hostless components + ts lexical scoping for templates,
 5. component inputs: lifted up + immediately available in the script,
 6. composition with fragments, directives and fallthrough attributes,
