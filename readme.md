@@ -555,8 +555,8 @@ export const Parent = component(() => ({
 
     <!-- binding to a function -->
 
-    <Child ref={(el) => many.update(v => [...v, el])} />
-    <Child ref={(el) => many.update(v => [...v, el])} />
+    <Child ref={(c) => many.update(v => [...v, c])} />
+    <Child ref={(c) => many.update(v => [...v, c])} />
 
     <button on:click={() => tlp().toggle()}> Toggle tlp </button>`,
 }));
