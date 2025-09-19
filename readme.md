@@ -67,7 +67,10 @@ export const TextSearch = component(({
 External template / style files:
 ```ts
 import { component, input, output, booleanAttribute } from '@angular/core';
-
+/**
+ * Have to import what's used in the template:
+ * @import { Comp } from '...';
+ */
 export const Checkbox = component(({
   value = input.required<any>({ transform: booleanAttribute }),
   valueChange = output<boolean>(),
