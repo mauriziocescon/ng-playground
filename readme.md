@@ -410,6 +410,8 @@ export const UserDetailConsumer = component(() => ({
     };
   },
   template: `
+    <!-- bind:**={object} bind all entries of object; same for model / on -->
+
     <MyUserDetail
       bind:**={{user}}
       model:**={{email}}
