@@ -133,8 +133,6 @@ export const TextSearch = component(() => ({
     function doSomething() { /** ... **/ }
   },
   template: `
-    <!-- ... -->
-
     <!-- encapsulation of directive data: @directive(...) -->
 
     <input
@@ -185,8 +183,6 @@ export const Items = component(({
 }) => ({
   script: () => { /** ... **/ },
   template: `
-    <!-- ... -->
-
     @let filteredItems = @bestSellers(items);
 
     @for (item of filteredItems(); track item.id) {
