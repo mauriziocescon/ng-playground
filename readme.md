@@ -12,7 +12,7 @@ Points:
 3. extra bindings for DOM elements: `bind:`, `on:`, `model:`, `class:`, `style:`, `attr:`, `animate:`,
 4. hostless components + ts lexical scoping for templates,
 5. component inputs: lifted up + immediately available in the script,
-6. composition with fragments, directives and fallthrough props,
+6. composition with fragments, directives and fallthrough attributes,
 7. template ref,
 8. DI enhancements,
 9. Concepts affected by these changes.
@@ -255,12 +255,12 @@ export const Counter = component(({
 }));
 ```
 
-## Composition with fragments, directives and fallthrough props
+## Composition with fragments, directives and fallthrough attributes
 Fragments are very similar to [`svelte snippets`](https://svelte.dev/docs/svelte/snippet): functions returning html markup. Returned markup is opaque: cannot manipulate it similarly to [`react Children (legacy)`](https://react.dev/reference/react/Children) or [`solid children`](https://www.solidjs.com/tutorial/props_children).
 
 Directives follows very similar rules as [`svelte attachments`](https://svelte.dev/docs/svelte/@attach).
 
-Fallthrough props are inspired by the same concept in [`vue`](https://vuejs.org/guide/components/attrs.html) and covers the usual react `spread props` need. At the moment, inputs are created (then syncronised) any time a component / directive is created rather than derived from already existing signals (solid / svelte). This is great for interoperability, but it implies there isn't any props object to spread. Note the examples below are simplified.
+Fallthrough attributes are inspired by the same concept in [`vue`](https://vuejs.org/guide/components/attrs.html) and covers the usual react `spread props` need. At the moment, inputs are created (then syncronised) any time a component / directive is created rather than derived from already existing signals (solid / svelte). This is great for interoperability, but it implies there isn't any props object to spread. Note the examples below are simplified.
 
 Implicit children fragment (where + when) and binding context:
 ```ts
@@ -393,7 +393,7 @@ export const Button = component(({
 
 Wrapping components and passing inputs / outputs:
 ```ts
-import { component, input, computed, fallthroughProps } from '@angular/core';
+import { component, input, computed, fallthroughAttrs } from '@angular/core';
 import { UserDetail, User, UserDetailProps } from './user-detail.ng';
 
 export const UserDetailConsumer = component(() => ({
@@ -423,10 +423,14 @@ export const MyUserDetail = component(({
   /**
    * whatever is not matching inputs / outputs
    * defined explicitly (like user).
+   * Object with:
+   * - in: inputs, attributes, ..
+   * - on: events,
+   * - mod: 2way.
    *
-   * props: name reserved to the framework
+   * attrs: name reserved to the framework
    */
-  props = fallthroughProps<Omit<UserDetailProps, 'user'>>(),
+  attrs = fallthroughAttrs<Omit<UserDetailProps, 'user'>>(),
 }) => ({
   script: () => {
     const other = computed(() => /** something depending on user or a default value **/);
@@ -434,9 +438,9 @@ export const MyUserDetail = component(({
   template: `
     <UserDetail
       user={other()}
-      bind:**={props.bind}
-      model:**={props.model}
-      on:**={props.on} />`,
+      bind:**={attrs.in}
+      model:**={attrs.mod}
+      on:**={attrs.on} />`,
 }));
 
 // -- UserDetail -----------------------------------
@@ -485,15 +489,15 @@ export const ButtonConsumer = component(() => ({
 }));
 
 // -- button in @mylib/button --------------------
-import { component, input, fallthroughProps } from '@angular/core';
+import { component, input, fallthroughAttrs } from '@angular/core';
 import { HTMLButtonAttributes } from '@angular/core/elements';
 
 export const Button = component(({
   children = input.required<Fragment<void>>(),
-  props = fallthroughProps<HTMLButtonAttributes>(),
+  attrs = fallthroughAttrs<HTMLButtonAttributes>(),
 }) => ({
   template: `
-    <button @** bind:**={props.bind} on:**={props.on}>
+    <button @** bind:**={attrs.in} on:**={attrs.on}>
       <Render fragment={children()} />
     </button>`,
 }));
