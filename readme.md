@@ -419,7 +419,8 @@ export const MyUserDetail = component(({
   /**
    * whatever is not matching inputs / outputs
    * defined explicitly (like user).
-   * Object with:
+   *
+   * attrs entries:
    * - in: inputs, attributes, ..
    * - on: events,
    * - mod: 2way.
