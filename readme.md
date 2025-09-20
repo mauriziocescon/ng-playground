@@ -605,7 +605,8 @@ export const AdminLinkWithTooltip = component(({
 - `queries`: if `ref` makes sense, likely not needed anymore; if they stay, it would be nice to improve the retrieval of data: no way to `read` providers from `injector` tree,
 - multiple `directives` applied to the same element: as for the previous point, it would be nice to avoid directives injection when applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy)); instead, it should be an explicit operation with a `ref` passed as an `input`,
 - in general, the concept of injecting components / directives inside each others should probably be restricted cause it generates lots of indirection / complexity; the downside is that some ng-reserved names are necessary,
-- `directives` attached to the host (components): not possible anymore, but you can pass directives as inputs and use `@**` (or equivalent syntax).
+- `directives` attached to the host (components): not possible anymore, but you can pass directives as inputs and use `@**` (or equivalent syntax),
+- event delegation: not consider `https://github.com/angular/angular/issues/15905`.
 
 Unresolved points:
 - there isn't any obvious `short notation` for passing props (like svelte / vue);
