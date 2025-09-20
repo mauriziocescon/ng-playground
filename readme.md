@@ -629,4 +629,4 @@ Unresolved points:
 - can reassign inputs / outputs inside script:
   - `https://github.com/microsoft/TypeScript/issues/18497`,
   - [`no-param-reassign`](https://eslint.org/docs/latest/rules/no-param-reassign).
-- parent component styling children (difficult point): maybe something based on css-variables similarly to [`svelte`](https://svelte.dev/docs/svelte/custom-properties)? Alternatevely, directives could support style `https://github.com/angular/angular/issues/17766`.
+- parent component styling children (difficult point): maybe something based on css-variables similarly to [`svelte`](https://svelte.dev/docs/svelte/custom-properties)?
