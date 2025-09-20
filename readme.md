@@ -523,7 +523,7 @@ export const Something = component(() => ({
 ## Template ref
 Retrieving references of elements / components / directives (runtime):
 ```ts
-import { component, ref, Signal, signal } from '@angular/core';
+import { component, ref, Signal, signal, afterNextRender } from '@angular/core';
 import { tooltip } from '@mylib/tooltip';
 
 const Child = component(() => ({
@@ -550,6 +550,10 @@ export const Parent = component(() => ({
     const child = ref('child');
     const tlp = ref<{ toggle: () => void }>('tlp');
     const many = signal<{ text: Signal<string> }[]>([]);
+
+    afterNextRender(() => {
+      // something with refs
+    });
   },
   template: `
     <div
@@ -606,12 +610,12 @@ export const AdminLinkWithTooltip = component(({
 Unresolved points:
 - there isn't any obvious `short notation` for passing props (like svelte / vue);
 ```ts
-<User user={user()} model:address={address} on:userChange={userChange} />
+<User user={user()} age={age()} gender={gender()} model:address={address} on:userChange={userChange} />
 
-// maybe something like "matching the name"?
+// maybe something like "matching the name only for signals"?
 // error in case of string interpolation or similar
 
-<User {user()} model:{address} on:{userChange} />
+<User {user} {age} {gender} model:{address} on:{userChange} />
 ```
 - there isn't any obvious way to conditionally apply directives at runtime;
 ```ts
