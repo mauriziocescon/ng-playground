@@ -5,17 +5,17 @@ Points:
 1. building blocks as functions:
     - `component`: a treble `script` / `template` / `style`,
     - `directive`: a `script` that can change the appearance or behavior of DOM elements,
+    - `derivation`: a `script` for creating computeds in templates depending on DI,
     - `fragment`: a way to capture some markup in the form of a function,
     - `**.ng` files,
 2. ts expressions with `{}`: bindings + text interpolation,
 3. extra bindings for DOM elements: `bind:`, `on:`, `model:`, `class:`, `style:`, `attr:`, `animate:`,
 4. hostless components + ts lexical scoping for templates,
-5. definition / derivation of state in templates,
-6. component inputs: lifted up + immediately available in the script,
-7. composition with fragments, directives and fallthrough attributes,
-8. template ref,
-9. DI enhancements,
-10. Concepts affected by these changes.
+5. component inputs: lifted up + immediately available in the script,
+6. composition with fragments, directives and fallthrough attributes,
+7. template ref,
+8. DI enhancements,
+9. Concepts affected by these changes.
 
 ## Components
 Component structure and element bindings:
@@ -170,30 +170,29 @@ export const tooltip = directive(({
 }));
 ```
 
-## Define / derive state within templates
-Declaratively define / transform state within templates:
+## Derivations
+Declaratively transforms data within templates:
 ```ts
-import { component, signal, computed } from '@angular/core';
+import { component, input, signal } from '@angular/core';
 import { isBestSeller, customEqual, currency, half } from '@mylib/derivations';
 
 interface Item { /** ... **/ }
 
-export const Items = component(() => ({
+export const Items = component(({
+  items = input.required<Item[]>(),
+}) => ({
+  script: () => {
+    const bestSellers = computed(() => items().filter(i => isBestSeller(i)));
+  },
   template: `
-    <!-- @const: defined once like in a script -->
-    <!-- the creation happens within an injection context -->
-
-    @const items = signal<Item[]>([...]);
-    @const bestSellers = computed(() => items().filter(i => isBestSeller(i)));
-
     @for (item of bestSellers(); track item.id) {
-      @const memoItem = customEqual(() => item);
+      @const memoItem = @customEqual(item);
 
       @if (memoItem().discount) {
-        @const price = currency(half(() => memoItem().price), () => 'EUR');
+        @const price = @currency(@half(@memoItem().price), 'EUR');
         <div>Price: {price()}</div>
       } @else {
-        @const price = currency(() => memoItem().price, () => 'EUR');
+        @const price = @currency(@memoItem().price, 'EUR');
         <div>Price: {price()}</div>
       }
     }
@@ -202,16 +201,17 @@ export const Items = component(() => ({
 }));
 
 // -- currency in @mylib/derivations --------------------
-import { computed, inject, LOCALE_ID } from '@angular/core';
+import { derivation, input, computed, inject, LOCALE_ID } from '@angular/core';
 
-export function currency(
-  value: () => (number | string | undefined),
-  currencyCode: (() => string) | undefined,
-) {
-  const localeId = inject(LOCALE_ID);
-
-  return computed( /** ... **/ );
-}
+export const currency = derivation(({
+  value = input.required<number | string>(),
+  currencyCode = input<string | undefined>(),
+}) => ({
+  script: () => {
+    const localeId = inject(LOCALE_ID);
+    return computed( /** ... **/ );
+  },
+}));
 ```
 
 ## Inputs
