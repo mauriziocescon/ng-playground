@@ -179,7 +179,6 @@ import { isBestSeller, customEqual, currency, half } from '@mylib/derivations';
 interface Item { /** ... **/ }
 
 export const Items = component(() => ({
-  script: () => { /** ... **/ },
   template: `
     <!-- @const: defined once like in a script -->
     <!-- the creation happens within an injection context -->
