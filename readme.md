@@ -238,6 +238,7 @@ export const Counter = component(({
     provide({ token: CounterStore, useFactory: () => new CounterStore(c) }),
   ],
   template: `
+    <!-- can also inject services at the top of the template -->
     @const store = inject(CounterStore);
 
     <h1>Counter</h1>
