@@ -186,13 +186,13 @@ export const Items = component(({
   },
   template: `
     @for (item of bestSellers(); track item.id) {
-      @const memoItem = @customEqual(item);
+      @let memoItem = @customEqual(() => item);
 
       @if (memoItem().discount) {
-        @const price = @currency(@half(@memoItem().price), 'EUR');
+        @let price = @currency(@half(() => memoItem().price), () => 'EUR');
         <div>Price: {price()}</div>
       } @else {
-        @const price = @currency(@memoItem().price, 'EUR');
+        @let price = @currency(() => memoItem().price, () => 'EUR');
         <div>Price: {price()}</div>
       }
     }
@@ -201,15 +201,20 @@ export const Items = component(({
 }));
 
 // -- currency in @mylib/derivations --------------------
-import { derivation, input, computed, inject, LOCALE_ID } from '@angular/core';
+import { derivation, computed, inject, LOCALE_ID } from '@angular/core';
 
-export const currency = derivation(({
-  value = input.required<number | string>(),
-  currencyCode = input<string | undefined>(),
-}) => ({
+export const currency = derivation(() => ({
   script: () => {
     const localeId = inject(LOCALE_ID);
-    return computed( /** ... **/ );
+
+    return (
+      value: () => (number | string | undefined),
+      currencyCode: (() => string) | undefined,
+    ) => {
+      // ...
+
+      return computed( /** ... **/ );
+    }
   },
 }));
 ```
