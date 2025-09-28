@@ -5,7 +5,7 @@ Points:
 1. building blocks as functions:
     - `component`: a treble `script` / `template` / `style`,
     - `directive`: a `script` that can change the appearance or behavior of DOM elements,
-    - `derivation`: a `script` for creating computeds in templates,
+    - `derivation`: a `script` for creating computeds in templates depending on DI,
     - `fragment`: a way to capture some markup in the form of a function,
     - `**.ng` files,
 2. ts expressions with `{}`: bindings + text interpolation,
@@ -170,8 +170,8 @@ export const tooltip = directive(({
 }));
 ```
 
-## Derivations
-Declaratively transforms data within templates:
+## Derivations + template state
+Declaratively transforms data within templates based on DI:
 ```ts
 import { component, input, linkedSignal } from '@angular/core';
 import { bestSellers, customEqual, currency, half } from '@mylib/derivations';
