@@ -173,21 +173,19 @@ export const tooltip = directive(({
 ## Define / derive state within templates
 Declaratively define / transform state within templates:
 ```ts
-import { component, input, linkedSignal } from '@angular/core';
+import { component, signal } from '@angular/core';
 import { bestSellers, customEqual, currency, half } from '@mylib/derivations';
 
 interface Item { /** ... **/ }
 
-export const Items = component(({
-  items = input.required<Item[]>(),
-}) => ({
+export const Items = component(() => ({
   script: () => { /** ... **/ },
   template: `
     <!-- @const: defined once like in a script -->
     <!-- the creation happens within an injection context -->
 
-    @const mappedItems = linkedSignal(() => this.items().map(i => ({id: i.id, price: i.price}));
-    @const filteredItems = bestSellers(mappedItems);
+    @const items = signal<Item[]>([...]);
+    @const filteredItems = bestSellers(items);
 
     @for (item of filteredItems(); track item.id) {
       @const memoItem = customEqual(() => item);
