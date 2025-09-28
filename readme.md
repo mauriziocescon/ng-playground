@@ -5,17 +5,17 @@ Points:
 1. building blocks as functions:
     - `component`: a treble `script` / `template` / `style`,
     - `directive`: a `script` that can change the appearance or behavior of DOM elements,
-    - `derivation`: a `script` for creating computeds in templates depending on DI,
     - `fragment`: a way to capture some markup in the form of a function,
     - `**.ng` files,
 2. ts expressions with `{}`: bindings + text interpolation,
 3. extra bindings for DOM elements: `bind:`, `on:`, `model:`, `class:`, `style:`, `attr:`, `animate:`,
 4. hostless components + ts lexical scoping for templates,
-5. component inputs: lifted up + immediately available in the script,
-6. composition with fragments, directives and fallthrough attributes,
-7. template ref,
-8. DI enhancements,
-9. Concepts affected by these changes.
+5. definition / derivation of state in templates,
+6. component inputs: lifted up + immediately available in the script,
+7. composition with fragments, directives and fallthrough attributes,
+8. template ref,
+9. DI enhancements,
+10. Concepts affected by these changes.
 
 ## Components
 Component structure and element bindings:
@@ -170,8 +170,8 @@ export const tooltip = directive(({
 }));
 ```
 
-## Derivations + template state
-Declaratively transforms data within templates based on DI:
+## Define / derive state within templates
+Declaratively define / transform state within templates:
 ```ts
 import { component, input, linkedSignal } from '@angular/core';
 import { bestSellers, customEqual, currency, half } from '@mylib/derivations';
@@ -183,8 +183,8 @@ export const Items = component(({
 }) => ({
   script: () => { /** ... **/ },
   template: `
-    <!-- @const defined once similarly to pipes (embedded view) -->
-    <!-- can also define state in templates -->
+    <!-- @const: defined once like in a script -->
+    <!-- the creation happens within an injection context -->
 
     @const mappedItems = linkedSignal(() => this.items().map(i => ({id: i.id, price: i.price}));
     @const filteredItems = bestSellers(mappedItems);
@@ -199,26 +199,22 @@ export const Items = component(({
         @const price = currency(() => memoItem().price, () => 'EUR');
         <div>Price: {price()}</div>
       }
-    }`,
+    }
+
+    <button on:click={() => mappedItems.set([])}>Reset</button>`,
 }));
 
 // -- currency in @mylib/derivations --------------------
-import { derivation, computed, inject, LOCALE_ID } from '@angular/core';
+import { computed, inject, LOCALE_ID } from '@angular/core';
 
-export const currency = derivation(() => ({
-  script: () => {
-    const localeId = inject(LOCALE_ID);
+export function currency(
+  value: () => (number | string | undefined),
+  currencyCode: (() => string) | undefined,
+) {
+  const localeId = inject(LOCALE_ID);
 
-    return (
-      value: () => (number | string | undefined),
-      currencyCode: (() => string) | undefined,
-    ) => {
-      // ...
-
-      return computed( /** ... **/ );
-    }
-  },
-}));
+  return computed( /** ... **/ );
+}
 ```
 
 ## Inputs
