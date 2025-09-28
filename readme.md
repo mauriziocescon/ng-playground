@@ -173,8 +173,8 @@ export const tooltip = directive(({
 ## Define / derive state within templates
 Declaratively define / transform state within templates:
 ```ts
-import { component, signal } from '@angular/core';
-import { bestSellers, customEqual, currency, half } from '@mylib/derivations';
+import { component, signal, computed } from '@angular/core';
+import { isBestSeller, customEqual, currency, half } from '@mylib/derivations';
 
 interface Item { /** ... **/ }
 
@@ -185,9 +185,9 @@ export const Items = component(() => ({
     <!-- the creation happens within an injection context -->
 
     @const items = signal<Item[]>([...]);
-    @const filteredItems = bestSellers(items);
+    @const bestSellers = computed(() => items().filter(i => isBestSeller(i)));
 
-    @for (item of filteredItems(); track item.id) {
+    @for (item of bestSellers(); track item.id) {
       @const memoItem = customEqual(() => item);
 
       @if (memoItem().discount) {
@@ -199,7 +199,7 @@ export const Items = component(() => ({
       }
     }
 
-    <button on:click={() => mappedItems.set([])}>Reset</button>`,
+    <button on:click={() => items.set([])}>Reset</button>`,
 }));
 
 // -- currency in @mylib/derivations --------------------
