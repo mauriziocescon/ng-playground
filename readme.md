@@ -237,10 +237,10 @@ export const Counter = component(({
   providers: [
     provide({ token: CounterStore, useFactory: () => new CounterStore(c) }),
   ],
+  script: () => {
+    const store = inject(CounterStore);
+  },
   template: `
-    <!-- can also inject services at the top of the template -->
-    @const store = inject(CounterStore);
-
     <h1>Counter</h1>
     <div>Value: {store.value()}</div>
     <button on:click={() => store.decrease()}> - </button>
@@ -261,11 +261,12 @@ import { component, signal } from '@angular/core';
 import { Menu, MenuItem } from '@mylib/menu';
 
 export const MenuConsumer = component(() => ({
+  script: () => {
+    const first = signal('First');
+    const second = signal('Second');
+  },
   template: `
     <!-- markup inside comp tag => implicitly become an input called children -->
-
-    @const first = signal('First');
-    @const second = signal('Second');
 
     <Menu>
       <MenuItem>{first()}</MenuItem>
