@@ -173,7 +173,7 @@ export const tooltip = directive(({
 ## Derivations
 Declaratively transforms data within templates:
 ```ts
-import { component, input, computed } from '@angular/core';
+import { component, input, linkedSignal } from '@angular/core';
 import { bestSellers, customEqual, currency, half } from '@mylib/derivations';
 
 interface Item { /** ... **/ }
@@ -185,7 +185,7 @@ export const Items = component(({
   template: `
     <!-- @const defined once similarly to pipes (embedded view) -->
 
-    @const mappedItems = computed(() => this.items().map(i => ({id: i.id, price: i.price}));
+    @const mappedItems = linkedSignal(() => this.items().map(i => ({id: i.id, price: i.price}));
     @const filteredItems = bestSellers(mappedItems);
 
     @for (item of filteredItems(); track item.id) {
