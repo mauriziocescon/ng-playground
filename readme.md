@@ -184,6 +184,7 @@ export const Items = component(({
   script: () => { /** ... **/ },
   template: `
     <!-- @const defined once similarly to pipes (embedded view) -->
+    <!-- can also define state in templates -->
 
     @const mappedItems = linkedSignal(() => this.items().map(i => ({id: i.id, price: i.price}));
     @const filteredItems = bestSellers(mappedItems);
