@@ -601,7 +601,7 @@ export const AdminLinkWithTooltip = component(({
 - `ng-template` (`let-*` shorthands + `ngTemplateGuard_*`): likely replaced by `fragments`,
 - structural directives: likely replaced by `fragments`,
 - `Ng**Outlet` + `ng-container`: likely replaced by the new things,
-- `pipes`: replaced by computed defined in templates,
+- `pipes`: replaced by derivations,
 - `event delegation`: not consider `https://github.com/angular/angular/issues/15905`,
 - `directives` attached to the host (components): not possible anymore, but you can pass directives as inputs and use `@**` (or equivalent syntax),
 - `queries`: if `ref` makes sense, likely not needed anymore; if they stay, it would be nice to improve the retrieval of data: no way to `read` providers from `injector` tree,
