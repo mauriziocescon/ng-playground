@@ -174,7 +174,7 @@ export const tooltip = directive(({
 Declaratively transforms data within templates:
 ```ts
 import { component, input, signal } from '@angular/core';
-import { bestSellers, memo, currency, half } from '@mylib/derivations';
+import { bestSellers, customEqual, currency, half } from '@mylib/derivations';
 
 interface Item { /** ... **/ }
 
@@ -183,16 +183,18 @@ export const Items = component(({
 }) => ({
   script: () => { /** ... **/ },
   template: `
-    @let filteredItems = @bestSellers(items);
+    <!-- @const defined once similarly to pipes (embedded view) -->
+
+    @const filteredItems = bestSellers(items);
 
     @for (item of filteredItems(); track item.id) {
-      @let memoItem = @memo(() => item);
+      @const memoItem = customEqual(() => item);
 
       @if (memoItem().discount) {
-        @let price = @currency(@half(() => memoItem().price), () => 'EUR');
+        @const price = currency(half(() => memoItem().price), () => 'EUR');
         <div>Price: {price()}</div>
       } @else {
-        @let price = @currency(() => memoItem().price, () => 'EUR');
+        @const price = currency(() => memoItem().price, () => 'EUR');
         <div>Price: {price()}</div>
       }
     }`,
