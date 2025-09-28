@@ -238,10 +238,9 @@ export const Counter = component(({
   providers: [
     provide({ token: CounterStore, useFactory: () => new CounterStore(c) }),
   ],
-  script: () => {
-    const store = inject(CounterStore);
-  },
   template: `
+    @const store = inject(CounterStore);
+
     <h1>Counter</h1>
     <div>Value: {store.value()}</div>
     <button on:click={() => store.decrease()}> - </button>
@@ -262,12 +261,11 @@ import { component, signal } from '@angular/core';
 import { Menu, MenuItem } from '@mylib/menu';
 
 export const MenuConsumer = component(() => ({
-  script: () => {
-    const first = signal('First');
-    const second = signal('Second');
-  },
   template: `
     <!-- markup inside comp tag => implicitly become an input called children -->
+
+    @const first = signal('First');
+    @const second = signal('Second');
 
     <Menu>
       <MenuItem>{first()}</MenuItem>
@@ -299,7 +297,6 @@ export const Menu = component(({
 export const MenuItem = component(({
   children = input.required<Fragment<void>>(),
 }) => ({
-  script: () => { /** ... **/ },
   template: `
     <Render fragment={children()} />`,
 }));
@@ -332,7 +329,6 @@ export const Menu = component(({
   items = input.required<{ id: string, desc: string }[]>(),
   menuItem = input.required<Fragment<[{ id: string, desc: string }]>>(),
 }) => ({
-  script: () => { /** ... **/ },
   template: `
     <h1> Total items: {items().length} </h1>
 
@@ -375,7 +371,6 @@ export const Button = component(({
   disabled = input<boolean>(false),
   click = output<void>(),
 }) => ({
-  script: () => { /** ... **/ },
   template: `
     <!-- @** => fallthrough directives (ripple / tooltip) from the consumer -->
 
