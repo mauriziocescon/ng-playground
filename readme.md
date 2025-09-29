@@ -151,11 +151,11 @@ function counter(value: number) {
  */
 #Component
 export const Counter = () => `
-    @if (type === Type.Counter) {
-      <p>{counter(5)}</p>
-    } @else {
-      <!-- ... -->
-    }`;
+  @if (type === Type.Counter) {
+    <p>{counter(5)}</p>
+  } @else {
+    <!-- ... -->
+  }`;
 ```
 
 ## Declarations
@@ -187,16 +187,16 @@ function currency(
 
 #Component
 export const Counter = () => `
-    @const count = counter(0);
+  @const count = counter(0);
 
-    <!-- requires @ -->
-    @const price = @currency(count.value, 'EUR');
+  <!-- requires @ -->
+  @const price = @currency(count.value, 'EUR');
 
-    <h1>Counter</h1>
-    <div>Value: {count.value()}</div>
-    <div>Price: {price()}</div>
-    <button on:click={() => count.decrease()}> - </button>
-    <button on:click={() => count.increase()}> + </button>`;
+  <h1>Counter</h1>
+  <div>Value: {count.value()}</div>
+  <div>Price: {price()}</div>
+  <button on:click={() => count.decrease()}> - </button>
+  <button on:click={() => count.increase()}> + </button>`;
 ```
 
 ## Element directives
