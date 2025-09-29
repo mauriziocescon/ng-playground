@@ -20,17 +20,18 @@ Points:
 ## Components
 Component structure and element bindings:
 ```ts
-import { component, signal, linkedSignal, input, output } from '@angular/core';
+import { signal, linkedSignal, input, output } from '@angular/core';
 
-/**
- * value / valueChange are always created
- * for interoperability
- * (no real "props decostruction")
- *
- * by the time script is called,
- * inputs are populated with parent data
- */
-export const TextSearch = component(({
+#Component
+export const TextSearch = ({
+  /**
+   * value / valueChange are always created
+   * for interoperability
+   * (no real "props decostruction")
+   *
+   * by the time script is called,
+   * inputs are populated with parent data
+   */
   value = input.required<string>(), // definition + type
   valueChange = output<string>(),
 }) => ({
@@ -61,32 +62,34 @@ export const TextSearch = component(({
     .danger {
       color: red;
     }`,
-}));
+});
 ```
 
 External template / style files:
 ```ts
-import { component, input, output, booleanAttribute } from '@angular/core';
+import { input, output } from '@angular/core';
 /**
  * Have to import what's used in the template:
  * @import { Comp } from '...';
  */
-export const Checkbox = component(({
-  value = input.required<any>({ transform: booleanAttribute }),
+#Component
+export const Checkbox = ({
+  value = input.required<boolean>(),
   valueChange = output<boolean>(),
 }) => ({
   script: () => { /** ... **/ },
   templateUrl: `./checkbox.ng.html`,
   styleUrl: `./checkbox.css`,
-}));
+});
 ```
 
 Component bindings:
 ```ts
-import { component, signal } from '@angular/core';
+import { signal } from '@angular/core';
 import { UserDetail, User } from './user-detail.ng';
 
-export const UserDetailConsumer = component(() => ({
+#Component
+export const UserDetailConsumer = () => ({
   script: () => {
     const user = signal<User>(...);
     const email = signal<string>(...);
@@ -102,29 +105,31 @@ export const UserDetailConsumer = component(() => ({
       model:email={email}
       on:emailChange={() => processEmail()}
       on:makeAdmin={makeAdmin} />`,
-}));
+});
 
 // -- UserDetail -----------------------------------
-import { component, input, model, output } from '@angular/core';
+import { input, model, output } from '@angular/core';
 
 export interface User { /** ... **/ }
 
-export const UserDetail = component(({
+#Component
+export const UserDetail = ({
   user = input<User>(),
   email = model<string>(),
   makeAdmin = output<void>(),
 }) => ({
   // ...
-}));
+});
 ```
 
 ## Element directives
 Change the appearance or behavior of DOM elements:
 ```ts
-import { component, signal } from '@angular/core';
+import { signal } from '@angular/core';
 import { tooltip } from '@mylib/tooltip';
 
-export const TextSearch = component(() => ({
+#Component
+export const TextSearch = () => ({
   script: () => {
     const text = signal('');
     const message = signal('Message');
@@ -142,12 +147,13 @@ export const TextSearch = component(() => ({
       @tooltip(message={message()} on:dismiss={doSomething}) />
 
     <p>Value: {text()}</p>`,
-}));
+});
 
 // -- tooltip in @mylib/tooltip --------------------
-import { directive, input, output, inject, Renderer2, ref, afterNextRender } from '@angular/core';
+import { input, output, inject, Renderer2, ref, afterNextRender } from '@angular/core';
 
-export const tooltip = directive(({
+#Directive
+export const tooltip = ({
   message = input.required<string>(),
   dismiss = output<void>(),
   /**
@@ -167,18 +173,19 @@ export const tooltip = directive(({
     // exposed as public
     return { /** ... **/ };
   },
-}));
+});
 ```
 
-## Derivations
+## Declarations
 Declaratively transforms data within templates:
 ```ts
-import { component, input, signal } from '@angular/core';
+import { input, signal } from '@angular/core';
 import { isBestSeller, customEqual, currency, half } from '@mylib/derivations';
 
 interface Item { /** ... **/ }
 
-export const Items = component(({
+#Component
+export const Items = ({
   items = input.required<Item[]>(),
 }) => ({
   script: () => {
@@ -198,31 +205,26 @@ export const Items = component(({
     }
 
     <button on:click={() => items.set([])}>Reset</button>`,
-}));
+});
 
 // -- currency in @mylib/derivations --------------------
-import { derivation, computed, inject, LOCALE_ID } from '@angular/core';
+import { computed, inject, LOCALE_ID } from '@angular/core';
 
-export const currency = derivation(() => ({
-  script: () => {
-    const localeId = inject(LOCALE_ID);
+#Declaration
+export const currency = (
+  value: () => (number | string | undefined),
+  currencyCode: (() => string) | undefined,
+) => {
+  const localeId = inject(LOCALE_ID);
 
-    return (
-      value: () => (number | string | undefined),
-      currencyCode: (() => string) | undefined,
-    ) => {
-      // ...
-
-      return computed( /** ... **/ );
-    }
-  },
-}));
+  return computed( /** ... **/ );
+};
 ```
 
 ## Inputs
 Inputs lifted up for providers init:
 ```ts
-import { component, linkedSignal, input, WritableSignal, provide, inject } from '@angular/core';
+import { linkedSignal, input, WritableSignal, provide, inject } from '@angular/core';
 
 class CounterStore {
   private readonly counter: WritableSignal<number>;
@@ -236,7 +238,8 @@ class CounterStore {
   increase() { /** ... **/ }
 }
 
-export const Counter = component(({
+#Component
+export const Counter = ({
   c = input.required<number>(),
 }) => ({
   providers: [
@@ -250,7 +253,7 @@ export const Counter = component(({
     <div>Value: {store.value()}</div>
     <button on:click={() => store.decrease()}> - </button>
     <button on:click={() => store.increase()}> + </button>`,
-}));
+});
 ```
 
 ## Composition with fragments, directives and fallthrough attributes
@@ -262,10 +265,11 @@ Fallthrough attributes are inspired by the same concept in [`vue`](https://vuejs
 
 Implicit children fragment (where + when) and binding context:
 ```ts
-import { component, signal } from '@angular/core';
+import { signal } from '@angular/core';
 import { Menu, MenuItem } from '@mylib/menu';
 
-export const MenuConsumer = component(() => ({
+#Component
+export const MenuConsumer = () => ({
   script: () => {
     const first = signal('First');
     const second = signal('Second');
@@ -277,13 +281,14 @@ export const MenuConsumer = component(() => ({
       <MenuItem>{first()}</MenuItem>
       <MenuItem>{second()}</MenuItem>
     </Menu>`,
-}));
+});
 
 // -- Menu in @mylib/menu --------------------------
-import { component, input, Fragment } from '@angular/core';
+import { input, Fragment } from '@angular/core';
 import { Render } from '@angular/common';
 
-export const Menu = component(({
+#Component
+export const Menu = ({
   /**
    * children: name reserved to the framework
    */
@@ -298,23 +303,25 @@ export const Menu = component(({
     } @else {
        <!-- ... -->
     }`,
-}));
+});
 
-export const MenuItem = component(({
+#Component
+export const MenuItem = ({
   children = input.required<Fragment<void>>(),
 }) => ({
   template: `
     <Render fragment={children()} />`,
-}));
+});
 ```
 
 Customising components:
 ```ts
-import { component, computed } from '@angular/core';
+import { computed } from '@angular/core';
 import { Menu } from '@mylib/menu';
 import { MyMenuItem } from './my-menu-item.ng';
 
-export const MenuConsumer = component(() => ({
+#Component
+export const MenuConsumer = () => ({
   script: () => {
     const items = computed(() => [{ id: '1', desc: 'First' }, { id: '2', desc: 'Second' }]);
   },
@@ -325,13 +332,14 @@ export const MenuConsumer = component(() => ({
       <MyMenuItem>{item.desc}</MyMenuItem>
     }
     <Menu items={items()} menuItem={menuItem} />`,
-}));
+});
 
 // -- Menu in @mylib/menu --------------------------
-import { component, input, Fragment } from '@angular/core';
+import { input, Fragment } from '@angular/core';
 import { Render } from '@angular/common';
 
-export const Menu = component(({
+#Component
+export const Menu = ({
   items = input.required<{ id: string, desc: string }[]>(),
   menuItem = input.required<Fragment<[{ id: string, desc: string }]>>(),
 }) => ({
@@ -341,17 +349,18 @@ export const Menu = component(({
     @for (item of items(); track item.id) {
       <Render fragment={menuItem()} params={[item]} />
     }`,
-}));
+});
 ```
 
 Directives passed as inputs and bound to an element at runtime:
 ```ts
-import { component, signal } from '@angular/core';
+import { signal } from '@angular/core';
 import { Button } from '@mylib/button';
 import { ripple } from '@mylib/ripple';
 import { tooltip } from '@mylib/tooltip';
 
-export const ButtonConsumer = component(() => ({
+#Component
+export const ButtonConsumer = () => ({
   script: () => {
     const tooltipMsg = signal('');
     const valid = signal(false);
@@ -366,13 +375,14 @@ export const ButtonConsumer = component(() => ({
       on:click={doSomething}>
         Click / Hover me
     </Button>`,
-}));
+});
 
 // -- button in @mylib/button --------------------
-import { component, input, output } from '@angular/core';
+import { input, output } from '@angular/core';
 import { Render } from '@angular/common';
 
-export const Button = component(({
+#Component
+export const Button = ({
   children = input.required<Fragment<void>>(),
   disabled = input<boolean>(false),
   click = output<void>(),
@@ -383,15 +393,16 @@ export const Button = component(({
     <button @** disabled={disabled()} on:click={() => click.emit()}>
       <Render fragment={children()} />
     </button>`,
-}));
+});
 ```
 
 Wrapping components and passing inputs / outputs:
 ```ts
-import { component, input, computed, fallthroughAttrs } from '@angular/core';
+import { input, computed, fallthroughAttrs } from '@angular/core';
 import { UserDetail, User, UserDetailProps } from './user-detail.ng';
 
-export const UserDetailConsumer = component(() => ({
+#Component
+export const UserDetailConsumer = () => ({
   script: () => {
     const user = signal<User>(...);
     const email = signal<string>(...);
@@ -411,9 +422,10 @@ export const UserDetailConsumer = component(() => ({
       bind:**={{user}}
       model:**={{email}}
       on:**={outputs} />`,
-}));
+});
 
-export const MyUserDetail = component(({
+#Component
+export const MyUserDetail = ({
   user = input<User>(),
   /**
    * whatever is not matching inputs / outputs
@@ -437,32 +449,34 @@ export const MyUserDetail = component(({
       bind:**={attrs.in}
       model:**={attrs.mod}
       on:**={attrs.on} />`,
-}));
+});
 
 // -- UserDetail -----------------------------------
-import { component, input, model, output, Props } from '@angular/core';
+import { input, model, output, Props } from '@angular/core';
 
 export interface User { /** ... **/ }
 
 export type UserDetailProps = Props<UserDetail>;
 
-export const UserDetail = component(({
+#Component
+export const UserDetail = ({
   user = input<User>(),
   email = model<string>(),
   makeAdmin = output<void>(),
 }) => ({
   // ...
-}));
+});
 ```
 
 Wrapping native elements and passing attributes / properties / event listeners:
 ```ts
-import { component, signal } from '@angular/core';
+import { signal } from '@angular/core';
 import { Button } from '@mylib/button';
 import { ripple } from '@mylib/ripple';
 import { tooltip } from '@mylib/tooltip';
 
-export const ButtonConsumer = component(() => ({
+#Component
+export const ButtonConsumer = () => ({
   script: () => {
     const tooltipMsg = signal('');
     const valid = signal(false);
@@ -482,13 +496,14 @@ export const ButtonConsumer = component(() => ({
       on:click={doSomething}>
         Click / Hover me
     </Button>`,
-}));
+});
 
 // -- button in @mylib/button --------------------
-import { component, input, fallthroughAttrs } from '@angular/core';
+import { input, fallthroughAttrs } from '@angular/core';
 import { HTMLButtonAttributes } from '@angular/core/elements';
 
-export const Button = component(({
+#Component
+export const Button = ({
   children = input.required<Fragment<void>>(),
   attrs = fallthroughAttrs<HTMLButtonAttributes>(),
 }) => ({
@@ -496,17 +511,18 @@ export const Button = component(({
     <button @** bind:**={attrs.in} on:**={attrs.on}>
       <Render fragment={children()} />
     </button>`,
-}));
+});
 ```
 
 Dynamic components:
 ```ts
-import { component, signal, computed } from '@angular/core';
+import { signal, computed } from '@angular/core';
 import { Dynamic } from '@angular/common';
 import { AComp } from './a-comp.ng';
 import { BComp } from './b-comp.ng';
 
-export const Something = component(() => ({
+#Component
+export const Something = () => ({
   script: () => {
     const condition = signal<boolean>(/** ... **/);
     const comp = computed(() => condition() ? AComp : BComp);
@@ -516,16 +532,17 @@ export const Something = component(() => ({
     <!-- ... -->
 
     <Dynamic component={comp()} inputs={inputs()} />`,
-}));
+});
 ```
 
 ## Template ref
 Retrieving references of elements / components / directives (runtime):
 ```ts
-import { component, ref, Signal, signal, afterNextRender } from '@angular/core';
+import { ref, Signal, signal, afterNextRender } from '@angular/core';
 import { tooltip } from '@mylib/tooltip';
 
-const Child = component(() => ({
+#Component
+const Child = () => ({
   script: () => {
     const text = signal('');
     // ...
@@ -536,9 +553,10 @@ const Child = component(() => ({
     };
   },
   template: `<!-- ... -->`,
-}));
+});
 
-export const Parent = component(() => ({
+#Component
+export const Parent = () => ({
   script: () => {
     // readonly signal
     const el = ref<HTMLDivElement>('el');
@@ -570,7 +588,7 @@ export const Parent = component(() => ({
     <Child ref={(c) => many.update(v => [...v, c])} />
 
     <button on:click={() => tlp().toggle()}> Toggle tlp </button>`,
-}));
+});
 ```
 
 ## DI enhancements
@@ -579,11 +597,12 @@ See [`DI enhancements`](https://github.com/mauriziocescon/ng-playground/blob/mai
 ## Backward compatibility
 Still can use legacy concepts for composition:
 ```ts
-import { component, input } from '@angular/core';
+import { input } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 
-export const AdminLinkWithTooltip = component(({
+#Component
+export const AdminLinkWithTooltip = ({
   tooltipMessage = input.required<string>(),
   hasPermissions = input.required<boolean>(),
 }) => ({
@@ -593,7 +612,7 @@ export const AdminLinkWithTooltip = component(({
       @MatTooltip(message={tooltipMessage()} disabled={hasPermissions()})>
         Admin
     </MatButton:a>`,
-}));
+});
 ```
 
 ## Concepts affected by these changes
