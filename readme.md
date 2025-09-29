@@ -145,15 +145,17 @@ function counter(value: number) {
   return `Let's count till ` + value;
 }
 
+/**
+ * short version in case of
+ * missing script / style / providers
+ */
 #Component
-export const Counter = () => ({
-  template: `
+export const Counter = () => `
     @if (type === Type.Counter) {
       <p>{counter(5)}</p>
     } @else {
       <!-- ... -->
-    }`,
-});
+    }`;
 ```
 
 ## Declarations
@@ -184,8 +186,7 @@ function currency(
 }
 
 #Component
-export const Counter = () => ({
-  template: `
+export const Counter = () => `
     @const count = counter(0);
 
     <!-- requires @ -->
@@ -195,8 +196,7 @@ export const Counter = () => ({
     <div>Value: {count.value()}</div>
     <div>Price: {price()}</div>
     <button on:click={() => count.decrease()}> - </button>
-    <button on:click={() => count.increase()}> + </button>`,
-});
+    <button on:click={() => count.increase()}> + </button>`;
 ```
 
 ## Element directives
