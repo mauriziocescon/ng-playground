@@ -175,13 +175,13 @@ function counter(value?: number) {
 }
 
 #Declaration
-export const currency = (
+function currency(
   value: () => (number | undefined),
   currencyCode: string | undefined,
-) => {
+) {
   const localeId = inject(LOCALE_ID);
   return computed(/** ... **/);
-};
+}
 
 #Component
 export const Counter = () => ({
