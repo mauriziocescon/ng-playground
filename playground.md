@@ -54,7 +54,7 @@
 ```
 
 ```ts
-export Generic = component(({
+export const Generic = component(({
   items = input.required<Item[]>(),
 }) => ({
   script: () => {
