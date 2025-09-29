@@ -3,11 +3,11 @@
 
 Points:
 1. building blocks as functions:
-    - `component`: a treble `script` / `template` / `style`,
-    - `directive`: a `script` that can change the appearance or behavior of DOM elements,
-    - `derivation`: a `script` for creating computeds in templates depending on DI,
-    - `fragment`: a way to capture some markup in the form of a function,
     - `**.ng` files,
+    - `component`: a quad `script` / `template` / `style` / `providers`,
+    - `declaration`: a way to declare vars in templates that depends on DI,
+    - `directive`: a `script` that can change the appearance or behavior of DOM elements,
+    - `fragment`: a way to capture some markup in the form of a function,
 2. ts expressions with `{}`: bindings + text interpolation,
 3. extra bindings for DOM elements: `bind:`, `on:`, `model:`, `class:`, `style:`, `attr:`, `animate:`,
 4. hostless components + ts lexical scoping for templates,
@@ -68,8 +68,9 @@ export const TextSearch = ({
 External template / style files:
 ```ts
 import { input, output } from '@angular/core';
+
 /**
- * Have to import what's used in the template:
+ * Have to import what's used in **.ng.html:
  * @import { Comp } from '...';
  */
 #Component
@@ -98,6 +99,7 @@ export const UserDetailConsumer = () => ({
     function makeAdmin() { /** ... **/ }
   },
   template: `
+    <!-- any #Component can be used directly in the template -->
     <!-- 2way binding for comp: model:name={var} on:nameChange={func} -->
 
     <UserDetail
@@ -119,6 +121,81 @@ export const UserDetail = ({
   makeAdmin = output<void>(),
 }) => ({
   // ...
+});
+```
+
+Lexical scoping: template > `script` > any imported / defined const, func, enum, interface with `#Template` > global scope.
+```ts
+/**
+ * #Template has no effect on Type. It just
+ * makes Type available in the template of any
+ * component of the **.ng file.
+ */
+#Template
+enum Type {
+  Counter = 'counter',
+  Other = 'other',
+}
+
+#Template
+const type = Type.Counter;
+
+#Template
+function counter(value: number) {
+  return `Let's count till ` + value;
+}
+
+#Component
+export const Counter = () => ({
+  template: `
+    @if (type === Type.Counter) {
+      <p>{counter(5)}</p>
+    } @else {
+      <!-- ... -->
+    }`,
+});
+```
+
+## Declarations
+Definition of `@const` variables in the template that depends on DI (creation happens once).
+```ts
+import { signal, computed, inject, LOCALE_ID } from '@angular/core';
+
+#Template
+function counter(value?: number) {
+  const count = signal(value ?? 0);
+  const price = computed(() => 10 * count());
+
+  return {
+    value: count.asReadonly(),
+    price,
+    decrease: () => count.update(c => c - 1),
+    increment: () => count. update(c => c + 1),
+  };
+}
+
+#Declaration
+export const currency = (
+  value: () => (number | undefined),
+  currencyCode: string | undefined,
+) => {
+  const localeId = inject(LOCALE_ID);
+  return computed(/** ... **/);
+};
+
+#Component
+export const Counter = () => ({
+  template: `
+    @const count = counter(0);
+
+    <!-- requires @ -->
+    @const price = @currency(count.value, 'EUR');
+
+    <h1>Counter</h1>
+    <div>Value: {count.value()}</div>
+    <div>Price: {price()}</div>
+    <button on:click={() => count.decrease()}> - </button>
+    <button on:click={() => count.increase()}> + </button>`,
 });
 ```
 
@@ -174,51 +251,6 @@ export const tooltip = ({
     return { /** ... **/ };
   },
 });
-```
-
-## Declarations
-Declaratively transforms data within templates:
-```ts
-import { input, signal } from '@angular/core';
-import { isBestSeller, customEqual, currency, half } from '@mylib/derivations';
-
-interface Item { /** ... **/ }
-
-#Component
-export const Items = ({
-  items = input.required<Item[]>(),
-}) => ({
-  script: () => {
-    const bestSellers = computed(() => items().filter(i => isBestSeller(i)));
-  },
-  template: `
-    @for (item of bestSellers(); track item.id) {
-      @let memoItem = @customEqual(() => item);
-
-      @if (memoItem().discount) {
-        @let price = @currency(@half(() => memoItem().price), () => 'EUR');
-        <div>Price: {price()}</div>
-      } @else {
-        @let price = @currency(() => memoItem().price, () => 'EUR');
-        <div>Price: {price()}</div>
-      }
-    }
-
-    <button on:click={() => items.set([])}>Reset</button>`,
-});
-
-// -- currency in @mylib/derivations --------------------
-import { computed, inject, LOCALE_ID } from '@angular/core';
-
-#Declaration
-export const currency = (
-  value: () => (number | string | undefined),
-  currencyCode: (() => string) | undefined,
-) => {
-  const localeId = inject(LOCALE_ID);
-
-  return computed( /** ... **/ );
-};
 ```
 
 ## Inputs
