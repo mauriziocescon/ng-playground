@@ -6,7 +6,7 @@ Points:
     - `**.ng` files with lightweight ngc annotation,
     - `component`: a quad `providers` / `script` / `template` / `style`,
     - `declaration`: a way to declare vars in templates that depends on DI,
-    - `directive`: a `script` that can change the appearance or behavior of DOM elements,
+    - `directive`: a `script` that can change the appearance or behaviour of DOM elements,
     - `fragment`: a way to capture some markup in the form of a function,
 2. hostless components + ts lexical scoping for templates,
 3. ts expressions with `{}`: bindings + text interpolation,
@@ -27,7 +27,7 @@ export const TextSearch = ({
   /**
    * value / valueChange are always created
    * for interoperability
-   * (no real "props decostruction")
+   * (no real "props deconstruction")
    *
    * by the time script is called,
    * inputs are populated with parent data
@@ -293,7 +293,7 @@ Fragments are very similar to [`svelte snippets`](https://svelte.dev/docs/svelte
 
 Directives follows very similar rules as [`svelte attachments`](https://svelte.dev/docs/svelte/@attach).
 
-Fallthrough attributes are inspired by the same concept in [`vue`](https://vuejs.org/guide/components/attrs.html) and covers the usual react `spread props` need. At the moment, inputs are created (then syncronised) any time a component / directive is created rather than derived from already existing signals (solid / svelte). This is great for interoperability, but it implies there isn't any props object to spread. Note the examples below are simplified.
+Fallthrough attributes are inspired by the same concept in [`vue`](https://vuejs.org/guide/components/attrs.html) and covers the usual react `spread props` need. At the moment, inputs are created (then syncronized) any time a component / directive is created rather than derived from already existing signals (solid / svelte). This is great for interoperability, but it implies there isn't any props object to spread. Note the examples below are simplified.
 
 Implicit children fragment (where + when) and binding context:
 ```ts
