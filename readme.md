@@ -340,10 +340,8 @@ export const Menu = ({
 #Component
 export const MenuItem = ({
   children = input.required<Fragment<void>>(),
-}) => ({
-  template: `
-    <Render fragment={children()} />`,
-});
+}) => `
+  <Render fragment={children()} />`;
 ```
 
 Customising components:
@@ -374,11 +372,10 @@ import { Render } from '@angular/common';
 export const Menu = ({
   items = input.required<{ id: string, desc: string }[]>(),
   menuItem = input.required<Fragment<[{ id: string, desc: string }]>>(),
-}) => ({
-  template: `
-    <h1> Total items: {items().length} </h1>
+}) => `
+  <h1> Total items: {items().length} </h1>
 
-    @for (item of items(); track item.id) {
+  @for (item of items(); track item.id) {
       <Render fragment={menuItem()} params={[item]} />
     }`,
 });
@@ -418,14 +415,12 @@ export const Button = ({
   children = input.required<Fragment<void>>(),
   disabled = input<boolean>(false),
   click = output<void>(),
-}) => ({
-  template: `
-    <!-- @** => fallthrough directives (ripple / tooltip) from the consumer -->
+}) => `
+  <!-- @** => fallthrough directives (ripple / tooltip) from the consumer -->
 
-    <button @** disabled={disabled()} on:click={() => click.emit()}>
-      <Render fragment={children()} />
-    </button>`,
-});
+  <button @** disabled={disabled()} on:click={() => click.emit()}>
+    <Render fragment={children()} />
+  </button>`;
 ```
 
 Wrapping components and passing inputs / outputs:
@@ -538,12 +533,10 @@ import { HTMLButtonAttributes } from '@angular/core/elements';
 export const Button = ({
   children = input.required<Fragment<void>>(),
   attrs = fallthroughAttrs<HTMLButtonAttributes>(),
-}) => ({
-  template: `
-    <button @** bind:**={attrs.in} on:**={attrs.on}>
-      <Render fragment={children()} />
-    </button>`,
-});
+}) => `
+  <button @** bind:**={attrs.in} on:**={attrs.on}>
+    <Render fragment={children()} />
+  </button>`;
 ```
 
 Dynamic components:
@@ -637,14 +630,12 @@ import { MatTooltip } from '@angular/material/tooltip';
 export const AdminLinkWithTooltip = ({
   tooltipMessage = input.required<string>(),
   hasPermissions = input.required<boolean>(),
-}) => ({
-  template: `
-    <MatButton:a
-      href="/admin"
-      @MatTooltip(message={tooltipMessage()} disabled={hasPermissions()})>
-        Admin
-    </MatButton:a>`,
-});
+}) => `
+  <MatButton:a
+    href="/admin"
+    @MatTooltip(message={tooltipMessage()} disabled={hasPermissions()})>
+      Admin
+  </MatButton:a>`;
 ```
 
 ## Concepts affected by these changes
