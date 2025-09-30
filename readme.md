@@ -128,8 +128,9 @@ Lexical scoping: template > `script` > any imported / defined const, func, enum,
 ```ts
 /**
  * #temp has no effect on Type.
- * It just makes Type available in any
- * component defined in **.ng files.
+ * It just makes Type available
+ * in any component.template
+ * defined in **.ng files.
  */
 #temp
 enum Type {
