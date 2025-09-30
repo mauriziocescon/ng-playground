@@ -3,7 +3,7 @@
 
 Points:
 1. building blocks as functions:
-    - `**.ng` files,
+    - `**.ng` files with lightway ngc annotation,
     - `component`: a quad `providers` / `script` / `template` / `style`,
     - `declaration`: a way to declare vars in templates that depends on DI,
     - `directive`: a `script` that can change the appearance or behavior of DOM elements,
@@ -124,7 +124,7 @@ export const UserDetail = ({
 });
 ```
 
-Lexical scoping: template > `script` > any imported / defined const, func, enum, interface with `#Template` > global scope.
+Lexical scoping: template > `script` > any imported / defined const, func, enum, interface annotated with `#Template` > global scope.
 ```ts
 /**
  * #Template has no effect on Type. It just
