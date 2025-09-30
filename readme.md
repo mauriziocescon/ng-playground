@@ -3,7 +3,7 @@
 
 Points:
 1. building blocks as functions:
-    - `**.ng` files with lightway ngc annotation,
+    - `**.ng` files with lightweight ngc annotation,
     - `component`: a quad `providers` / `script` / `template` / `style`,
     - `declaration`: a way to declare vars in templates that depends on DI,
     - `directive`: a `script` that can change the appearance or behavior of DOM elements,
