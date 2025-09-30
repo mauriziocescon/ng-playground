@@ -4,7 +4,7 @@
 Points:
 1. building blocks as functions:
     - `**.ng` files,
-    - `component`: a quad `script` / `template` / `style` / `providers`,
+    - `component`: a quad `providers` / `script` / `template` / `style`,
     - `declaration`: a way to declare vars in templates that depends on DI,
     - `directive`: a `script` that can change the appearance or behavior of DOM elements,
     - `fragment`: a way to capture some markup in the form of a function,
