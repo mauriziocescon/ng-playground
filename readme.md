@@ -124,7 +124,7 @@ export const UserDetail = ({
 });
 ```
 
-Lexical scoping: template > `script` > any imported / defined const, func, enum, interface annotated with `#temp` > global scope.
+Lexical scoping: template > `script` > anything (func/const/enum) annotated with `#` > global.
 ```ts
 /**
  * #temp has no effect on Type.
@@ -217,6 +217,7 @@ export const TextSearch = () => ({
   },
   template: `
     <!-- encapsulation of directive data: @directive(...) -->
+    <!-- any #dir can be used directly in the template -->
 
     <input
       type="text"
