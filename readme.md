@@ -125,7 +125,7 @@ export const UserDetail = ({
 ```
 
 ## Declarations
-Lexical scoping: template > `script` > func/const/enum annotated with `#` > global.
+Lexical scoping: template > `script` > func / const / enum annotated with `#` > global.
 ```ts
 /**
  * #temp has no effect on Type.
