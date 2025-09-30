@@ -124,7 +124,8 @@ export const UserDetail = ({
 });
 ```
 
-Lexical scoping: template > `script` > anything (func/const/enum) annotated with `#` > global.
+## Declarations
+Lexical scoping: template > `script` > func/const/enum annotated with `#` > global.
 ```ts
 /**
  * #temp has no effect on Type.
@@ -132,16 +133,16 @@ Lexical scoping: template > `script` > anything (func/const/enum) annotated with
  * in any component.template
  * defined in **.ng files.
  */
-#temp
+#decl
 enum Type {
   Counter = 'counter',
   Other = 'other',
 }
 
-#temp
+#decl
 const type = Type.Counter;
 
-#temp
+#decl
 function counter(value: number) {
   return `Let's count till ` + value;
 }
@@ -159,12 +160,11 @@ export const Counter = () => `
   }`;
 ```
 
-## Declarations
 Definition of `@const` variables in the template that depends on DI (creation happens once).
 ```ts
 import { signal, computed, inject, LOCALE_ID } from '@angular/core';
 
-#temp
+#decl
 function counter(value?: number) {
   const count = signal(value ?? 0);
   const price = computed(() => 10 * count());
