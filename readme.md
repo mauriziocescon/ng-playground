@@ -73,7 +73,7 @@ import { input, output } from '@angular/core';
  * Have to import what's used in **.ng.html:
  * @import { Comp } from '...';
  */
- #comp
+#comp
 export const Checkbox = ({
   value = input.required<boolean>(),
   valueChange = output<boolean>(),
@@ -229,7 +229,7 @@ export const TextSearch = () => ({
 // -- tooltip in @mylib/tooltip --------------------
 import { input, output, inject, Renderer2, ref, afterNextRender } from '@angular/core';
 
-@directive
+#dir
 export const tooltip = ({
   message = input.required<string>(),
   dismiss = output<void>(),
