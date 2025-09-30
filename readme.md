@@ -147,7 +147,7 @@ function counter(value: number) {
 
 /**
  * short version in case of
- * missing script / style / providers
+ * missing providers / script / style
  */
 #Component
 export const Counter = () => `
