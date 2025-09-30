@@ -5,7 +5,7 @@ Points:
 1. building blocks as functions:
     - `**.ng` files with lightweight ngc annotation,
     - `component`: a quad `providers` / `script` / `template` / `style`,
-    - `declaration`: a way to declare vars in templates that can depend on DI,
+    - `declaration`: a way to declare `const` in templates that can depend on DI,
     - `directive`: a `script` that can change the appearance or behaviour of DOM elements,
     - `fragment`: a way to capture some markup in the form of a function,
 2. hostless components + ts lexical scoping for templates,
