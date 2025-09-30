@@ -22,7 +22,7 @@ Component structure and element bindings:
 ```ts
 import { signal, linkedSignal, input, output } from '@angular/core';
 
-@component
+#comp
 export const TextSearch = ({
   /**
    * value / valueChange are always created
@@ -73,7 +73,7 @@ import { input, output } from '@angular/core';
  * Have to import what's used in **.ng.html:
  * @import { Comp } from '...';
  */
-@component
+ #comp
 export const Checkbox = ({
   value = input.required<boolean>(),
   valueChange = output<boolean>(),
@@ -89,7 +89,7 @@ Component bindings:
 import { signal } from '@angular/core';
 import { UserDetail, User } from './user-detail.ng';
 
-@component
+#comp
 export const UserDetailConsumer = () => ({
   script: () => {
     const user = signal<User>(...);
@@ -99,7 +99,7 @@ export const UserDetailConsumer = () => ({
     function makeAdmin() { /** ... **/ }
   },
   template: `
-    <!-- any @component can be used directly in the template -->
+    <!-- any #comp can be used directly in the template -->
     <!-- 2way binding for comp: model:name={var} on:nameChange={func} -->
 
     <UserDetail
@@ -114,7 +114,7 @@ import { input, model, output } from '@angular/core';
 
 export interface User { /** ... **/ }
 
-@component
+#comp
 export const UserDetail = ({
   user = input<User>(),
   email = model<string>(),
@@ -124,23 +124,23 @@ export const UserDetail = ({
 });
 ```
 
-Lexical scoping: template > `script` > any imported / defined const, func, enum, interface annotated with `@template` > global scope.
+Lexical scoping: template > `script` > any imported / defined const, func, enum, interface annotated with `#temp` > global scope.
 ```ts
 /**
- * @template has no effect on Type.
+ * #temp has no effect on Type.
  * It just makes Type available in any
  * component defined in **.ng files.
  */
-@template
+#temp
 enum Type {
   Counter = 'counter',
   Other = 'other',
 }
 
-@template
+#temp
 const type = Type.Counter;
 
-@template
+#temp
 function counter(value: number) {
   return `Let's count till ` + value;
 }
@@ -149,7 +149,7 @@ function counter(value: number) {
  * short version in case of
  * missing providers / script / style
  */
-@component
+#comp
 export const Counter = () => `
   @if (type === Type.Counter) {
     <p>{counter(5)}</p>
@@ -163,7 +163,7 @@ Definition of `@const` variables in the template that depends on DI (creation ha
 ```ts
 import { signal, computed, inject, LOCALE_ID } from '@angular/core';
 
-@template
+#temp
 function counter(value?: number) {
   const count = signal(value ?? 0);
   const price = computed(() => 10 * count());
@@ -176,7 +176,7 @@ function counter(value?: number) {
   };
 }
 
-@declaration
+#decl
 function currency(
   value: () => (number | undefined),
   currencyCode: string | undefined,
@@ -185,7 +185,7 @@ function currency(
   return computed(/** ... **/);
 }
 
-@component
+#comp
 export const Counter = () => `
   @const count = counter(0);
 
@@ -205,7 +205,7 @@ Change the appearance or behavior of DOM elements:
 import { signal } from '@angular/core';
 import { tooltip } from '@mylib/tooltip';
 
-@component
+#comp
 export const TextSearch = () => ({
   script: () => {
     const text = signal('');
@@ -270,7 +270,7 @@ class CounterStore {
   increase() { /** ... **/ }
 }
 
-@component
+#comp
 export const Counter = ({
   c = input.required<number>(),
 }) => ({
@@ -300,7 +300,7 @@ Implicit children fragment (where + when) and binding context:
 import { signal } from '@angular/core';
 import { Menu, MenuItem } from '@mylib/menu';
 
-@component
+#comp
 export const MenuConsumer = () => ({
   script: () => {
     const first = signal('First');
@@ -319,7 +319,7 @@ export const MenuConsumer = () => ({
 import { input, Fragment } from '@angular/core';
 import { Render } from '@angular/common';
 
-@component
+#comp
 export const Menu = ({
   /**
    * children: name reserved to the framework
@@ -337,7 +337,7 @@ export const Menu = ({
     }`,
 });
 
-@component
+#comp
 export const MenuItem = ({
   children = input.required<Fragment<void>>(),
 }) => `
@@ -350,7 +350,7 @@ import { computed } from '@angular/core';
 import { Menu } from '@mylib/menu';
 import { MyMenuItem } from './my-menu-item.ng';
 
-@component
+#comp
 export const MenuConsumer = () => ({
   script: () => {
     const items = computed(() => [{ id: '1', desc: 'First' }, { id: '2', desc: 'Second' }]);
@@ -368,7 +368,7 @@ export const MenuConsumer = () => ({
 import { input, Fragment } from '@angular/core';
 import { Render } from '@angular/common';
 
-@component
+#comp
 export const Menu = ({
   items = input.required<{ id: string, desc: string }[]>(),
   menuItem = input.required<Fragment<[{ id: string, desc: string }]>>(),
@@ -388,7 +388,7 @@ import { Button } from '@mylib/button';
 import { ripple } from '@mylib/ripple';
 import { tooltip } from '@mylib/tooltip';
 
-@component
+#comp
 export const ButtonConsumer = () => ({
   script: () => {
     const tooltipMsg = signal('');
@@ -410,7 +410,7 @@ export const ButtonConsumer = () => ({
 import { input, output } from '@angular/core';
 import { Render } from '@angular/common';
 
-@component
+#comp
 export const Button = ({
   children = input.required<Fragment<void>>(),
   disabled = input<boolean>(false),
@@ -428,7 +428,7 @@ Wrapping components and passing inputs / outputs:
 import { input, computed, fallthroughAttrs } from '@angular/core';
 import { UserDetail, User, UserDetailProps } from './user-detail.ng';
 
-@component
+#comp
 export const UserDetailConsumer = () => ({
   script: () => {
     const user = signal<User>(...);
@@ -451,7 +451,7 @@ export const UserDetailConsumer = () => ({
       on:**={outputs} />`,
 });
 
-@component
+#comp
 export const MyUserDetail = ({
   user = input<User>(),
   /**
@@ -485,7 +485,7 @@ export interface User { /** ... **/ }
 
 export type UserDetailProps = Props<UserDetail>;
 
-@component
+#comp
 export const UserDetail = ({
   user = input<User>(),
   email = model<string>(),
@@ -502,7 +502,7 @@ import { Button } from '@mylib/button';
 import { ripple } from '@mylib/ripple';
 import { tooltip } from '@mylib/tooltip';
 
-@component
+#comp
 export const ButtonConsumer = () => ({
   script: () => {
     const tooltipMsg = signal('');
@@ -529,7 +529,7 @@ export const ButtonConsumer = () => ({
 import { input, fallthroughAttrs } from '@angular/core';
 import { HTMLButtonAttributes } from '@angular/core/elements';
 
-@component
+#comp
 export const Button = ({
   children = input.required<Fragment<void>>(),
   attrs = fallthroughAttrs<HTMLButtonAttributes>(),
@@ -546,7 +546,7 @@ import { Dynamic } from '@angular/common';
 import { AComp } from './a-comp.ng';
 import { BComp } from './b-comp.ng';
 
-@component
+#comp
 export const Something = () => ({
   script: () => {
     const condition = signal<boolean>(/** ... **/);
@@ -566,7 +566,7 @@ Retrieving references of elements / components / directives (runtime):
 import { ref, Signal, signal, afterNextRender } from '@angular/core';
 import { tooltip } from '@mylib/tooltip';
 
-@component
+#comp
 const Child = () => ({
   script: () => {
     const text = signal('');
@@ -580,7 +580,7 @@ const Child = () => ({
   template: `<!-- ... -->`,
 });
 
-@component
+#comp
 export const Parent = () => ({
   script: () => {
     // readonly signal
@@ -626,7 +626,7 @@ import { input } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 
-@component
+#comp
 export const AdminLinkWithTooltip = ({
   tooltipMessage = input.required<string>(),
   hasPermissions = input.required<boolean>(),
