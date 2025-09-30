@@ -127,9 +127,9 @@ export const UserDetail = ({
 Lexical scoping: template > `script` > any imported / defined const, func, enum, interface annotated with `#Template` > global scope.
 ```ts
 /**
- * #Template has no effect on Type. It just
- * makes Type available in the template of any
- * component of the **.ng file.
+ * #Template has no effect on Type.
+ * It just makes Type available in any
+ * component defined in **.ng files.
  */
 #Template
 enum Type {
