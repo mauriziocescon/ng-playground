@@ -125,7 +125,7 @@ export const UserDetail = ({
 ```
 
 ## Declarations
-Lexical scoping: template > `script` > func / const / enum annotated with `#` > global.
+Lexical scoping: template > `script` > func / const / enum / interface annotated with `#` > global.
 ```ts
 /**
  * #decl has no effect on Type.
@@ -348,19 +348,25 @@ export const MenuItem = ({
 
 Customising components:
 ```ts
-import { computed } from '@angular/core';
+import { signal } from '@angular/core';
 import { Menu } from '@mylib/menu';
 import { MyMenuItem } from './my-menu-item.ng';
+
+#decl
+export interface Item {
+  id: string;
+  desc: string;
+}
 
 #comp
 export const MenuConsumer = () => ({
   script: () => {
-    const items = computed(() => [{ id: '1', desc: 'First' }, { id: '2', desc: 'Second' }]);
+    const items = signal<Item[]>(/** ... **/);
   },
   template: `
     <!-- menuItem inside <Menu></Menu> automatically becomes an input -->
 
-    @fragment menuItem(item: {id: string, desc: string}) {
+    @fragment menuItem(item: Item) {
       <MyMenuItem>{item.desc}</MyMenuItem>
     }
     <Menu items={items()} menuItem={menuItem} />`,

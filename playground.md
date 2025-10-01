@@ -54,7 +54,16 @@
 ```
 
 ```ts
-export const Generic = component(({
+#decl
+export interface Item {
+  id: string;
+  imgUrl: string;
+  title: string;
+  description: string;
+}
+
+#comp
+export const Generic = ({
   items = input.required<Item[]>(),
 }) => ({
   script: () => {
@@ -89,5 +98,5 @@ export const Generic = component(({
         </Card>
       }
     </List>`,
-}));
+});
 ```
