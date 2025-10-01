@@ -43,7 +43,7 @@ export const TextSearch = ({
       valueChange.emit(text());
     }
 
-    // exposed as public interface
+    // available for ref
     return {
       text: text.asReadonly(),
     };
@@ -249,7 +249,7 @@ export const tooltip = ({
       // something with elRef
     });
 
-    // exposed as public
+    // available for ref
     return { /** ... **/ };
   },
 });
@@ -580,7 +580,7 @@ const Child = () => ({
     const text = signal('');
     // ...
 
-    // exposed as public
+    // available for ref
     return {
       text: text.asReadonly(),
     };
