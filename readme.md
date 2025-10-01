@@ -593,6 +593,7 @@ export const Parent = () => ({
     // 2. templates only lookup: cannot retrieve providers
     //    defined in the Child comp tree
     const child = ref('child');
+
     // using what's returned by tooltip.script
     const tlp = ref<{ toggle: () => void }>('tlp');
     const many = signal<{ text: Signal<string> }[]>([]);
