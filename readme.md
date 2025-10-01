@@ -3,7 +3,7 @@
 
 Points:
 1. building blocks as functions:
-    - `**.ng` files with lightweight annotation (`#comp`, `#dir`, `#decl`),
+    - `**.ng` files (typescript superset) with lightweight annotation (`#comp`, `#dir`, `#decl`),
     - `component`: a quad `providers` / `script` / `template` / `style`,
     - `declaration`: a way to declare `const` variables in templates that can depend on DI,
     - `directive`: a `script` that can change the appearance or behaviour of DOM elements,
