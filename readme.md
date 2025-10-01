@@ -42,11 +42,6 @@ export const TextSearch = ({
     function textChange() {
       valueChange.emit(text());
     }
-
-    // available for ref
-    return {
-      text: text.asReadonly(),
-    };
   },
   template: `
     <!-- bind: can be omitted (default) while on: is mandatory -->
@@ -248,9 +243,6 @@ export const tooltip = ({
     afterNextRender(() => {
       // something with elRef
     });
-
-    // available for ref
-    return { /** ... **/ };
   },
 });
 ```
@@ -580,7 +572,9 @@ const Child = () => ({
     const text = signal('');
     // ...
 
-    // available for ref
+    // can return an object that is
+    // any ref can use to interact with
+    // the component
     return {
       text: text.asReadonly(),
     };
@@ -598,6 +592,7 @@ export const Parent = () => ({
     // 2. templates only lookup: cannot retrieve providers
     //    defined in the Child comp tree
     const child = ref('child');
+    // using what's returned by tooltip.script
     const tlp = ref<{ toggle: () => void }>('tlp');
     const many = signal<{ text: Signal<string> }[]>([]);
 
