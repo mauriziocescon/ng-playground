@@ -3,9 +3,9 @@
 
 Points:
 1. building blocks as functions:
-    - `**.ng` files with lightweight ngc annotation,
+    - `**.ng` files with lightweight annotation (`#comp`, `#dir`, `#decl`),
     - `component`: a quad `providers` / `script` / `template` / `style`,
-    - `declaration`: a way to declare `const` in templates that can depend on DI,
+    - `declaration`: a way to declare `const` variables in templates that can depend on DI,
     - `directive`: a `script` that can change the appearance or behaviour of DOM elements,
     - `fragment`: a way to capture some markup in the form of a function,
 2. hostless components + ts lexical scoping for templates,
@@ -160,7 +160,7 @@ export const Counter = () => `
   }`;
 ```
 
-Definition of `@const` variables in the template that can depend on DI (creation happens once).
+Definition of `@const` variables in the template (creation happens once) that can run in an injection context.
 ```ts
 import { signal, computed, inject, LOCALE_ID } from '@angular/core';
 
