@@ -572,9 +572,10 @@ const Child = () => ({
     const text = signal('');
     // ...
 
-    // can return an object that is
-    // any ref can use to interact with
-    // the component
+    // can return an object that
+    // any ref can use to interact
+    // with the component
+    // (public interface)
     return {
       text: text.asReadonly(),
     };
