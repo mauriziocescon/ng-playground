@@ -185,7 +185,7 @@ function currency(
 export const Counter = () => `
   @const count = counter(0);
 
-  <!-- requires @ -->
+  <!-- injection context => requires @ -->
   @const price = @currency(count.value, 'EUR');
 
   <h1>Counter</h1>
