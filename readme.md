@@ -376,8 +376,8 @@ export const Menu = ({
   <h1> Total items: {items().length} </h1>
 
   @for (item of items(); track item.id) {
-      <Render fragment={menuItem()} params={[item]} />
-    }`,
+    <Render fragment={menuItem()} params={[item]} />
+  }`,
 });
 ```
 
