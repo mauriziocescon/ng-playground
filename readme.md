@@ -644,12 +644,14 @@ export const AdminLinkWithTooltip = ({
 ```
 
 ## Concepts affected by these changes
+- `new annotation`: custom (rather than decorators), but more powerful and capable of addressing lexical scope issues without `eslint` (cannot add any function to a template `<div>{effect(() => ...)}</div>`),
 - `ng-content`: replaced by `fragments`,
 - `ng-template` (`let-*` shorthands + `ngTemplateGuard_*`): likely replaced by `fragments`,
 - structural directives: likely replaced by `fragments`,
 - `Ng**Outlet` + `ng-container`: likely replaced by the new things,
-- `pipes`: replaced by derivations,
+- `pipes`: replaced by declarations,
 - `event delegation`: not consider `https://github.com/angular/angular/issues/15905`,
+- `@let`: likely obsolete and not needed anymore,
 - `directives` attached to the host (components): not possible anymore, but you can pass directives as inputs and use `@**` (or equivalent syntax),
 - `queries`: if `ref` makes sense, likely not needed anymore; if they stay, it would be nice to improve the retrieval of data: no way to `read` providers from `injector` tree,
 - multiple `directives` applied to the same element: as for the previous point, it would be nice to avoid directives injection when applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy)); instead, it should be an explicit operation with a `ref` passed as an `input`,
