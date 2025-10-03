@@ -3,7 +3,7 @@
 
 Points:
 1. building blocks as functions:
-    - `**.ng` files (typescript superset) with lightweight annotation (`#comp`, `#dir`, `#decl`),
+    - `**.ng` files (typescript superset) with lightweight annotation (`#comp`, `#dir`),
     - `component`: a quad `providers` / `script` / `template` / `style`,
     - `declaration`: a way to declare `const` variables in templates that can depend on DI,
     - `directive`: a `script` that can change the appearance or behaviour of DOM elements,
@@ -120,24 +120,15 @@ export const UserDetail = ({
 ```
 
 ## Declarations
-Lexical scoping: template => `script` => func / const / enum / interface annotated with `#` => global.
+Lexical scoping: template => `script` => func / const / enum / interface imported in the file => global.
 ```ts
-/**
- * #decl has no effect on Type.
- * It just makes Type available
- * in any component.template
- * defined in **.ng files.
- */
-#decl
 enum Type {
   Counter = 'counter',
   Other = 'other',
 }
 
-#decl
 const type = Type.Counter;
 
-#decl
 function counter(value: number) {
   return `Let's count till ` + value;
 }
@@ -159,7 +150,6 @@ Definition of `@const` variables in the template (creation happens once) that ca
 ```ts
 import { signal, computed, inject, LOCALE_ID } from '@angular/core';
 
-#decl
 function counter(value?: number) {
   const count = signal(value ?? 0);
   const price = computed(() => 10 * count());
@@ -172,7 +162,6 @@ function counter(value?: number) {
   };
 }
 
-#decl
 function currency(
   value: () => (number | undefined),
   currencyCode: string | undefined,
@@ -344,7 +333,6 @@ import { signal } from '@angular/core';
 import { Menu } from '@mylib/menu';
 import { MyMenuItem } from './my-menu-item.ng';
 
-#decl
 export interface Item {
   id: string;
   desc: string;

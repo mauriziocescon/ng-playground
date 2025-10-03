@@ -54,7 +54,6 @@
 ```
 
 ```ts
-#decl
 export interface Item {
   id: string;
   imgUrl: string;
