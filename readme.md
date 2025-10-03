@@ -208,8 +208,7 @@ export #comp TextSearch = () => ({
 // -- tooltip in @mylib/tooltip --------------------
 import { input, output, inject, Renderer2, ref, afterNextRender } from '@angular/core';
 
-#dir
-export const tooltip = ({
+export #dir tooltip = ({
   message = input.required<string>(),
   dismiss = output<void>(),
   /**
