@@ -18,8 +18,7 @@ class CounterStore {
 /**
  * provide function for types safety
  */
-#comp
-export const Counter = ({
+export #comp Counter = ({
   c = input<number>() as const,
 }) => ({
   providers: [
@@ -75,8 +74,7 @@ const rootToken = provideForRoot('desc', {
 /**
  * provide compToken at Counter level using the default factory
  */
-#comp
-export const Counter = ({
+export #comp Counter = ({
   initialValue = input<number>() as const,
 }) => ({
   providers: [

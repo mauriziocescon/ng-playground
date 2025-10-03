@@ -22,8 +22,7 @@ Component structure and element bindings:
 ```ts
 import { signal, linkedSignal, input, output } from '@angular/core';
 
-#comp
-export const TextSearch = ({
+export #comp TextSearch = ({
   /**
    * value / valueChange are always created
    * for interoperability
@@ -68,8 +67,7 @@ import { input, output } from '@angular/core';
  * Have to import what's used in **.ng.html:
  * @import { Comp } from '...';
  */
-#comp
-export const Checkbox = ({
+export #comp Checkbox = ({
   value = input.required<boolean>(),
   valueChange = output<boolean>(),
 }) => ({
@@ -84,8 +82,7 @@ Component bindings:
 import { signal } from '@angular/core';
 import { UserDetail, User } from './user-detail.ng';
 
-#comp
-export const UserDetailConsumer = () => ({
+export #comp UserDetailConsumer = () => ({
   script: () => {
     const user = signal<User>(...);
     const email = signal<string>(...);
@@ -109,8 +106,7 @@ import { input, model, output } from '@angular/core';
 
 export interface User { /** ... **/ }
 
-#comp
-export const UserDetail = ({
+export #comp UserDetail = ({
   user = input<User>(),
   email = model<string>(),
   makeAdmin = output<void>(),
@@ -137,8 +133,7 @@ function counter(value: number) {
  * short version in case of
  * missing providers / script / style
  */
-#comp
-export const Counter = () => `
+export #comp Counter = () => `
   @if (type === Type.Counter) {
     <p>{counter(5)}</p>
   } @else {
@@ -170,8 +165,7 @@ function currency(
   return computed(/** ... **/);
 }
 
-#comp
-export const Counter = () => `
+export #comp Counter = () => `
   @const count = counter(0);
 
   <!-- injection context => requires @ -->
@@ -190,8 +184,7 @@ Change the appearance or behavior of DOM elements:
 import { signal } from '@angular/core';
 import { tooltip } from '@mylib/tooltip';
 
-#comp
-export const TextSearch = () => ({
+export #comp TextSearch = () => ({
   script: () => {
     const text = signal('');
     const message = signal('Message');
@@ -253,8 +246,7 @@ class CounterStore {
   increase() { /** ... **/ }
 }
 
-#comp
-export const Counter = ({
+export #comp Counter = ({
   c = input.required<number>(),
 }) => ({
   providers: [
@@ -283,8 +275,7 @@ Implicit children fragment (where + when) and binding context:
 import { signal } from '@angular/core';
 import { Menu, MenuItem } from '@mylib/menu';
 
-#comp
-export const MenuConsumer = () => ({
+export #comp MenuConsumer = () => ({
   script: () => {
     const first = signal('First');
     const second = signal('Second');
@@ -302,8 +293,7 @@ export const MenuConsumer = () => ({
 import { input, Fragment } from '@angular/core';
 import { Render } from '@angular/common';
 
-#comp
-export const Menu = ({
+export #comp Menu = ({
   /**
    * children: name reserved to the framework
    */
@@ -320,8 +310,7 @@ export const Menu = ({
     }`,
 });
 
-#comp
-export const MenuItem = ({
+export #comp MenuItem = ({
   children = input.required<Fragment<void>>(),
 }) => `
   <Render fragment={children()} />`;
@@ -338,8 +327,7 @@ export interface Item {
   desc: string;
 }
 
-#comp
-export const MenuConsumer = () => ({
+export #comp MenuConsumer = () => ({
   script: () => {
     const items = signal<Item[]>(/** ... **/);
   },
@@ -356,8 +344,7 @@ export const MenuConsumer = () => ({
 import { input, Fragment } from '@angular/core';
 import { Render } from '@angular/common';
 
-#comp
-export const Menu = ({
+export #comp Menu = ({
   items = input.required<{ id: string, desc: string }[]>(),
   menuItem = input.required<Fragment<[{ id: string, desc: string }]>>(),
 }) => `
@@ -376,8 +363,7 @@ import { Button } from '@mylib/button';
 import { ripple } from '@mylib/ripple';
 import { tooltip } from '@mylib/tooltip';
 
-#comp
-export const ButtonConsumer = () => ({
+export #comp ButtonConsumer = () => ({
   script: () => {
     const tooltipMsg = signal('');
     const valid = signal(false);
@@ -398,8 +384,7 @@ export const ButtonConsumer = () => ({
 import { input, output } from '@angular/core';
 import { Render } from '@angular/common';
 
-#comp
-export const Button = ({
+export #comp Button = ({
   children = input.required<Fragment<void>>(),
   disabled = input<boolean>(false),
   click = output<void>(),
@@ -416,8 +401,7 @@ Wrapping components and passing inputs / outputs:
 import { input, computed, fallthroughAttrs } from '@angular/core';
 import { UserDetail, User, UserDetailProps } from './user-detail.ng';
 
-#comp
-export const UserDetailConsumer = () => ({
+export #comp UserDetailConsumer = () => ({
   script: () => {
     const user = signal<User>(...);
     const email = signal<string>(...);
@@ -439,8 +423,7 @@ export const UserDetailConsumer = () => ({
       on:**={outputs} />`,
 });
 
-#comp
-export const MyUserDetail = ({
+export #comp MyUserDetail = ({
   user = input<User>(),
   /**
    * whatever is not matching inputs / outputs
@@ -473,8 +456,7 @@ export interface User { /** ... **/ }
 
 export type UserDetailProps = Props<UserDetail>;
 
-#comp
-export const UserDetail = ({
+export #comp UserDetail = ({
   user = input<User>(),
   email = model<string>(),
   makeAdmin = output<void>(),
@@ -490,8 +472,7 @@ import { Button } from '@mylib/button';
 import { ripple } from '@mylib/ripple';
 import { tooltip } from '@mylib/tooltip';
 
-#comp
-export const ButtonConsumer = () => ({
+export #comp ButtonConsumer = () => ({
   script: () => {
     const tooltipMsg = signal('');
     const valid = signal(false);
@@ -517,8 +498,7 @@ export const ButtonConsumer = () => ({
 import { input, fallthroughAttrs } from '@angular/core';
 import { HTMLButtonAttributes } from '@angular/core/elements';
 
-#comp
-export const Button = ({
+export #comp Button = ({
   children = input.required<Fragment<void>>(),
   attrs = fallthroughAttrs<HTMLButtonAttributes>(),
 }) => `
@@ -534,8 +514,7 @@ import { Dynamic } from '@angular/common';
 import { AComp } from './a-comp.ng';
 import { BComp } from './b-comp.ng';
 
-#comp
-export const Something = () => ({
+export #comp Something = () => ({
   script: () => {
     const condition = signal<boolean>(/** ... **/);
     const comp = computed(() => condition() ? AComp : BComp);
@@ -554,8 +533,7 @@ Retrieving references of elements / components / directives (runtime):
 import { ref, Signal, signal, afterNextRender } from '@angular/core';
 import { tooltip } from '@mylib/tooltip';
 
-#comp
-const Child = () => ({
+#comp Child = () => ({
   script: () => {
     const text = signal('');
     // ...
@@ -571,8 +549,7 @@ const Child = () => ({
   template: `<!-- ... -->`,
 });
 
-#comp
-export const Parent = () => ({
+export #comp Parent = () => ({
   script: () => {
     // readonly signal
     const el = ref<HTMLDivElement>('el');
@@ -619,8 +596,7 @@ import { input } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 
-#comp
-export const AdminLinkWithTooltip = ({
+export #comp AdminLinkWithTooltip = ({
   tooltipMessage = input.required<string>(),
   hasPermissions = input.required<boolean>(),
 }) => `

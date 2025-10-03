@@ -61,8 +61,7 @@ export interface Item {
   description: string;
 }
 
-#comp
-export const Generic = ({
+export #comp Generic = ({
   items = input.required<Item[]>(),
 }) => ({
   script: () => {
