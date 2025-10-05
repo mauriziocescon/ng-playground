@@ -54,7 +54,8 @@
 ```
 
 ```ts
-import { input, provide, inject, Comp } from '@angular/core';
+import { input, provide, inject, Comp, Render } from '@angular/core';
+import { Card, HStack, Img, VStack, Title, Description } from '@lib/card';
 
 export interface Item {
   id: string;
@@ -115,7 +116,7 @@ export #comp List = ({
 }) => {
   <>
     @for (i of items(); track item.id) {
-      <Render fragment={item()} inputs={[i]} />
+      <Render component={Item()} inputs={{i}} />
     }
   </>
 };
