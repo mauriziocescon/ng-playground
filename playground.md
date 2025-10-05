@@ -54,7 +54,7 @@
 ```
 
 ```ts
-import { input, provide, inject } from '@angular/core';
+import { input, provide, inject, Fragment } from '@angular/core';
 
 export interface Item {
   id: string;
@@ -67,9 +67,7 @@ class ItemsStore {
   /** ... **/
 }
 
-export #comp Generic = ({
-  items = input.required<Item[]>(),
-}) => ({
+export #comp ItemsPage = () => ({
   providers: [
     provide({ token: ItemsStore, useFactory: () => new ItemsStore() }),
   ],
@@ -81,20 +79,7 @@ export #comp Generic = ({
     }
   },
   template: `
-    @fragment card(item: Item) {
-      <Card on:click={goTo(item)}>
-        <HStack width={100}>
-          <Img url={item.imgUrl} />
-          <VStack>
-            <Title title={item.title} />
-            <Description description={item.description} />
-          </VStack>
-        </HStack>
-      </Card>
-    }
-    <List items={items()} item={card} />
-
-    <List items={items()}>
+    <List items={store.items()}>
       @fragment item(i: Item) {
         <Card on:click={goTo(i)}>
           <HStack width={100}>
@@ -108,5 +93,14 @@ export #comp Generic = ({
       }
     </List>`,
     style: ``,
+});
+
+export #comp List = ({
+  items = input.required<Item[]>(),
+  item = input.required<Fragment<[Item]>>(),
+}) => ({
+  template: `
+    @for (i of items(); track item.id) {
+      <Render fragment={item()} inputs={[i]} />`,
 });
 ```
