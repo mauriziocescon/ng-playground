@@ -69,9 +69,9 @@ class ItemsStore {
 }
 
 export #comp ItemsPage = () => {
-  <providers>
+  <script providers>
     provide({ token: ItemsStore, useFactory: () => new ItemsStore() });
-  </providers>
+  </script>
 
   <script>
     const store = inject(ItemsStore);
@@ -85,7 +85,7 @@ export #comp ItemsPage = () => {
     };
   </script>
 
-  <template>
+  <!ng>
     <List items={store.items()}>
       #comp Item = ({
         i = input.required<Item>(),
@@ -103,10 +103,10 @@ export #comp ItemsPage = () => {
         </>
       };
     </List>
-  </template>
+  </ng>
 
   <style>
-    /** **/
+    @import url("./items-page.css");
   </style>
 };
 
@@ -114,10 +114,10 @@ export #comp List = ({
   items = input.required<Item[]>(),
   Item = input.required<Comp<{i: InputSignal<Item>}>>(),
 }) => {
-  <template>
+  <>
     @for (i of items(); track item.id) {
       <Render component={Item()} inputs={{i}} />
     }
-  </template>
+  </>
 };
 ```
