@@ -339,9 +339,12 @@ export const MenuConsumer = component(() => ({
     <!-- menuItem inside <Menu></Menu> automatically becomes an input -->
 
     @fragment menuItem(item: Item) {
-      <MyMenuItem>{item.desc}</MyMenuItem>
+      <div class="my-menu-item">
+        <MyMenuItem>{item.desc}</MyMenuItem>
+      </div>
     }
     <Menu items={items()} menuItem={menuItem} />`,
+  styleUrl: './menu-consumer.css',
 }));
 
 // -- Menu in @mylib/menu --------------------------
