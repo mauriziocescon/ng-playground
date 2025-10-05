@@ -114,10 +114,10 @@ export #comp List = ({
   items = input.required<Item[]>(),
   Item = input.required<Comp<{i: InputSignal<Item>}>>(),
 }) => {
-  <>
+  <template>
     @for (i of items(); track item.id) {
       <Render component={Item()} inputs={{i}} />
     }
-  </>
+  </template>
 };
 ```
