@@ -67,40 +67,53 @@ class ItemsStore {
   /** ... **/
 }
 
-export #comp ItemsPage = () => ({
-  providers: [
-    provide({ token: ItemsStore, useFactory: () => new ItemsStore() }),
-  ],
-  script: () => {
+export #comp ItemsPage = () => {
+  <providers>
+    provide({ token: ItemsStore, useFactory: () => new ItemsStore() });
+  </providers>
+  <script>
     const store = inject(ItemsStore);
 
     function goTo(item: Item) {
       // ..
     }
-  },
-  template: `
+
+    export {
+      goTo,
+    };
+  </script>
+  <>
     <List items={store.items()}>
-      @fragment item(i: Item) {
-        <Card on:click={goTo(i)}>
-          <HStack width={100}>
-            <Img url={i.imgUrl} />
-            <VStack>
-              <Title title={i.title} />
-              <Description description={i.description} />
-            </VStack>
-          </HStack>
-        </Card>
-      }
-    </List>`,
-    style: ``,
-});
+      #comp Item = ({
+        i = input.required<Item>(),
+      }) => {
+        <>
+          <Card on:click={goTo(i)}>
+            <HStack width={100}>
+              <Img url={i.imgUrl} />
+              <VStack>
+                <Title title={i.title} />
+                <Description description={i.description} />
+              </VStack>
+            </HStack>
+          </Card>
+        </>
+      };
+    </List>
+  </>
+  <style>
+    /** **/
+  </style>
+};
 
 export #comp List = ({
   items = input.required<Item[]>(),
   item = input.required<Fragment<[Item]>>(),
-}) => ({
-  template: `
+}) => {
+  <>
     @for (i of items(); track item.id) {
-      <Render fragment={item()} inputs={[i]} />`,
-});
+      <Render fragment={item()} inputs={[i]} />
+    }
+  </>
+};
 ```
