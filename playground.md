@@ -106,7 +106,7 @@ export #comp ItemsPage = () => {
   </ng>
 
   <style>
-    @import url("./items-page.css");
+    @import url('./items-page.css');
   </style>
 };
 
