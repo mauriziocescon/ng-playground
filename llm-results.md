@@ -1,17 +1,17 @@
 # LLM Results
-Prompt (gemini 2.5 flash): 
+Prompt (gemini 2.5 flash):
 
 >Hey!
 >in readme.md and di.md, I drafted a possible evolution of the angular syntax in templates and proposed a new authoring format.
 >Considering such files and the current angular best practices, could you please create a todo-list component following the style?
 >Thanks
 
-Result: 
+Result:
 
 >Here are the `TodoItem` and `TodoList` components, designed to follow the Angular syntax evolution and authoring format proposed in and . `readme.md``di.md`
 >First, the `TodoItem` component, which represents a single item in the to-do list:
 ```ts
-import { input, output } from '@angular/core';
+import { component, input, output } from '@angular/core';
 
 export interface Todo {
   id: string;
@@ -19,8 +19,7 @@ export interface Todo {
   completed: boolean;
 }
 
-#comp
-export const TodoItem = ({
+export const TodoItem = component(({
   todo = input.required<Todo>(),
   toggle = output<string>(), // Emits id when toggled
   remove = output<string>(), // Emits id when removed
@@ -39,7 +38,7 @@ export const TodoItem = ({
     <div class:completed={todo().completed}>
       <input
         type="checkbox"
-        bind:checked={todo().completed}
+        model:checked={todo().completed}
         on:change={onToggle} />
       <span>{todo().text}</span>
       <button on:click={onRemove}>X</button>
@@ -73,12 +72,12 @@ export const TodoItem = ({
       background-color: #d32f2f;
     }
   `,
-});
+}));
 ```
 >Next, the `TodoList` component, which manages the collection of to-do items and their interactions:
 ```ts
-import { signal, computed } from '@angular/core';
-import { TodoItem, Todo } from './todo-item.ng'; // Assuming todo-item.ng will be in the same directory.
+import { component, signal, computed } from '@angular/core';
+import { TodoItem, Todo } from './todo-item.ng.ts'; // Assuming todo-item.ng.ts will be in the same directory.
 
 // For demonstration, let's create a simple ID generator
 let nextId = 0;
@@ -86,8 +85,7 @@ function generateId(): string {
   return (nextId++).toString();
 }
 
-#comp
-export const TodoList = () => ({
+export const TodoList = component(() => ({
   script: () => {
     const todos = signal<Todo[]>([]);
     const newTodoText = signal('');
@@ -205,5 +203,5 @@ export const TodoList = () => ({
       color: #666;
     }
   `,
-});
+}));
 ```
