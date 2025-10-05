@@ -90,7 +90,7 @@ export #comp ItemsPage = () => {
       #comp Item = ({
         i = input.required<Item>(),
       }) => {
-        <>
+        <!ng>
           <Card on:click={goTo(i)}>
             <HStack width={100}>
               <Img url={i.imgUrl} />
@@ -100,7 +100,7 @@ export #comp ItemsPage = () => {
               </VStack>
             </HStack>
           </Card>
-        </>
+        </ng>
       };
     </List>
   </ng>
@@ -114,10 +114,10 @@ export #comp List = ({
   items = input.required<Item[]>(),
   Item = input.required<Comp<{i: InputSignal<Item>}>>(),
 }) => {
-  <>
+  <!ng>
     @for (i of items(); track item.id) {
       <Render component={Item()} inputs={{i}} />
     }
-  </>
+  </ng>
 };
 ```
