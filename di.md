@@ -1,7 +1,7 @@
 ## Inputs
 Inputs lifted up for providers init:
 ```ts
-import { linkedSignal, input, WritableSignal, provide, inject } from '@angular/core';
+import { component, linkedSignal, input, WritableSignal, provide, inject } from '@angular/core';
 
 class CounterStore {
   private readonly counter: WritableSignal<number>;
@@ -18,7 +18,7 @@ class CounterStore {
 /**
  * provide function for types safety
  */
-export #comp Counter = ({
+export const Counter = component(({
   c = input<number>() as const,
 }) => ({
   providers: [
@@ -32,13 +32,13 @@ export #comp Counter = ({
     <div>Value: {store.value()}</div>
     <button on:click={() => store.decrease()}> - </button>
     <button on:click={() => store.increase()}> + </button>`,
-});
+}));
 ```
 
 ## DI enhancements
 Better ergonomics around types / tokens:
 ```ts
-import { inject, provide, provideForRoot, injectionToken, input } from '@angular/core';
+import { component, inject, provide, provideForRoot, injectionToken, input } from '@angular/core';
 
 /**
  * define a default implementation (no need for an explicit interface)
@@ -74,7 +74,7 @@ const rootToken = provideForRoot('desc', {
 /**
  * provide compToken at Counter level using the default factory
  */
-export #comp Counter = ({
+export const Counter = component(({
   initialValue = input<number>() as const,
 }) => ({
   providers: [
@@ -86,5 +86,5 @@ export #comp Counter = ({
     // ...
   },
   // ...
-});
+}));
 ```
