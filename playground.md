@@ -71,6 +71,7 @@ export #comp ItemsPage = () => {
   <providers>
     provide({ token: ItemsStore, useFactory: () => new ItemsStore() });
   </providers>
+
   <script>
     const store = inject(ItemsStore);
 
@@ -82,6 +83,7 @@ export #comp ItemsPage = () => {
       goTo,
     };
   </script>
+
   <>
     <List items={store.items()}>
       #comp Item = ({
@@ -101,6 +103,7 @@ export #comp ItemsPage = () => {
       };
     </List>
   </>
+
   <style>
     /** **/
   </style>
