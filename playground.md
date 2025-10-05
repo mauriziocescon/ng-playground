@@ -85,7 +85,7 @@ export #comp ItemsPage = () => {
     };
   </script>
 
-  <>
+  <template>
     <List items={store.items()}>
       #comp Item = ({
         i = input.required<Item>(),
@@ -103,7 +103,7 @@ export #comp ItemsPage = () => {
         </>
       };
     </List>
-  </>
+  </template>
 
   <style>
     /** **/
