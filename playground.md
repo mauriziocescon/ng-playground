@@ -54,7 +54,7 @@
 ```
 
 ```ts
-import { input, provide, inject, Fragment } from '@angular/core';
+import { input, provide, inject, Comp } from '@angular/core';
 
 export interface Item {
   id: string;
@@ -111,7 +111,7 @@ export #comp ItemsPage = () => {
 
 export #comp List = ({
   items = input.required<Item[]>(),
-  item = input.required<Fragment<[Item]>>(),
+  Item = input.required<Comp<{i: InputSignal<Item>}>>(),
 }) => {
   <>
     @for (i of items(); track item.id) {
