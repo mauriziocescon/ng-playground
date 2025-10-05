@@ -54,6 +54,8 @@
 ```
 
 ```ts
+import { input, provide, inject } from '@angular/core';
+
 export interface Item {
   id: string;
   imgUrl: string;
@@ -61,10 +63,19 @@ export interface Item {
   description: string;
 }
 
+class ItemsStore {
+  /** ... **/
+}
+
 export #comp Generic = ({
   items = input.required<Item[]>(),
 }) => ({
+  providers: [
+    provide({ token: ItemsStore, useFactory: () => new ItemsStore() }),
+  ],
   script: () => {
+    const store = inject(ItemsStore);
+
     function goTo(item: Item) {
       // ..
     }
@@ -96,5 +107,6 @@ export #comp Generic = ({
         </Card>
       }
     </List>`,
+    style: ``,
 });
 ```
