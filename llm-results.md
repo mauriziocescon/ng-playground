@@ -77,7 +77,7 @@ export const TodoItem = component(({
 >Next, the `TodoList` component, which manages the collection of to-do items and their interactions:
 ```ts
 import { component, signal, computed } from '@angular/core';
-import { TodoItem, Todo } from './todo-item.ng.ts'; // Assuming todo-item.ng.ts will be in the same directory.
+import { TodoItem, Todo } from './todo-item'; // Assuming todo-item.ts will be in the same directory.
 
 // For demonstration, let's create a simple ID generator
 let nextId = 0;

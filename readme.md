@@ -79,7 +79,7 @@ export const Checkbox = component(({
 Component bindings:
 ```ts
 import { component, signal } from '@angular/core';
-import { UserDetail, User } from './user-detail.ng';
+import { UserDetail, User } from './user-detail';
 
 export const UserDetailConsumer = component(() => ({
   script: () => {
@@ -322,7 +322,7 @@ Customising components:
 ```ts
 import { component, signal } from '@angular/core';
 import { Menu } from '@mylib/menu';
-import { MyMenuItem } from './my-menu-item.ng';
+import { MyMenuItem } from './my-menu-item';
 
 export interface Item {
   id: string;
@@ -405,7 +405,7 @@ export const Button = component(({
 Wrapping components and passing inputs / outputs:
 ```ts
 import { component, input, computed, fallthroughAttrs } from '@angular/core';
-import { UserDetail, User, UserDetailProps } from './user-detail.ng';
+import { UserDetail, User, UserDetailProps } from './user-detail';
 
 export const UserDetailConsumer = component(() => ({
   script: () => {
@@ -518,8 +518,8 @@ Dynamic components:
 ```ts
 import { component, signal, computed } from '@angular/core';
 import { Dynamic } from '@angular/common';
-import { AComp } from './a-comp.ng';
-import { BComp } from './b-comp.ng';
+import { AComp } from './a-comp';
+import { BComp } from './b-comp';
 
 export const Something = component(() => ({
   script: () => {
