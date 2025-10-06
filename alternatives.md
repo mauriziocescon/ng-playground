@@ -87,21 +87,19 @@ export #comp ItemsPage = () => {
     };
   </script>
 
-  <!ng>
-    <List items={store.items()}>
-      @fragment item(i: Item) {
-        <Card on:click={goTo(i)}>
-          <HStack width={100}>
-            <Img url={i.imgUrl} />
-            <VStack>
-              <Title title={i.title} />
-              <Description description={i.description} />
-            </VStack>
-          </HStack>
-        </Card>
-      }
-    </List>
-  </ng>
+  <List items={store.items()}>
+    @fragment item(i: Item) {
+      <Card on:click={goTo(i)}>
+        <HStack width={100}>
+          <Img url={i.imgUrl} />
+          <VStack>
+            <Title title={i.title} />
+            <Description description={i.description} />
+          </VStack>
+        </HStack>
+      </Card>
+    }
+  </List>
 
   <style>
     @import url('./items-page.css');
@@ -112,11 +110,9 @@ export #comp List = ({
   items = input.required<Item[]>(),
   item = input.required<Fragment<[Item]>>(),
 }) => {
-  <!ng>
-    @for (i of items(); track item.id) {
-      <Render fragment={item()} inputs={[i]} />
-    }
-  </ng>
+  @for (i of items(); track item.id) {
+    <Render fragment={item()} inputs={[i]} />
+  }
 };
 ```
 
@@ -152,25 +148,21 @@ export #comp ItemsPage = () => {
     };
   </script>
 
-  <!ng>
-    <List items={store.items()}>
-      #comp Item = ({
-        i = input.required<Item>(),
-      }) => {
-        <!ng>
-          <Card on:click={goTo(i)}>
-            <HStack width={100}>
-              <Img url={i.imgUrl} />
-              <VStack>
-                <Title title={i.title} />
-                <Description description={i.description} />
-              </VStack>
-            </HStack>
-          </Card>
-        </ng>
-      };
-    </List>
-  </ng>
+  <List items={store.items()}>
+    #comp Item = ({
+      i = input.required<Item>(),
+    }) => {
+      <Card on:click={goTo(i)}>
+        <HStack width={100}>
+          <Img url={i.imgUrl} />
+          <VStack>
+            <Title title={i.title} />
+            <Description description={i.description} />
+          </VStack>
+        </HStack>
+      </Card>
+    };
+  </List>
 
   <style>
     @import url('./items-page.css');
@@ -181,10 +173,8 @@ export #comp List = ({
   items = input.required<Item[]>(),
   Item = input.required<Comp<{i: InputSignal<Item>}>>(),
 }) => {
-  <!ng>
-    @for (i of items(); track item.id) {
-      <Render component={Item()} inputs={{i}} />
-    }
-  </ng>
+  @for (i of items(); track item.id) {
+    <Render component={Item()} inputs={{i}} />
+  }
 };
 ```
