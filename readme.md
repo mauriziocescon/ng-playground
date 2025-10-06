@@ -616,7 +616,6 @@ export const AdminLinkWithTooltip = component(({
 ```
 
 ## Concepts affected by these changes
-- `new annotation`: custom (rather than decorators), but more powerful and capable of addressing lexical scope issues without `eslint` (cannot add any function to a template `<div>{effect(() => ...)}</div>`),
 - `ng-content`: replaced by `fragments`,
 - `ng-template` (`let-*` shorthands + `ngTemplateGuard_*`): likely replaced by `fragments`,
 - structural directives: likely replaced by `fragments`,
