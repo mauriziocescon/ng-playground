@@ -72,6 +72,7 @@ class ItemsStore {
 
 export const ItemsPage = component(() => {
   provide({ token: ItemsStore, useFactory: () => new ItemsStore() });
+  
   const store = inject(ItemsStore);
 
   function goTo(item: Item) {
