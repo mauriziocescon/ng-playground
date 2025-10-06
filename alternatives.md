@@ -1,3 +1,5 @@
+## Returns an object
+Easy to migrate from the current decorators based setup. Clear distinction between script and providers. On the other hand, you can still define variables before returning the object. 
 ```ts
 import { component, input, provide, inject, Fragment, Render } from '@angular/core';
 import { Card, HStack, Img, VStack, Title, Description } from '@lib/card';
@@ -55,6 +57,8 @@ export const List = component(({
 );
 ```
 
+## merge script and providers
+Reduced boilerplate, but there is confusion at the level of `provide` and `inject`: the order matters. 
 ```ts
 import { component, input, provide, inject, Fragment, Render } from '@angular/core';
 import { Card, HStack, Img, VStack, Title, Description } from '@lib/card';
@@ -116,6 +120,8 @@ export const List = component(({
 });
 ```
 
+## two separte scripts 
+Clear distinction between all the blocks; less familiar for angular devs and more abstract. 
 ```ts
 import { input, provide, inject, Fragment, Render } from '@angular/core';
 import { Card, HStack, Img, VStack, Title, Description } from '@lib/card';
@@ -176,75 +182,6 @@ export #comp List = ({
   <!ng>
     @for (i of items(); track item.id) {
       <Render fragment={item()} inputs={[i]} />
-    }
-  </ng>
-};
-```
-
-```ts
-import { input, provide, inject, Comp, Render } from '@angular/core';
-import { Card, HStack, Img, VStack, Title, Description } from '@lib/card';
-
-export interface Item {
-  id: string;
-  imgUrl: string;
-  title: string;
-  description: string;
-}
-
-class ItemsStore {
-  /** ... **/
-}
-
-export #comp ItemsPage = () => {
-  <script providers>
-    provide({ token: ItemsStore, useFactory: () => new ItemsStore() });
-  </script>
-
-  <script>
-    const store = inject(ItemsStore);
-
-    function goTo(item: Item) {
-      // ..
-    }
-
-    export {
-      goTo,
-    };
-  </script>
-
-  <!ng>
-    <List items={store.items()}>
-      #comp Item = ({
-        i = input.required<Item>(),
-      }) => {
-        <!ng>
-          <Card on:click={goTo(i)}>
-            <HStack width={100}>
-              <Img url={i.imgUrl} />
-              <VStack>
-                <Title title={i.title} />
-                <Description description={i.description} />
-              </VStack>
-            </HStack>
-          </Card>
-        </ng>
-      };
-    </List>
-  </ng>
-
-  <style>
-    @import './items-page.css';
-  </style>
-};
-
-export #comp List = ({
-  items = input.required<Item[]>(),
-  Item = input.required<Comp<{i: InputSignal<Item>}>>(),
-}) => {
-  <!ng>
-    @for (i of items(); track item.id) {
-      <Render component={Item()} inputs={{i}} />
     }
   </ng>
 };
