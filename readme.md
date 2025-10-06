@@ -3,9 +3,8 @@
 
 Points:
 1. building blocks as functions:
-    - `**.ng` files (typescript superset),
     - `component`: a quad `providers` / `script` / `template` / `style`,
-    - `declaration`: a way to declare `const` variables in templates that can depend on DI,
+    - `declaration`: a way to declare `const` variables in templates that depend on DI,
     - `directive`: a `script` that can change the appearance or behaviour of DOM elements,
     - `fragment`: a way to capture some markup in the form of a function,
 2. hostless components + ts lexical scoping for templates,
@@ -50,7 +49,7 @@ export const TextSearch = component(({
     <input type="text" model:value={text} on:input={textChange} />
 
     <button disabled={text().length === 0} on:click={() => text.set('')}>
-      {`Reset ${text()}`}
+      {'Reset ' + text()}
     </button>`,
   style: `
     .danger {
@@ -127,9 +126,7 @@ enum Type {
 
 const type = Type.Counter;
 
-function counter(value: number) {
-  return `Let's count till ` + value;
-}
+const counter = (value: number) => `Let's count till ${value}`;
 
 /**
  * short version in case of
@@ -146,9 +143,9 @@ export const Counter = component(() => `
 
 Definition of `@const` variables in the template (creation happens once) that can run in an injection context.
 ```ts
-import { component, signal, computed, inject, LOCALE_ID } from '@angular/core';
+import { component, derivation, signal, computed, inject, LOCALE_ID } from '@angular/core';
 
-function counter(value?: number) {
+const counter = (value?: number) => {
   const count = signal(value ?? 0);
   const price = computed(() => 10 * count());
 
@@ -158,27 +155,28 @@ function counter(value?: number) {
     decrease: () => count.update(c => c - 1),
     increment: () => count. update(c => c + 1),
   };
-}
+};
 
-function currency(
+const currency = derivation((
   value: () => (number | undefined),
   currencyCode: string | undefined,
-) {
+) => {
+  // injection context like component.script
   const localeId = inject(LOCALE_ID);
   return computed(/** ... **/);
-}
+});
 
 export const Counter = component(() => `
   @const count = counter(0);
 
-  <!-- injection context => requires @ -->
+  <!-- requires @ -->
   @const price = @currency(count.value, 'EUR');
 
   <h1>Counter</h1>
   <div>Value: {count.value()}</div>
   <div>Price: {price()}</div>
-  <button on:click={() => count.decrease()}> - </button>
-  <button on:click={() => count.increase()}> + </button>`,
+  <button on:click={() => count.decrease()}>-</button>
+  <button on:click={() => count.increase()}>+</button>`,
 );
 ```
 
@@ -261,8 +259,8 @@ export const Counter = component(({
   template: `
     <h1>Counter</h1>
     <div>Value: {store.value()}</div>
-    <button on:click={() => store.decrease()}> - </button>
-    <button on:click={() => store.increase()}> + </button>`,
+    <button on:click={() => store.decrease()}>-</button>
+    <button on:click={() => store.increase()}>+</button>`,
 }));
 ```
 
