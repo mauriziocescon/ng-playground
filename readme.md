@@ -196,7 +196,7 @@ export const TextSearch = component(() => ({
   },
   template: `
     <!-- encapsulation of directive data: @directive(...) -->
-    <!-- any #dir can be used directly in the template -->
+    <!-- any directive can be used directly in the template -->
 
     <input
       type="text"
