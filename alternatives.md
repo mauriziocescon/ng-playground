@@ -123,7 +123,7 @@ export const List = component(({
 ## two separte scripts 
 Clear distinction between all the blocks; less familiar for angular devs and more abstract. 
 ```ts
-import { input, provide, inject, Fragment, Render } from '@angular/core';
+import { component, input, provide, inject, Fragment, Render } from '@angular/core';
 import { Card, HStack, Img, VStack, Title, Description } from '@lib/card';
 
 export interface Item {
@@ -137,7 +137,7 @@ class ItemsStore {
   /** ... **/
 }
 
-export #comp ItemsPage = () => {
+export const ItemsPage = component(() => {
   <script providers>
     provide({ token: ItemsStore, useFactory: () => new ItemsStore() });
   </script>
@@ -173,7 +173,7 @@ export #comp ItemsPage = () => {
   <style>
     @import './items-page.css';
   </style>
-};
+});
 
 export #comp List = ({
   items = input.required<Item[]>(),
