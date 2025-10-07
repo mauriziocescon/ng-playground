@@ -109,7 +109,7 @@ class ItemsStore {
   /** ... **/
 }
 
-export component ItemsPage() {
+export component ItemsPage = () => {
   providers: [
     provide({ token: ItemsStore, useFactory: () => new ItemsStore() }),
   ],
@@ -139,23 +139,23 @@ export component ItemsPage() {
       }
     </List>`,
   styleUrl: './items-page.css',
-}
+};
 
-export component List({
+export component List = ({
   items = input.required<Item[]>(),
   item = input.required<Fragment<[Item]>>(),
-}) {
+}) => {
   template: `
     @for (i of items(); track item.id) {
       <Render fragment={item()} inputs={[i]} />
     }`,
-}
+};
 
-export directive tooltip({
+export directive tooltip = ({
   message = input.required<string>(),
   dismiss = output<void>(),
   elRef = ref<HTMLElement>(),
-}) {
+}) => {
   script: () => {
     const renderer = inject(Renderer2);
 
@@ -163,13 +163,13 @@ export directive tooltip({
       // ...
     });
   },
-}
+};
 
-export declaration currency(
+export declaration currency = (
   value: () => (number | undefined),
   currencyCode: string | undefined,
-) {
+) => {
   const localeId = inject(LOCALE_ID);
   return computed(/** ... **/);
-}
+};
 ```
