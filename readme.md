@@ -659,7 +659,7 @@ export const AdminLinkWithTooltip = component(({
   - `https://github.com/microsoft/TypeScript/issues/18497`,
   - [`no-param-reassign`](https://eslint.org/docs/latest/rules/no-param-reassign).
 
-### Pros and cons and future evolution
+### Pros and cons and evolution
 Pros: 
 - familiar, 
 - easy to migrate (just a move + reshuffle of things),
