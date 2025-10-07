@@ -679,7 +679,7 @@ export const Name = component(({
   };
 });
 ```
-But since angular is a compiled framework, the problem could be fixed by introducing `**.ng` files (typescript superset) and by turning the syntax above into the following: 
+But since angular is a compiled framework, the problem can be fixed by introducing `**.ng` files (typescript superset), `component` / `directive` / `declaration` keywords (see Ripple) and by turning the syntax above into the following: 
 ```ts
 export component Name({
   i = input.required<string>(),
