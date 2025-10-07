@@ -50,11 +50,12 @@ export const ItemsPage = component(() => ({
 export const List = component(({
   items = input.required<Item[]>(),
   item = input.required<Fragment<[Item]>>(),
-}) => `
-  @for (i of items(); track item.id) {
-    <Render fragment={item()} inputs={[i]} />
-  }`,
-);
+}) => {
+  template: `
+    @for (i of items(); track item.id) {
+      <Render fragment={item()} inputs={[i]} />
+    }`,
+});
 ```
 
 ## More abstract approach

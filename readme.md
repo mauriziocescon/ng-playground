@@ -132,13 +132,14 @@ const counter = (value: number) => `Let's count till ${value}`;
  * short version in case of
  * missing providers / script / style
  */
-export const Counter = component(() => `
-  @if (type === Type.Counter) {
-    <p>{counter(5)}</p>
-  } @else {
-    <!-- ... -->
-  }`,
-);
+export const Counter = component(() => ({
+  template: `
+    @if (type === Type.Counter) {
+      <p>{counter(5)}</p>
+    } @else {
+      <!-- ... -->
+    }`,
+}));
 ```
 
 Definition of `@const` variables in the template (creation happens once) that can run in an injection context.
@@ -160,24 +161,25 @@ const counter = (value?: number) => {
 const currency = derivation((
   value: () => (number | undefined),
   currencyCode: string | undefined,
-) => {
+) => ({
   // injection context like component.script
   const localeId = inject(LOCALE_ID);
   return computed(/** ... **/);
-});
+}));
 
-export const Counter = component(() => `
-  @const count = counter(0);
-
-  <!-- requires @ -->
-  @const price = @currency(count.value, 'EUR');
-
-  <h1>Counter</h1>
-  <div>Value: {count.value()}</div>
-  <div>Price: {price()}</div>
-  <button on:click={() => count.decrease()}>-</button>
-  <button on:click={() => count.increase()}>+</button>`,
-);
+export const Counter = component(() => ({
+  template: `
+    @const count = counter(0);
+  
+    <!-- requires @ -->
+    @const price = @currency(count.value, 'EUR');
+  
+    <h1>Counter</h1>
+    <div>Value: {count.value()}</div>
+    <div>Price: {price()}</div>
+    <button on:click={() => count.decrease()}>-</button>
+    <button on:click={() => count.increase()}>+</button>`,
+}));
 ```
 
 ## Element directives
@@ -313,9 +315,10 @@ export const Menu = component(({
 
 export const MenuItem = component(({
   children = input.required<Fragment<void>>(),
-}) => `
-  <Render fragment={children()} />`,
-);
+}) => ({
+  template: `
+    <Render fragment={children()} />`,
+}));
 ```
 
 Customising components:
@@ -352,12 +355,13 @@ import { Render } from '@angular/common';
 export const Menu = component(({
   items = input.required<{ id: string, desc: string }[]>(),
   menuItem = input.required<Fragment<[{ id: string, desc: string }]>>(),
-}) => `
-  <h1> Total items: {items().length} </h1>
-
-  @for (item of items(); track item.id) {
-    <Render fragment={menuItem()} params={[item]} />
-  }`,
+}) => {
+  template: `
+    <h1> Total items: {items().length} </h1>
+  
+    @for (item of items(); track item.id) {
+      <Render fragment={menuItem()} params={[item]} />
+    }`,
 }));
 ```
 
@@ -393,13 +397,14 @@ export const Button = component(({
   children = input.required<Fragment<void>>(),
   disabled = input<boolean>(false),
   click = output<void>(),
-}) => `
-  <!-- @** => fallthrough directives (ripple / tooltip) from the consumer -->
-
-  <button @** disabled={disabled()} on:click={() => click.emit()}>
-    <Render fragment={children()} />
-  </button>`,
-);
+}) => ({
+  template: `
+    <!-- @** => fallthrough directives (ripple / tooltip) from the consumer -->
+  
+    <button @** disabled={disabled()} on:click={() => click.emit()}>
+      <Render fragment={children()} />
+    </button>`,
+}));
 ```
 
 Wrapping components and passing inputs / outputs:
@@ -507,11 +512,12 @@ import { HTMLButtonAttributes } from '@angular/core/elements';
 export const Button = component(({
   children = input.required<Fragment<void>>(),
   attrs = fallthroughAttrs<HTMLButtonAttributes>(),
-}) => `
-  <button @** bind:**={attrs.in} on:**={attrs.on}>
-    <Render fragment={children()} />
-  </button>`,
-);
+}) => ({
+  template: `
+    <button @** bind:**={attrs.in} on:**={attrs.on}>
+      <Render fragment={children()} />
+    </button>`,
+}));
 ```
 
 Dynamic components:
@@ -606,13 +612,14 @@ import { MatTooltip } from '@angular/material/tooltip';
 export const AdminLinkWithTooltip = component(({
   tooltipMessage = input.required<string>(),
   hasPermissions = input.required<boolean>(),
-}) => `
-  <MatButton:a
-    href="/admin"
-    @MatTooltip(message={tooltipMessage()} disabled={hasPermissions()})>
-      Admin
-  </MatButton:a>`,
-);
+}) => ({
+  template: `
+    <MatButton:a
+      href="/admin"
+      @MatTooltip(message={tooltipMessage()} disabled={hasPermissions()})>
+        Admin
+    </MatButton:a>`,
+}));
 ```
 
 ## Final considerations
