@@ -1,5 +1,5 @@
 ## Returns an object
-Easy to migrate from the current decorators based setup. Clear distinction between script and providers. On the other hand, you can still define variables before returning the object... which makes no sense.  
+You can define variables before returning the object which makes no sense.  
 ```ts
 import { component, input, provide, inject, Fragment, Render } from '@angular/core';
 import { Card, HStack, Img, VStack, Title, Description } from '@lib/card';
@@ -93,7 +93,7 @@ const currency = declaration((
 ```
 
 ## More abstract approach
-Clear distinction between all the blocks: easy to set the lexical scope for each one. Not really typescript anymore. 
+`**.ng` files (typescript superset) and `component` / `directive` / `declaration` keywords (see Ripple): 
 ```ts
 import { input, provide, inject, Fragment, Render } from '@angular/core';
 import { Card, HStack, Img, VStack, Title, Description } from '@lib/card';

@@ -662,7 +662,7 @@ export const AdminLinkWithTooltip = component(({
 ### Pros and cons and evolution
 Pros: 
 - familiar, 
-- easy to migrate (just a move + reshuffle of things),
+- relatively easy to migrate (just a move + reshuffle of things),
 
 Cons:
 - the general shape of defining components like above has a major problem: 
