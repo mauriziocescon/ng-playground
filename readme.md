@@ -667,7 +667,7 @@ Pros:
 Cons:
 - the general shape of defining components like above has a major problem: 
 ```ts
-export const Comp = component(({
+export const Name = component(({
   i = input.required<string>(),
 }) => {
   const unwanted = 'unwanted';
@@ -675,19 +675,19 @@ export const Comp = component(({
     providers: [...],
     script: () => {...},
     template: `...`,
-    script: `...`,
+    style: `...`,
   };
 });
 ```
 But since angular is a compiled framework, the problem could be fixed by introducing `**.ng` files (typescript superset) and by turning the syntax above into the following: 
 ```ts
-export component Comp({
+export component Name({
   i = input.required<string>(),
 }) {
   providers: [...],
   script: () => {...},
   template: `...`,
-  script: `...`,
+  style: `...`,
 }
 ```
 See [`Alternatives`](https://github.com/mauriziocescon/ng-playground/blob/main/alternatives.md) for a full example.

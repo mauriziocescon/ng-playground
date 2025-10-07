@@ -56,6 +56,34 @@ export const List = component(({
       <Render fragment={item()} inputs={[i]} />
     }`,
 });
+
+export const tooltip = directive(({
+  message = input.required<string>(),
+  dismiss = output<void>(),
+  /**
+   * Readonly signal managed by ng.
+   *
+   * elRef: name reserved to the framework
+   */
+  elRef = ref<HTMLElement>(),
+}) => ({
+  script: () => {
+    const renderer = inject(Renderer2);
+
+    afterNextRender(() => {
+      // something with elRef
+    });
+  },
+}));
+
+const currency = declaration((
+  value: () => (number | undefined),
+  currencyCode: string | undefined,
+) => {
+  // injection context like component.script
+  const localeId = inject(LOCALE_ID);
+  return computed(/** ... **/);
+});
 ```
 
 ## More abstract approach
@@ -115,5 +143,33 @@ export component List({
     @for (i of items(); track item.id) {
       <Render fragment={item()} inputs={[i]} />
     }`,
+}
+
+export directive tooltip({
+  message = input.required<string>(),
+  dismiss = output<void>(),
+  /**
+   * Readonly signal managed by ng.
+   *
+   * elRef: name reserved to the framework
+   */
+  elRef = ref<HTMLElement>(),
+}) {
+  script: () => {
+    const renderer = inject(Renderer2);
+
+    afterNextRender(() => {
+      // something with elRef
+    });
+  },
+}
+
+export declaration currency(
+  value: () => (number | undefined),
+  currencyCode: string | undefined,
+) {
+  // injection context like component.script
+  const localeId = inject(LOCALE_ID);
+  return computed(/** ... **/);
 }
 ```
