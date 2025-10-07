@@ -14,7 +14,7 @@ Points:
 6. composition with fragments, directives and fallthrough attributes,
 7. template ref,
 8. DI enhancements,
-9. Final considerations.
+9. Final considerations (`!important`).
 
 ## Components
 Component structure and element bindings:
@@ -681,7 +681,7 @@ export const Comp = component(({
 ```
 But since angular is a compiled framework, the problem could be fixed by introducing `**.ng` files (typescript superset) and by turning the syntax above into the following: 
 ```ts
-export component Comp(({
+export component Comp({
   i = input.required<string>(),
 }) {
   providers: [...],
