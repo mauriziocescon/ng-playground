@@ -14,7 +14,7 @@ Points:
 6. composition with fragments, directives and fallthrough attributes,
 7. template ref,
 8. DI enhancements,
-9. Concepts affected by these changes.
+9. Final considerations.
 
 ## Components
 Component structure and element bindings:
@@ -615,7 +615,9 @@ export const AdminLinkWithTooltip = component(({
 );
 ```
 
-## Concepts affected by these changes
+## Final considerations
+
+### Concepts affected by these changes
 - `ng-content`: replaced by `fragments`,
 - `ng-template` (`let-*` shorthands + `ngTemplateGuard_*`): likely replaced by `fragments`,
 - structural directives: likely replaced by `fragments`,
@@ -628,7 +630,7 @@ export const AdminLinkWithTooltip = component(({
 - multiple `directives` applied to the same element: as for the previous point, it would be nice to avoid directives injection when applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy)); instead, it should be an explicit operation with a `ref` passed as an `input`,
 - in general, the concept of injecting components / directives inside each others should be restricted cause it generates lots of indirection / complexity; the downside is that some ng-reserved names are necessary.
 
-Unresolved points:
+### Unresolved points
 - there isn't any obvious `short notation` for passing props (like svelte / vue);
 ```ts
 <User user={user()} age={age()} gender={gender()} model:address={address} on:userChange={userChange} />
@@ -649,3 +651,36 @@ Unresolved points:
 - can reassign inputs / outputs inside script:
   - `https://github.com/microsoft/TypeScript/issues/18497`,
   - [`no-param-reassign`](https://eslint.org/docs/latest/rules/no-param-reassign).
+
+### Pros and cons and future evolution
+Pros: 
+- familiar, 
+- easy to migrate (just a move + reshuffle of things),
+
+Cons:
+- the general shape of defining components like above has a major problem: 
+```ts
+export const Comp = component(({
+  i = input.required<string>(),
+}) => {
+  const unwanted = 'unwanted';
+  return {
+    providers: [...],
+    script: () => {...},
+    template: `...`,
+    script: `...`,
+  };
+});
+```
+But since angular is a compiled framework, the problem could be fixed by introducing `**.ng` files (typescript superset) and by turning the syntax above into the following: 
+```ts
+export component Comp(({
+  i = input.required<string>(),
+}) {
+  providers: [...],
+  script: () => {...},
+  template: `...`,
+  script: `...`,
+}
+```
+See [`Alternatives`](https://github.com/mauriziocescon/ng-playground/blob/main/alternatives.md)

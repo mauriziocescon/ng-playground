@@ -57,10 +57,10 @@ export const List = component(({
 );
 ```
 
-## more abstract approach
-Clear distinction between all the blocks: easy to set the lexical scope for each one; less familiar for angular devs and more abstract. Not really typescript nor html anymore. 
+## More abstract approach
+Clear distinction between all the blocks: easy to set the lexical scope for each one. Not really typescript anymore. 
 ```ts
-import { component, input, provide, inject, Fragment, Render } from '@angular/core';
+import { input, provide, inject, Fragment, Render } from '@angular/core';
 import { Card, HStack, Img, VStack, Title, Description } from '@lib/card';
 
 export interface Item {
@@ -74,24 +74,22 @@ class ItemsStore {
   /** ... **/
 }
 
-export const ItemsPage = component(() => {
-  <script providers>
-    provide({ token: ItemsStore, useFactory: () => new ItemsStore() });
-  </script>
-
-  <script>
+export component ItemsPage() {
+  providers: [
+    provide({ token: ItemsStore, useFactory: () => new ItemsStore() }),
+  ],
+  script: () => {
     const store = inject(ItemsStore);
-
+  
     function goTo(item: Item) {
       // ..
     }
-
-    export {
+  
+    return {
       goTo,
     };
-  </script>
-
-  <!ng>
+  },
+  template: `
     <List items={store.items()}>
       @fragment item(i: Item) {
         <Card on:click={goTo(i)}>
@@ -104,22 +102,17 @@ export const ItemsPage = component(() => {
           </HStack>
         </Card>
       }
-    </List>
-  </ng>
+    </List>`,
+  styleUrl: './items-page.css',
+}
 
-  <style>
-    @import './items-page.css';
-  </style>
-});
-
-export const List = component({
+export component List({
   items = input.required<Item[]>(),
   item = input.required<Fragment<[Item]>>(),
-}) => {
-  <!ng>
+}) {
+  template: `
     @for (i of items(); track item.id) {
       <Render fragment={item()} inputs={[i]} />
-    }
-  </ng>
-});
+    }`,
+}
 ```
