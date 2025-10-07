@@ -175,7 +175,7 @@ export const ItemsPage = component(() => {
   </style>
 });
 
-export #comp List = ({
+export const List = component({
   items = input.required<Item[]>(),
   item = input.required<Fragment<[Item]>>(),
 }) => {
@@ -184,5 +184,5 @@ export #comp List = ({
       <Render fragment={item()} inputs={[i]} />
     }
   </ng>
-};
+});
 ```
