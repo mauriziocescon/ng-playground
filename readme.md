@@ -144,7 +144,7 @@ export const Counter = component(() => ({
 
 Definition of `@const` variables in the template (creation happens once) that can run in an injection context.
 ```ts
-import { component, derivation, signal, computed, inject, LOCALE_ID } from '@angular/core';
+import { component, declaration, signal, computed, inject, LOCALE_ID } from '@angular/core';
 
 const counter = (value?: number) => {
   const count = signal(value ?? 0);
@@ -158,14 +158,14 @@ const counter = (value?: number) => {
   };
 };
 
-const currency = derivation((
+const currency = declaration((
   value: () => (number | undefined),
   currencyCode: string | undefined,
-) => ({
+) => {
   // injection context like component.script
   const localeId = inject(LOCALE_ID);
   return computed(/** ... **/);
-}));
+});
 
 export const Counter = component(() => ({
   template: `
@@ -690,4 +690,4 @@ export component Comp({
   script: `...`,
 }
 ```
-See [`Alternatives`](https://github.com/mauriziocescon/ng-playground/blob/main/alternatives.md)
+See [`Alternatives`](https://github.com/mauriziocescon/ng-playground/blob/main/alternatives.md) for a full example.
