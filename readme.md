@@ -114,7 +114,6 @@ export const UserDetail = component(({
 }));
 ```
 
-## Declarations
 Lexical scoping: template => `script` => func / const / enum / interface imported in the file => global.
 ```ts
 import { component } from '@angular/core';
@@ -142,6 +141,7 @@ export const Counter = component(() => ({
 }));
 ```
 
+## Declarations
 Definition of `@const` variables in the template (creation happens once) that can run in an injection context.
 ```ts
 import { component, declaration, signal, computed, inject, LOCALE_ID } from '@angular/core';
