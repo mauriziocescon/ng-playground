@@ -279,7 +279,7 @@ import { component, signal } from '@angular/core';
 import { Menu, MenuItem } from '@mylib/menu';
 
 export const MenuConsumer = component(() => ({
-  script: () => ({
+  script: () => {
     const first = signal('First');
     const second = signal('Second');
   },
