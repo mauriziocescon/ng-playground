@@ -154,14 +154,17 @@ const counter = (value?: number) => {
   };
 };
 
-const currency = declaration((
-  value: () => (number | undefined),
-  currencyCode: string | undefined,
-) => {
-  // injection context
-  const localeId = inject(LOCALE_ID);
-  return computed(/** ... **/);
-});
+const currency = declaration(() => ({
+  script: () => {
+    // injection context
+    const localeId = inject(LOCALE_ID);
+    
+    return (
+      value: () => (number | undefined),
+      currencyCode: string | undefined,
+    ) => computed(/** ... **/);
+  },
+}));
 
 export const Counter = component(() => ({
   template: `
@@ -675,7 +678,7 @@ export const Name = component(({
   };
 });
 ```
-But since angular is a compiled framework, the problem can be fixed by introducing `**.ng` files (typescript superset), `component` / `directive` / `declaration` keywords (see Ripple) and by turning the syntax above into the following: 
+But since angular is a compiled framework, the problem can be fixed by introducing `**.ng` files (typescript superset), `component` / `directive` / `declaration` keywords (see RippleJS) and by turning the syntax above into the following: 
 ```ts
 export component Name = ({
   i = input.required<string>(),

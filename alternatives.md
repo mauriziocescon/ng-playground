@@ -1,7 +1,7 @@
 ## Returns an object
 You can define variables before returning the object which makes no sense.  
 ```ts
-import { component, directive, declaration, input, provide, inject, Fragment, Render } from '@angular/core';
+import { component, directive, declaration, ... } from '@angular/core';
 import { Card, HStack, Img, VStack, Title, Description } from '@lib/card';
 
 export interface Item {
@@ -83,19 +83,22 @@ export const tooltip = directive(({
   };
 });
 
-const currency = declaration((
-  value: () => (number | undefined),
-  currencyCode: string | undefined,
-) => {
-  const localeId = inject(LOCALE_ID);
-  return computed(/** ... **/);
-});
+export const currency = declaration(() => ({
+  script: () => {
+    const localeId = inject(LOCALE_ID);
+    
+    return (
+      value: () => (number | undefined),
+      currencyCode: string | undefined,
+    ) => computed(/** ... **/);
+  },
+}));
 ```
 
 ## More abstract approach
-`**.ng` files (typescript superset) and `component` / `directive` / `declaration` keywords (see Ripple): 
+`**.ng` files (typescript superset) and `component` / `directive` / `declaration` keywords (see RippleJS): 
 ```ts
-import { input, provide, inject, Fragment, Render } from '@angular/core';
+import { ... } from '@angular/core';
 import { Card, HStack, Img, VStack, Title, Description } from '@lib/card';
 
 export interface Item {
@@ -165,11 +168,14 @@ export directive tooltip = ({
   },
 };
 
-export declaration currency = (
-  value: () => (number | undefined),
-  currencyCode: string | undefined,
-) => {
-  const localeId = inject(LOCALE_ID);
-  return computed(/** ... **/);
+export declaration currency = () => {
+  script: () => {
+    const localeId = inject(LOCALE_ID);
+    
+    return (
+      value: () => (number | undefined),
+      currencyCode: string | undefined,
+    ) => computed(/** ... **/);
+  },
 };
 ```
