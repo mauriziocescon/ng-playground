@@ -4,12 +4,12 @@
 Points:
 1. building blocks as functions:
     - `component`: a quad `providers` / `script` / `template` / `style`,
-    - `declaration`: a way to declare `const` variables in templates that depend on DI,
     - `directive`: a `script` that can change the appearance or behaviour of DOM elements,
+    - `declaration`: a way to declare `const` variables in templates that depend on DI,
     - `fragment`: a way to capture some markup in the form of a function,
-2. hostless components + ts lexical scoping for templates,
-3. ts expressions with `{}`: bindings + text interpolation,
-4. extra bindings for DOM elements: `bind:`, `on:`, `model:`, `class:`, `style:`, `attr:`, `animate:`,
+2. ts expressions with `{}`: bindings + text interpolation,
+3. extra bindings for DOM elements: `bind:`, `on:`, `model:`, `class:`, `style:`, `attr:`, `animate:`,
+4. hostless components + ts lexical scoping for templates,
 5. component inputs: lifted up + immediately available in the script,
 6. composition with fragments, directives and fallthrough attributes,
 7. template ref,
