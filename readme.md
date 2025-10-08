@@ -158,7 +158,7 @@ const currency = declaration((
   value: () => (number | undefined),
   currencyCode: string | undefined,
 ) => {
-  // injection context like component.script
+  // injection context
   const localeId = inject(LOCALE_ID);
   return computed(/** ... **/);
 });
