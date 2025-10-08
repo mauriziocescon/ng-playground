@@ -127,10 +127,6 @@ const type = Type.Counter;
 
 const counter = (value: number) => `Let's count till ${value}`;
 
-/**
- * short version in case of
- * missing providers / script / style
- */
 export const Counter = component(() => ({
   template: `
     @if (type === Type.Counter) {
