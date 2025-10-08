@@ -1,7 +1,7 @@
 ## Returns an object
 You can define variables before returning the object which makes no sense.  
 ```ts
-import { component, input, provide, inject, Fragment, Render } from '@angular/core';
+import { component, directive, declaration, input, provide, inject, Fragment, Render } from '@angular/core';
 import { Card, HStack, Img, VStack, Title, Description } from '@lib/card';
 
 export interface Item {
