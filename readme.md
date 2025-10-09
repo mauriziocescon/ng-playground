@@ -45,7 +45,7 @@ export const TextSearch = component(({
     <!-- bind: can be omitted (default) while on: is mandatory -->
     <!-- 2way binding for input / select / textarea: model:property={var} -->
     
-    <!-- ‼️ cannot duplicate attribute names: only one (bound or not) -->
+    <!-- ‼️ cannot duplicate attribute names: only one (static or bound) -->
     <!-- <span class="" class="" class={} on:click={} on:click={}> -->
 
     <label class:danger={isDanger()}> Text: </label>
@@ -518,10 +518,10 @@ import { HTMLButtonAttributes } from '@angular/core/elements';
 export const Button = component(({
   children = input.required<Fragment<void>>(),
   class = input<string>(''),
-  attrs = fallthroughAttrs<HTMLButtonAttributes>(),
+  attrs = fallthroughAttrs<Omit<HTMLButtonAttributes, 'class'>>(),
 }) => ({
   script: () => {
-    const innerClass = computed(() => `{this.class()} other-class`);
+    const innerClass = computed(() => `{class()} other-class`);
   },
   template: `
     <button @** bind:**={attrs.in} class={innerClass()} on:**={attrs.on}>
