@@ -666,7 +666,7 @@ export const AdminLinkWithTooltip = component(({
 Pros: 
 - familiar, 
 - relatively easy to migrate (just a move + reshuffle of things),
-- no `splitProps` drama, 
+- no `splitProps` drama 😅, 
 
 Cons:
 - the general definition shape for `components` / `directives` / `declarations` has a major problem: 
