@@ -408,8 +408,8 @@ export const Button = component(({
 
 Wrapping components and passing inputs / outputs:
 ```ts
-import { component, input, computed, fallthroughAttrs } from '@angular/core';
-import { UserDetail, User, UserDetailProps } from './user-detail';
+import { component, input, computed, fallthroughAttrs, Props } from '@angular/core';
+import { UserDetail, User } from './user-detail';
 
 export const UserDetailConsumer = component(() => ({
   script: () => {
@@ -439,7 +439,8 @@ export const MyUserDetail = component(({
   user = input<User>(),
   /**
    * whatever is not matching inputs / outputs
-   * defined explicitly (like user).
+   * defined explicitly (like user). In a way, 
+   * it's like: const f = ({ user, ...rest }: Props) => ({...});
    *
    * attrs entries:
    * - in: inputs, attributes, ..
@@ -448,7 +449,7 @@ export const MyUserDetail = component(({
    *
    * attrs: name reserved to the framework
    */
-  attrs = fallthroughAttrs<Omit<UserDetailProps, 'user'>>(),
+  attrs = fallthroughAttrs<Omit<Props<UserDetail>, 'user'>>(),
 }) => ({
   script: () => {
     const other = computed(() => /** something depending on user or a default value **/);
@@ -465,8 +466,6 @@ export const MyUserDetail = component(({
 import { component, input, model, output, Props } from '@angular/core';
 
 export interface User { /** ... **/ }
-
-export type UserDetailProps = Props<UserDetail>;
 
 export const UserDetail = component(({
   user = input<User>(),
@@ -493,6 +492,8 @@ export const ButtonConsumer = component(() => ({
   },
   template: `
     <!-- can pass down attributes, properties, event listeners either static or bound -->
+    <!-- cannot have multiple style / class / ... -->
+    <!-- directives win over attributes -->
 
     <Button
       type="button"
