@@ -422,7 +422,9 @@ export const UserDetailConsumer = component(() => ({
     function processEmail() { /** ... **/ }
     function makeAdmin() { /** ... **/ }
 
-    const inputs = {user: () => user()};
+    const inputs = {
+      user: () => user(),
+    };
     
     const outputs = {
       makeAdmin,
@@ -433,7 +435,7 @@ export const UserDetailConsumer = component(() => ({
     <!-- bind:**={object} bind all entries of object; same for model / on -->
 
     <MyUserDetail
-      bind:**={{inputs}}
+      bind:**={inputs}
       model:**={{email}}
       on:**={outputs} />`,
 }));
@@ -441,12 +443,12 @@ export const UserDetailConsumer = component(() => ({
 export const MyUserDetail = component(({
   user = input<User>(),
   /**
-   * whatever is not matching inputs / outputs
-   * defined explicitly (like user). In a way, 
-   * it's like: const f = ({ user, ...rest }: Props) => ({...});
+   * whatever is not matching inputs / outputs / models
+   * defined explicitly (like user). In a way, it's like: 
+   * const f = ({ user, ...rest }: Props) => ({...});
    *
    * attrs entries:
-   * - in: inputs, attributes, ..
+   * - in: inputs, 
    * - on: events,
    * - mod: 2way.
    *
@@ -471,15 +473,15 @@ import { component, input, model, output, Props } from '@angular/core';
 export interface User { /** ... **/ }
 
 export const UserDetail = component(({
-  user = input<User>(),
-  email = model<string>(),
+  user = input.required<User>(),
+  email = model.required<string>(),
   makeAdmin = output<void>(),
 }) => ({
   // ...
 }));
 ```
 
-Wrapping native elements and passing attributes / properties / event listeners:
+Wrapping native elements and passing attributes / event listeners:
 ```ts
 import { component, signal } from '@angular/core';
 import { Button } from '@mylib/button';
@@ -494,9 +496,8 @@ export const ButtonConsumer = component(() => ({
     function doSomething() { /** ... **/ }
   },
   template: `
-    <!-- can pass down attributes, properties, event listeners either static or bound -->
+    <!-- can pass down attributes (either static or bound) and event listeners -->
     <!-- cannot have multiple style / class / ... -->
-    <!-- directives win over attributes -->
 
     <Button
       type="button"
@@ -511,15 +512,19 @@ export const ButtonConsumer = component(() => ({
 }));
 
 // -- button in @mylib/button --------------------
-import { component, input, fallthroughAttrs } from '@angular/core';
+import { component, input, fallthroughAttrs, computed } from '@angular/core';
 import { HTMLButtonAttributes } from '@angular/core/elements';
 
 export const Button = component(({
   children = input.required<Fragment<void>>(),
+  class = input<string>(''),
   attrs = fallthroughAttrs<HTMLButtonAttributes>(),
 }) => ({
+  script: () => {
+    const innerClass = computed(() => `{this.class()} other-class`);
+  },
   template: `
-    <button @** bind:**={attrs.in} on:**={attrs.on}>
+    <button @** bind:**={attrs.in} class={innerClass()} on:**={attrs.on}>
       <Render fragment={children()} />
     </button>`,
 }));
