@@ -220,7 +220,7 @@ export const Counter = component(() => ({
   template: `
     @const count = counter(0);
   
-    <!-- requires @ -->
+    <!-- declaration requires @ -->
     @const price = @currency(count.value, 'EUR');
   
     <h1>Counter</h1>
@@ -419,6 +419,8 @@ export const UserDetailConsumer = component(() => ({
     function processEmail() { /** ... **/ }
     function makeAdmin() { /** ... **/ }
 
+    const inputs = {user: () => user()};
+    
     const outputs = {
       makeAdmin,
       emailChange: () => processEmail()
@@ -428,7 +430,7 @@ export const UserDetailConsumer = component(() => ({
     <!-- bind:**={object} bind all entries of object; same for model / on -->
 
     <MyUserDetail
-      bind:**={{user}}
+      bind:**={{inputs}}
       model:**={{email}}
       on:**={outputs} />`,
 }));
