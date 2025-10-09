@@ -137,50 +137,6 @@ export const Counter = component(() => ({
 }));
 ```
 
-## Declarations
-Definition of `@const` variables in the template (creation happens once) that can run in an injection context.
-```ts
-import { component, declaration, signal, computed, inject, LOCALE_ID } from '@angular/core';
-
-const counter = (value?: number) => {
-  const count = signal(value ?? 0);
-  const price = computed(() => 10 * count());
-
-  return {
-    value: count.asReadonly(),
-    price,
-    decrease: () => count.update(c => c - 1),
-    increment: () => count. update(c => c + 1),
-  };
-};
-
-const currency = declaration(() => ({
-  script: () => {
-    // injection context
-    const localeId = inject(LOCALE_ID);
-    
-    return (
-      value: () => (number | undefined),
-      currencyCode: string | undefined,
-    ) => computed(/** ... **/);
-  },
-}));
-
-export const Counter = component(() => ({
-  template: `
-    @const count = counter(0);
-  
-    <!-- requires @ -->
-    @const price = @currency(count.value, 'EUR');
-  
-    <h1>Counter</h1>
-    <div>Value: {count.value()}</div>
-    <div>Price: {price()}</div>
-    <button on:click={() => count.decrease()}>-</button>
-    <button on:click={() => count.increase()}>+</button>`,
-}));
-```
-
 ## Element directives
 Change the appearance or behavior of DOM elements:
 ```ts
@@ -228,6 +184,50 @@ export const tooltip = directive(({
       // something with elRef
     });
   },
+}));
+```
+
+## Declarations and `@const` variables
+Definition of `@const` variables in the template (creation happens once) that can run in an injection context:
+```ts
+import { component, declaration, signal, computed, inject, LOCALE_ID } from '@angular/core';
+
+const counter = (value?: number) => {
+  const count = signal(value ?? 0);
+  const price = computed(() => 10 * count());
+
+  return {
+    value: count.asReadonly(),
+    price,
+    decrease: () => count.update(c => c - 1),
+    increment: () => count. update(c => c + 1),
+  };
+};
+
+const currency = declaration(() => ({
+  script: () => {
+    // injection context
+    const localeId = inject(LOCALE_ID);
+    
+    return (
+      value: () => (number | undefined),
+      currencyCode: string | undefined,
+    ) => computed(/** ... **/);
+  },
+}));
+
+export const Counter = component(() => ({
+  template: `
+    @const count = counter(0);
+  
+    <!-- requires @ -->
+    @const price = @currency(count.value, 'EUR');
+  
+    <h1>Counter</h1>
+    <div>Value: {count.value()}</div>
+    <div>Price: {price()}</div>
+    <button on:click={() => count.decrease()}>-</button>
+    <button on:click={() => count.increase()}>+</button>`,
 }));
 ```
 
@@ -632,6 +632,7 @@ export const AdminLinkWithTooltip = component(({
 - `event delegation`: not consider `https://github.com/angular/angular/issues/15905`,
 - `@let`: likely obsolete and not needed anymore,
 - `directives` attached to the host (components): not possible anymore, but you can pass directives as inputs and use `@**` (or equivalent syntax),
+- `directive` types: since `ref` is defined as a parameter of a function (rather then injected), it's possible to improve static types checking, 
 - `queries`: if `ref` makes sense, likely not needed anymore; if they stay, it would be nice to improve the retrieval of data: no way to `read` providers from `injector` tree,
 - multiple `directives` applied to the same element: as for the previous point, it would be nice to avoid directives injection when applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy)); instead, it should be an explicit operation with a `ref` passed as an `input`,
 - in general, the concept of injecting components / directives inside each others should be restricted cause it generates lots of indirection / complexity; the downside is that some ng-reserved names are necessary.
@@ -664,10 +665,10 @@ Pros:
 - relatively easy to migrate (just a move + reshuffle of things),
 
 Cons:
-- the general shape of defining components like above has a major problem: 
+- the general definition shape for `components` / `directives` / `declarations` has a major problem: 
 ```ts
-export const Name = component(({
-  i = input.required<string>(),
+const Comp = component(({
+  /** ... **/
 }) => {
   const unwanted = 'unwanted';
   return {
@@ -677,16 +678,47 @@ export const Name = component(({
     style: `...`,
   };
 });
+
+const dir = directive(({
+  /** ... **/
+  elRef = ref<HTMLElement>(),
+}) => {
+  const unwanted = 'unwanted';
+  return {
+    script: () => {...},
+  };
+});
+
+const decl = declaration(() => {
+  const unwanted = 'unwanted';
+  return {
+    script: () => {...},
+  };
+});
 ```
-But since angular is a compiled framework, the problem can be fixed by introducing `**.ng` files (typescript superset), `component` / `directive` / `declaration` keywords (see RippleJS) and by turning the syntax above into the following: 
+Since angular is a compiled framework, one way of fixing the problem is by introducing
+- `**.ng` files (typescript superset), 
+- `component` / `directive` / `declaration` keywords (see RippleJS) 
+and by applying some special remapping rules: 
 ```ts
-export component Name = ({
-  i = input.required<string>(),
+component Comp = ({
+  /** ... **/
 }) => {
   providers: [...],
   script: () => {...},
   template: `...`,
   style: `...`,
+};
+
+directive dir = ({
+  /** ... **/
+  elRef = ref<HTMLElement>(),
+}) => {
+  script: () => {...},
+};
+
+declaration decl = () => {
+  script: () => {...},
 };
 ```
 See [`Alternatives`](https://github.com/mauriziocescon/ng-playground/blob/main/alternatives.md) for a full example.

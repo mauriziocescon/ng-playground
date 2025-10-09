@@ -83,16 +83,20 @@ export const tooltip = directive(({
   };
 });
 
-export const currency = declaration(() => ({
-  script: () => {
-    const localeId = inject(LOCALE_ID);
-    
-    return (
-      value: () => (number | undefined),
-      currencyCode: string | undefined,
-    ) => computed(/** ... **/);
-  },
-}));
+export const currency = declaration(() => {
+  const unwanted = 'unwanted';
+  
+  return {
+    script: () => {
+      const localeId = inject(LOCALE_ID);
+      
+      return (
+        value: () => (number | undefined),
+        currencyCode: string | undefined,
+      ) => computed(/** ... **/);
+    },    
+  };
+});
 ```
 
 ## More abstract approach
