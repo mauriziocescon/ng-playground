@@ -646,7 +646,7 @@ export const AdminLinkWithTooltip = component(({
 <User user={user()} age={age()} gender={gender()} model:address={address} on:userChange={userChange} />
 
 // maybe something like "matching the name only for signals"?
-// error in case of string interpolation or similar
+// error in case of string interpolation or similar... it sounds anyway hacky
 
 <User {user} {age} {gender} model:{address} on:{userChange} />
 ```
