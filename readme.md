@@ -629,7 +629,7 @@ export const AdminLinkWithTooltip = component(({
 - structural directives: likely replaced by `fragments`,
 - `Ng**Outlet` + `ng-container`: likely replaced by the new things,
 - `pipes`: replaced by declarations,
-- `event delegation`: not consider `https://github.com/angular/angular/issues/15905`,
+- `event delegation`: not consider `https://github.com/angular/angular/issues/15905` (in case, no big issue to fit it in),
 - `@let`: likely obsolete and not needed anymore,
 - `directives` attached to the host (components): not possible anymore, but you can pass directives as inputs and use `@**` (or equivalent syntax),
 - `directive` types: since `ref` is defined as a parameter of a function (rather then injected), it's possible to improve static types checking, 
