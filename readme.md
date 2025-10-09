@@ -45,7 +45,7 @@ export const TextSearch = component(({
     <!-- bind: can be omitted (default) while on: is mandatory -->
     <!-- 2way binding for input / select / textarea: model:property={var} -->
     
-    <!-- cannot duplicate attribute names: only one -->
+    <!-- cannot duplicate attribute names: only one, bound or not -->
     <!-- ‼️ <span class="" class="" class={} on:click={} on:click={}> -->
 
     <label class:danger={isDanger()}> Text: </label>
