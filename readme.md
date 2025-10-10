@@ -8,7 +8,7 @@ Points:
     - `declaration`: a way to declare `const` variables in templates that depend on DI,
     - `fragment`: a way to capture some markup in the form of a function,
 2. ts expressions with `{}`: bindings + text interpolation,
-3. extra bindings for DOM elements: `bind:`, `on:`, `model:`, `class:`, `style:`, `attr:`, `animate:`,
+3. extra bindings for DOM elements: `bind:`, `on:`, `model:`, `class:`, `style:`, `animate:`,
 4. hostless components + ts lexical scoping for templates,
 5. component inputs: lifted up + immediately available in the script,
 6. composition with fragments, directives and fallthrough attributes,
@@ -46,7 +46,10 @@ export const TextSearch = component(({
     <!-- 2way binding for input / select / textarea: model:property={var} -->
     
     <!-- cannot duplicate attribute names anymore: only one (static or bound) -->
-    <!-- ‼️ <span class="" class="" class={} on:click={} on:click={}> ‼️ -->
+    <!-- ‼️ <span class="..." class="..." class={...} on:click={...} on:click={...}> ‼️ -->
+    
+    <!-- but can use multiple class: and style: -->
+    <!-- ✅ <span class="..." class:some-class={...} class:some-other-class={...}> ✅ -->
 
     <label class:danger={isDanger()}> Text: </label>
     <input type="text" model:value={text} on:input={textChange} />
