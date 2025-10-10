@@ -640,7 +640,7 @@ export const AdminLinkWithTooltip = component(({
 - structural directives: likely replaced by `fragments`,
 - `Ng**Outlet` + `ng-container`: likely replaced by the new things,
 - `pipes`: replaced by declarations,
-- `event delegation`: not consider `https://github.com/angular/angular/issues/15905` (in case, no big issue to fit it in),
+- `event delegation`: not explicitly considered, but it could fit as "special attributes" (`onclick`, ...) similarly to [`svelte events](https://svelte.dev/docs/svelte/basic-markup#Events),
 - `@let`: likely obsolete and not needed anymore,
 - `directives` attached to the host (components): not possible anymore, but you can pass directives as inputs and use `@**` (or equivalent syntax),
 - `directive` types: since `ref` is defined as a parameter of a function (rather then injected), it's possible to improve static types checking, 
@@ -649,12 +649,12 @@ export const AdminLinkWithTooltip = component(({
 - in general, the concept of injecting components / directives inside each others should be restricted cause it generates lots of indirection / complexity; the downside is that some ng-reserved names are necessary.
 
 ### Unresolved points
-- there isn't any obvious `short notation` for passing props (like svelte / vue);
+- there isn't any obvious `short notation` for passing signals (like svelte / vue);
 ```ts
 <User user={user()} age={age()} gender={gender()} model:address={address} on:userChange={userChange} />
 
-// maybe something like "matching the name only for signals"?
-// error in case of string interpolation or similar... it sounds anyway hacky
+// there is the hacky way: "matching the name only for signals"
+// error in case of string interpolation or similar
 
 <User {user} {age} {gender} model:{address} on:{userChange} />
 ```
@@ -672,8 +672,8 @@ export const AdminLinkWithTooltip = component(({
 
 ### Pros and cons and evolution
 Pros: 
-- familiar, 
-- relatively easy to migrate (just a move + reshuffle of things),
+- familiar enough, 
+- not impossible to automagically migrate the code (mostly move + reshuffle),
 - no `splitProps` drama 😅, 
 
 Cons:
