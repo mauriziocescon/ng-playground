@@ -98,7 +98,7 @@ export const UserDetailConsumer = component(() => ({
   template: `
     <!-- any component can be used directly in the template -->
     
-    <!-- bind: and on: as for elements -->
+    <!-- bind: and on: behaves the same as for elements -->
     <!-- 2way binding for comp: model:name={var} on:nameChange={func} -->
 
     <UserDetail
@@ -453,8 +453,8 @@ export const MyUserDetail = component(({
    * const f = ({ user, ...rest }: Props) => ({...});
    *
    * attrs entries:
-   * - in: inputs, 
-   * - on: events,
+   * - in: inputs (or meaningful attributes),
+   * - on: outputs (or meaningful event handlers),
    * - mod: 2way.
    *
    * attrs: name reserved to the framework
@@ -645,7 +645,7 @@ export const AdminLinkWithTooltip = component(({
 - structural directives: likely replaced by `fragments`,
 - `Ng**Outlet` + `ng-container`: likely replaced by the new things,
 - `pipes`: replaced by declarations,
-- `event delegation`: not explicitly considered, but it could fit as "special attributes" (`onclick`, ...) similarly to [`svelte events](https://svelte.dev/docs/svelte/basic-markup#Events),
+- `event delegation`: not explicitly considered, but it could fit as "special attributes" (`onclick`, ...) similarly to [svelte events](https://svelte.dev/docs/svelte/basic-markup#Events),
 - `@let`: likely obsolete and not needed anymore,
 - `directives` attached to the host (components): not possible anymore, but you can pass directives as inputs and use `@**` (or equivalent syntax),
 - `directive` types: since `ref` is defined as a parameter of a function (rather then injected), it's possible to improve static types checking, 
