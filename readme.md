@@ -98,7 +98,7 @@ export const UserDetailConsumer = component(() => ({
   template: `
     <!-- any component can be used directly in the template -->
     
-    <!-- bind: and on: behaves the same as for elements -->
+    <!-- bind: and on: behaves the same as for native elements -->
     <!-- 2way binding for comp: model:name={var} on:nameChange={func} -->
 
     <UserDetail
