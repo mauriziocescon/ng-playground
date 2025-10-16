@@ -650,7 +650,7 @@ export const AdminLinkWithTooltip = component(({
 - `event delegation`: not explicitly considered, but it could fit as "special attributes" (`onclick`, ...) similarly to [svelte events](https://svelte.dev/docs/svelte/basic-markup#Events),
 - `@let`: likely obsolete and not needed anymore,
 - `directives` attached to the host (components): not possible anymore, but you can pass directives as inputs and use `@**` (or equivalent syntax),
-- `directive` types: since `ref` is defined as a parameter of a function (rather then injected), it's possible to improve static types checking, 
+- `directive` types: since `ref` is defined as a parameter of a function (rather then injected), static types checking can be introduced (directives can be applied only to compatible elementes), 
 - `queries`: if `ref` makes sense, likely not needed anymore; if they stay, it would be nice to limit their DI capabilities: no way to `read` providers from `injector` tree (see [`viewChild abuses`](https://stackblitz.com/edit/stackblitz-starters-wkkqtd9j)),
 - multiple `directives` applied to the same element: as for the previous point, it would be nice to avoid directives injection when applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy)); instead, it should be an explicit template operation with a `ref` passed as an `input`,
 - in general, the concept of injecting components / directives inside each others should be restricted cause it generates lots of indirection / complexity; the downside is that some ng-reserved names are necessary.
@@ -660,7 +660,7 @@ export const AdminLinkWithTooltip = component(({
 ```ts
 <User user={user()} age={age()} gender={gender()} model:address={address} on:userChange={userChange} />
 
-// there is the hacky way: "matching the name only for signals"
+// hacky way: "matching the name only for signals"
 // error in case of string interpolation or similar
 
 <User {user} {age} {gender} model:{address} on:{userChange} />
@@ -684,7 +684,7 @@ Pros:
 - no `splitProps` drama 😅, 
 
 Cons:
-- the general definition shape for `components` / `directives` / `declarations` has a major problem: 
+- the general definition for `components` / `directives` / `declarations` has a major problem: 
 ```ts
 const Comp = component(({
   /** ... **/
@@ -715,7 +715,7 @@ const decl = declaration(() => {
   };
 });
 ```
-Since angular is a compiled framework, one way of fixing the problem is by introducing
+Since angular is a compiled framework, the problem can be fixed by introducing
 - `**.ng` files (typescript superset), 
 - `component` / `directive` / `declaration` keywords (see RippleJS) 
 and by applying some special remapping rules: 
