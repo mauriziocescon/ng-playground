@@ -3,6 +3,7 @@
 
 Points:
 1. building blocks as functions:
+    - `**.ng` files (typescript superset), 
     - `component`: a quad `providers` / `script` / `template` / `style`,
     - `directive`: a `script` that can change the appearance or behaviour of DOM elements,
     - `declaration`: a way to declare `const` variables in templates that depend on DI,
@@ -85,7 +86,7 @@ export const Checkbox = component(({
 Component bindings:
 ```ts
 import { component, signal } from '@angular/core';
-import { UserDetail, User } from './user-detail';
+import { UserDetail, User } from './user-detail.ng';
 
 export const UserDetailConsumer = component(() => ({
   script: () => {
@@ -96,7 +97,7 @@ export const UserDetailConsumer = component(() => ({
     function makeAdmin() { /** ... **/ }
   },
   template: `
-    <!-- any component can be used directly in the template -->
+    <!-- any component can be used directly in the template (**.ng files) -->
     <!-- cannot duplicate inputs / outputs -->
     
     <!-- bind: and on: behaves the same as for native elements -->
@@ -162,7 +163,7 @@ export const TextSearch = component(() => ({
   },
   template: `
     <!-- encapsulation of directive data: @directive(...) -->
-    <!-- any directive can be used directly in the template -->
+    <!-- any directive can be used directly in the template (**.ng files) -->
 
     <input
       type="text"
@@ -227,7 +228,7 @@ const currency = declaration(() => ({
 
 export const Counter = component(() => ({
   template: `
-    <!-- any declaration can be used directly in the template -->
+    <!-- any declaration can be used directly in the template (**.ng files) -->
     @const count = counter(0);
   
     <!-- declaration requires @ -->
@@ -334,7 +335,7 @@ Customising components:
 ```ts
 import { component, signal } from '@angular/core';
 import { Menu } from '@mylib/menu';
-import { MyMenuItem } from './my-menu-item';
+import { MyMenuItem } from './my-menu-item.ng';
 
 export interface Item {
   id: string;
@@ -419,7 +420,7 @@ export const Button = component(({
 Wrapping components and passing inputs / outputs:
 ```ts
 import { component, input, computed, fallthroughAttrs, Props } from '@angular/core';
-import { UserDetail, User } from './user-detail';
+import { UserDetail, User } from './user-detail.ng';
 
 export const UserDetailConsumer = component(() => ({
   script: () => {
@@ -541,8 +542,8 @@ Dynamic components:
 ```ts
 import { component, signal, computed } from '@angular/core';
 import { Dynamic } from '@angular/common';
-import { AComp } from './a-comp';
-import { BComp } from './b-comp';
+import { AComp } from './a-comp.ng';
+import { BComp } from './b-comp.ng';
 
 export const Something = component(() => ({
   script: () => {
@@ -716,7 +717,6 @@ const decl = declaration(() => {
 });
 ```
 Since angular is a compiled framework, the problem can be fixed by introducing
-- `**.ng` files (typescript superset), 
 - `component` / `directive` / `declaration` keywords (see RippleJS) 
 and by applying some special remapping rules: 
 ```ts
