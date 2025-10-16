@@ -227,6 +227,7 @@ const currency = declaration(() => ({
 
 export const Counter = component(() => ({
   template: `
+    <!-- any declaration can be used directly in the template -->
     @const count = counter(0);
   
     <!-- declaration requires @ -->
