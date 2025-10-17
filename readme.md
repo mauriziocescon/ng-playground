@@ -228,9 +228,9 @@ const currency = declaration(() => ({
 
 export const Counter = component(() => ({
   template: `
-    <!-- any declaration can be used directly in the template (**.ng files) -->
     @const count = counter(0);
   
+    <!-- any declaration can be used directly in the template (**.ng files) -->
     <!-- declaration requires @ -->
     @const price = @currency(count.value, 'EUR');
   
