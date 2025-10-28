@@ -14,8 +14,7 @@ Points:
 5. component inputs: lifted up + immediately available in the script,
 6. composition with fragments, directives and fallthrough attributes,
 7. template ref,
-8. DI enhancements,
-9. Final considerations (`!important`).
+8. Final considerations (`!important`).
 
 ## Components
 Component structure and element bindings:
@@ -612,9 +611,6 @@ export const Parent = component(() => ({
     <button on:click={() => tlp().toggle()}> Toggle tlp </button>`,
 }));
 ```
-
-## DI enhancements
-See [`DI enhancements`](https://github.com/mauriziocescon/ng-playground/blob/main/di.md)
 
 ## Backward compatibility
 Still can use legacy concepts for composition:
