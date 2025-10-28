@@ -7,7 +7,7 @@ class CounterStore {
   private readonly counter: WritableSignal<number>;
   readonly value = this.counter.asReadonly();
 
-  constructor(c: Signal<number>) {
+  constructor(c = () => 0) {
     this.counter = linkedSignal(() => c());
   }
 
@@ -15,11 +15,8 @@ class CounterStore {
   increase() { /** ... **/ }
 }
 
-/**
- * provide function for types safety
- */
 export const Counter = component(({
-  c = input<number>() as const,
+  c = input.required<number>(),
 }) => ({
   providers: [
     provide({ token: CounterStore, useFactory: () => new CounterStore(c) }),
@@ -30,15 +27,15 @@ export const Counter = component(({
   template: `
     <h1>Counter</h1>
     <div>Value: {store.value()}</div>
-    <button on:click={() => store.decrease()}> - </button>
-    <button on:click={() => store.increase()}> + </button>`,
+    <button on:click={() => store.decrease()}>-</button>
+    <button on:click={() => store.increase()}>+</button>`,
 }));
 ```
 
 ## DI enhancements
 Better ergonomics around types / tokens:
 ```ts
-import { component, inject, provide, provideForRoot, injectionToken, input } from '@angular/core';
+import { component, inject, provide, providedInRoot, injectionToken, input } from '@angular/core';
 
 /**
  * define a default implementation (no need for an explicit interface)
@@ -50,8 +47,12 @@ const compToken = injectionToken('desc', {
 
     return {
       value: counter.asReadonly(),
-      decrease: () => counter.update(v => v - 1),
-      increase: () => counter.update(v => v + 1),
+      decrease: () => {
+        counter.update(v => v - 1);
+      },
+      increase: () => {
+        counter.update(v => v + 1);
+      },
     };
   },
 });
@@ -59,14 +60,18 @@ const compToken = injectionToken('desc', {
 /**
  * root provider (similar for platform)
  */
-const rootToken = provideForRoot('desc', {
-  factory: (initialValue?: Signal<number>) => {
-    const counter = signal(initialValue ? initialValue() : 0);
+const rootToken = providedInRoot('desc', {
+  factory: () => {
+    const counter = signal(0);
 
     return {
       value: counter.asReadonly(),
-      decrease: () => counter.update(v => v - 1),
-      increase: () => counter.update(v => v + 1),
+      decrease: () => {
+        counter.update(v => v - 1);
+      },
+      increase: () => {
+        counter.update(v => v + 1);
+      },
     };
   },
 });
