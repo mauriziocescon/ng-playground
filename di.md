@@ -42,8 +42,8 @@ import { component, inject, provide, providedInRoot, injectionToken, input } fro
  * the token must be provided somewhere
  */
 const compToken = injectionToken('desc', {
-  factory: (initialValue?: Signal<number>) => {
-    const counter = signal(initialValue ? initialValue() : 0);
+  factory: () => {
+    const counter = signal(0);
 
     return {
       value: counter.asReadonly(),
@@ -83,7 +83,7 @@ export const Counter = component(({
   initialValue = input<number>() as const,
 }) => ({
   providers: [
-    provide({ token: compToken, useFactory: () => compToken.factory(initialValue) }),
+    provide(compToken),
   ],
   script: () => {
     const rootCounter = inject(rootToken);
