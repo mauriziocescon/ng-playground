@@ -35,11 +35,13 @@ export const Counter = component(({
 ## DI enhancements
 Better ergonomics around types / tokens:
 ```ts
-import { component, inject, provide, providedInRoot, injectionToken, input } from '@angular/core';
+import { component, inject, provide, injectionToken, input } from '@angular/core';
 
 /**
- * define a default implementation (no need for an explicit interface)
- * the token must be provided somewhere
+ * not provided in root by default: the token
+ * must be provided somewhere
+ * 
+ * a factory defines a default implementation and type
  */
 const compToken = injectionToken('desc', {
   factory: () => {
@@ -58,9 +60,10 @@ const compToken = injectionToken('desc', {
 });
 
 /**
- * root provider (similar for platform)
+ * root provider: no need to provide it
  */
-const rootToken = providedInRoot('desc', {
+const rootToken = injectionToken('desc', {
+  level: 'root',
   factory: () => {
     const counter = signal(0);
 
