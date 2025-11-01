@@ -83,7 +83,7 @@ const rootToken = injectionToken('desc', {
  * provide compToken at Counter level using the default factory
  */
 export const Counter = component(({
-  initialValue = input<number>() as const,
+  initialValue = input<number>(),
 }) => ({
   providers: [
     provide(compToken),
