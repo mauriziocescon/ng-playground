@@ -80,6 +80,15 @@ const rootToken = injectionToken('desc', {
 });
 
 /**
+ * multi defined at token creation
+ */
+const multiToken = injectionToken('desc', {
+  level: 'root',
+  multi: true,
+  factory: () => 'first',
+});
+
+/**
  * provide compToken at Counter level using the default factory
  */
 export const Counter = component(({
@@ -91,6 +100,7 @@ export const Counter = component(({
   script: () => {
     const rootCounter = inject(rootToken);
     const compCounter = inject(compToken);
+    const multi = inject(multiToken); // array strings
     // ...
   },
   // ...
