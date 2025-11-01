@@ -100,7 +100,7 @@ export const Counter = component(({
   script: () => {
     const rootCounter = inject(rootToken);
     const compCounter = inject(compToken);
-    const multi = inject(multiToken); // array strings
+    const multi = inject(multiToken); // array of strings
     // ...
   },
   // ...
