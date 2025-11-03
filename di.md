@@ -88,22 +88,31 @@ const multiToken = injectionToken('desc', {
 });
 
 /**
- * provide compToken at Counter level using the default factory
+ * class
  */
+class Store {}
+
 export const Counter = component(({
   initialValue = input<number>(),
 }) => ({
   providers: [
+    // provide compToken at Counter level using the default factory
     provide(compToken),
+    
+    // multi
     provide(multiToken),
     provide(multiToken),
     provide({ token: multiToken, useFactory: () => 10 }),
     provide({ token: multiToken, useFactory: () => initialValue() }),
+    
+    // class
+    provide({ token: Store, useFactory: () => new Store() }),
   ],
   script: () => {
     const rootCounter = inject(rootToken);
     const compCounter = inject(compToken);
     const multi = inject(multiToken); // array of numbers
+    const store = inject(Store);
     // ...
   },
   // ...
