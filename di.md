@@ -83,9 +83,8 @@ const rootToken = injectionToken('desc', {
  * multi defined at token creation
  */
 const multiToken = injectionToken('desc', {
-  level: 'root',
   multi: true,
-  factory: () => 'first',
+  factory: () => Math.random(),
 });
 
 /**
@@ -96,11 +95,15 @@ export const Counter = component(({
 }) => ({
   providers: [
     provide(compToken),
+    provide(multiToken),
+    provide(multiToken),
+    provide({ token: multiToken, useFactory: () => 10 }),
+    provide({ token: multiToken, useFactory: () => initialValue() }),
   ],
   script: () => {
     const rootCounter = inject(rootToken);
     const compCounter = inject(compToken);
-    const multi = inject(multiToken); // array of strings
+    const multi = inject(multiToken); // array of numbers
     // ...
   },
   // ...
