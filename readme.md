@@ -41,26 +41,32 @@ export const TextSearch = component(({
       valueChange.emit(text());
     }
   },
-  template: `
-    <!-- bind: can be omitted (default) while on: is mandatory -->
-    <!-- 2way binding for input / select / textarea: model:property={var} -->
-    
-    <!-- cannot duplicate attribute names: only one (static or bound) -->
-    <!-- ‼️ <span class="..." class="..." class={...} on:click={...} on:click={...}> ‼️ -->
-    
-    <!-- but can use multiple class: and style: -->
-    <!-- ✅ <span class="..." class:some-class={...} class:some-other-class={...}> ✅ -->
-
-    <label class:danger={isDanger()}> Text: </label>
-    <input type="text" model:value={text} on:input={textChange} />
-
-    <button disabled={text().length === 0} on:click={() => text.set('')}>
-      {'Reset ' + text()}
-    </button>`,
-  style: `
-    .danger {
-      color: red;
-    }`,
+  template: (
+    <>
+      <!-- bind: can be omitted (default) while on: is mandatory -->
+      <!-- 2way binding for input / select / textarea: model:property={var} -->
+      
+      <!-- cannot duplicate attribute names: only one (static or bound) -->
+      <!-- ‼️ <span class="..." class="..." class={...} on:click={...} on:click={...}> ‼️ -->
+      
+      <!-- but can use multiple class: and style: -->
+      <!-- ✅ <span class="..." class:some-class={...} class:some-other-class={...}> ✅ -->
+  
+      <label class:danger={isDanger()}> Text: </label>
+      <input type="text" model:value={text} on:input={textChange} />
+  
+      <button disabled={text().length === 0} on:click={() => text.set('')}>
+        {'Reset ' + text()}
+      </button>
+    </>
+  ),
+  style: (
+    <>
+      .danger {
+        color: red;
+      }
+    </>
+  ),
 }));
 ```
 
@@ -77,8 +83,8 @@ export const Checkbox = component(({
   valueChange = output<boolean>(),
 }) => ({
   script: () => { /** ... **/ },
-  templateUrl: `./checkbox.ng.html`,
-  styleUrl: `./checkbox.css`,
+  templateUrl: './checkbox.ng.html',
+  styleUrl: './checkbox.css',
 }));
 ```
 
@@ -95,18 +101,21 @@ export const UserDetailConsumer = component(() => ({
     function processEmail() { /** ... **/ }
     function makeAdmin() { /** ... **/ }
   },
-  template: `
-    <!-- any component can be used directly in the template (**.ng files) -->
-    <!-- cannot duplicate inputs / outputs -->
-    
-    <!-- bind: and on: behaves the same as for native elements -->
-    <!-- 2way binding for comp: model:name={var} on:nameChange={func} -->
-
-    <UserDetail
-      user={user()}
-      model:email={email}
-      on:emailChange={() => processEmail()}
-      on:makeAdmin={makeAdmin} />`,
+  template: (
+    <>
+      <!-- any component can be used directly in the template (**.ng files) -->
+      <!-- cannot duplicate inputs / outputs -->
+      
+      <!-- bind: and on: behaves the same as for native elements -->
+      <!-- 2way binding for comp: model:name={var} on:nameChange={func} -->
+  
+      <UserDetail
+        user={user()}
+        model:email={email}
+        on:emailChange={() => processEmail()}
+        on:makeAdmin={makeAdmin} />
+    </>
+  ),
 }));
 
 // -- UserDetail -----------------------------------
@@ -137,12 +146,15 @@ const type = Type.Counter;
 const counter = (value: number) => `Let's count till ${value}`;
 
 export const Counter = component(() => ({
-  template: `
-    @if (type === Type.Counter) {
-      <p>{counter(5)}</p>
-    } @else {
-      <!-- ... -->
-    }`,
+  template: (
+    <>
+      @if (type === Type.Counter) {
+        <p>{counter(5)}</p>
+      } @else {
+        <!-- ... -->
+      }
+    </>
+  ),
 }));
 ```
 
@@ -160,17 +172,20 @@ export const TextSearch = component(() => ({
     function valueChange() { /** ... **/ }
     function doSomething() { /** ... **/ }
   },
-  template: `
-    <!-- encapsulation of directive data: @directive(...) -->
-    <!-- any directive can be used directly in the template (**.ng files) -->
-
-    <input
-      type="text"
-      model:value={text}
-      on:input={valueChange}
-      @tooltip(message={message()} on:dismiss={doSomething}) />
-
-    <p>Value: {text()}</p>`,
+  template: (
+    <>
+      <!-- encapsulation of directive data: @directive(...) -->
+      <!-- any directive can be used directly in the template (**.ng files) -->
+  
+      <input
+        type="text"
+        model:value={text}
+        on:input={valueChange}
+        @tooltip(message={message()} on:dismiss={doSomething}) />
+  
+      <p>Value: {text()}</p>
+    </>
+  ),
 }));
 
 // -- tooltip in @mylib/tooltip --------------------
@@ -226,18 +241,21 @@ const currency = declaration(() => ({
 }));
 
 export const Counter = component(() => ({
-  template: `
-    @const count = counter(0);
-  
-    <!-- any declaration can be used directly in the template (**.ng files) -->
-    <!-- declaration requires @ -->
-    @const price = @currency(count.value, 'EUR');
-  
-    <h1>Counter</h1>
-    <div>Value: {count.value()}</div>
-    <div>Price: {price()}</div>
-    <button on:click={() => count.decrease()}>-</button>
-    <button on:click={() => count.increase()}>+</button>`,
+  template: (
+    <>
+      @const count = counter(0);
+    
+      <!-- any declaration can be used directly in the template (**.ng files) -->
+      <!-- declaration requires @ -->
+      @const price = @currency(count.value, 'EUR');
+    
+      <h1>Counter</h1>
+      <div>Value: {count.value()}</div>
+      <div>Price: {price()}</div>
+      <button on:click={() => count.decrease()}>-</button>
+      <button on:click={() => count.increase()}>+</button>
+    </>
+  ),
 }));
 ```
 
@@ -267,11 +285,14 @@ export const Counter = component(({
   script: () => {
     const store = inject(CounterStore);
   },
-  template: `
-    <h1>Counter</h1>
-    <div>Value: {store.value()}</div>
-    <button on:click={() => store.decrease()}>-</button>
-    <button on:click={() => store.increase()}>+</button>`,
+  template: (
+    <>
+      <h1>Counter</h1>
+      <div>Value: {store.value()}</div>
+      <button on:click={() => store.decrease()}>-</button>
+      <button on:click={() => store.increase()}>+</button>
+    </>
+  ),
 }));
 ```
 
@@ -288,13 +309,16 @@ export const MenuConsumer = component(() => ({
     const first = signal('First');
     const second = signal('Second');
   },
-  template: `
-    <!-- markup inside comp tag => implicitly become an input called children -->
-
-    <Menu>
-      <MenuItem>{first()}</MenuItem>
-      <MenuItem>{second()}</MenuItem>
-    </Menu>`,
+  template: (
+    <>
+      <!-- markup inside comp tag => implicitly become an input called children -->
+  
+      <Menu>
+        <MenuItem>{first()}</MenuItem>
+        <MenuItem>{second()}</MenuItem>
+      </Menu>
+    </>
+  ),
 }));
 
 // -- Menu in @mylib/menu --------------------------
@@ -308,21 +332,27 @@ export const Menu = component(({
   children = input<Fragment<void>>(),
 }) => ({
   script: () => { /** ... **/ },
-  template: `
-    <!-- no need to have an explicit anchor point like ng-container -->
-
-    @if (children()) {
-      <Render fragment={children()} />
-    } @else {
-       <!-- ... -->
-    }`,
+  template: (
+    <>
+      <!-- no need to have an explicit anchor point like ng-container -->
+  
+      @if (children()) {
+        <Render fragment={children()} />
+      } @else {
+        <!-- ... -->
+      }
+    </>
+  ),
 }));
 
 export const MenuItem = component(({
   children = input.required<Fragment<void>>(),
 }) => ({
-  template: `
-    <Render fragment={children()} />`,
+  template: (
+    <>
+      <Render fragment={children()} />
+    </>
+  ),
 }));
 ```
 
@@ -341,15 +371,18 @@ export const MenuConsumer = component(() => ({
   script: () => {
     const items = signal<Item[]>(/** ... **/);
   },
-  template: `
-    <!-- menuItem inside <Menu></Menu> automatically becomes an input -->
-
-    @fragment menuItem(item: Item) {
-      <div class="my-menu-item">
-        <MyMenuItem>{item.desc}</MyMenuItem>
-      </div>
-    }
-    <Menu items={items()} menuItem={menuItem} />`,
+  template: (
+    <>
+      <!-- menuItem inside <Menu></Menu> automatically becomes an input -->
+  
+      @fragment menuItem(item: Item) {
+        <div class="my-menu-item">
+          <MyMenuItem>{item.desc}</MyMenuItem>
+        </div>
+      }
+      <Menu items={items()} menuItem={menuItem} />
+    </>
+  ),
   styleUrl: './menu-consumer.css',
 }));
 
@@ -361,12 +394,15 @@ export const Menu = component(({
   items = input.required<{ id: string, desc: string }[]>(),
   menuItem = input.required<Fragment<[{ id: string, desc: string }]>>(),
 }) => {
-  template: `
-    <h1> Total items: {items().length} </h1>
-  
-    @for (item of items(); track item.id) {
-      <Render fragment={menuItem()} params={[item]} />
-    }`,
+  template: (
+    <>
+      <h1> Total items: {items().length} </h1>
+    
+      @for (item of items(); track item.id) {
+        <Render fragment={menuItem()} params={[item]} />
+      }
+    </>
+  ),
 }));
 ```
 
@@ -384,14 +420,17 @@ export const ButtonConsumer = component(() => ({
 
     function doSomething() { /** ... **/ }
   },
-  template: `
-    <Button
-      @ripple
-      @tooltip(message={tooltipMsg()})
-      disabled={!valid()}
-      on:click={doSomething}>
-        Click / Hover me
-    </Button>`,
+  template: (
+    <>
+      <Button
+        @ripple
+        @tooltip(message={tooltipMsg()})
+        disabled={!valid()}
+        on:click={doSomething}>
+          Click / Hover me
+      </Button>
+    </>
+  ),
 }));
 
 // -- button in @mylib/button --------------------
@@ -403,12 +442,15 @@ export const Button = component(({
   disabled = input<boolean>(false),
   click = output<void>(),
 }) => ({
-  template: `
-    <!-- @** => fallthrough directives (ripple / tooltip) from the consumer -->
-  
-    <button @** disabled={disabled()} on:click={() => click.emit()}>
-      <Render fragment={children()} />
-    </button>`,
+  template: (
+    <>
+      <!-- @** => fallthrough directives (ripple / tooltip) from the consumer -->
+    
+      <button @** disabled={disabled()} on:click={() => click.emit()}>
+        <Render fragment={children()} />
+      </button>
+    </>
+  ),
 }));
 ```
 
@@ -434,13 +476,16 @@ export const UserDetailConsumer = component(() => ({
       emailChange: () => processEmail()
     };
   },
-  template: `
-    <!-- bind:**={object} bind all entries of object; same for model / on -->
-
-    <MyUserDetail
-      bind:**={inputs}
-      model:**={{email}}
-      on:**={outputs} />`,
+  template: (
+    <>
+      <!-- bind:**={object} bind all entries of object; same for model / on -->
+  
+      <MyUserDetail
+        bind:**={inputs}
+        model:**={{email}}
+        on:**={outputs} />
+    </>
+  ),
 }));
 
 export const MyUserDetail = component(({
@@ -462,12 +507,15 @@ export const MyUserDetail = component(({
   script: () => {
     const other = computed(() => /** something depending on user or a default value **/);
   },
-  template: `
-    <UserDetail
-      user={other()}
-      bind:**={attrs.in}
-      model:**={attrs.mod}
-      on:**={attrs.on} />`,
+  template: (
+    <>
+      <UserDetail
+        user={other()}
+        bind:**={attrs.in}
+        model:**={attrs.mod}
+        on:**={attrs.on} />
+    </>
+  ),
 }));
 
 // -- UserDetail -----------------------------------
@@ -498,20 +546,23 @@ export const ButtonConsumer = component(() => ({
 
     function doSomething() { /** ... **/ }
   },
-  template: `
-    <!-- can pass down attributes (either static or bound) and event listeners -->
-    <!-- cannot have multiple style / class / ... -->
-
-    <Button
-      type="button"
-      style="background-color: cyan"
-      class={valid() ? 'global-css-valid' : ''}
-      @ripple
-      @tooltip(message={tooltipMsg()})
-      disabled={!valid()}
-      on:click={doSomething}>
-        Click / Hover me
-    </Button>`,
+  template: (
+    <>
+      <!-- can pass down attributes (either static or bound) and event listeners -->
+      <!-- cannot have multiple style / class / ... -->
+  
+      <Button
+        type="button"
+        style="background-color: cyan"
+        class={valid() ? 'global-css-valid' : ''}
+        @ripple
+        @tooltip(message={tooltipMsg()})
+        disabled={!valid()}
+        on:click={doSomething}>
+          Click / Hover me
+      </Button>
+    </>
+  ),
 }));
 
 // -- button in @mylib/button --------------------
@@ -526,10 +577,13 @@ export const Button = component(({
   script: () => {
     const innerClass = computed(() => `{class()} other-class`);
   },
-  template: `
-    <button @** bind:**={attrs.in} class={innerClass()} on:**={attrs.on}>
-      <Render fragment={children()} />
-    </button>`,
+  template: (
+    <>
+      <button @** bind:**={attrs.in} class={innerClass()} on:**={attrs.on}>
+        <Render fragment={children()} />
+      </button>
+    </>
+  ),
 }));
 ```
 
@@ -546,10 +600,13 @@ export const Something = component(() => ({
     const comp = computed(() => condition() ? AComp : BComp);
     const inputs = computed(() => /** ... **/);
   },
-  template: `
-    <!-- ... -->
-
-    <Dynamic component={comp()} inputs={inputs()} />`,
+  template: (
+    <>
+      <!-- ... -->
+  
+      <Dynamic component={comp()} inputs={inputs()} />
+    </>
+  ),
 }));
 ```
 
@@ -593,22 +650,25 @@ export const Parent = component(() => ({
       // something with refs
     });
   },
-  template: `
-    <div
-      #el
-      @ripple=#rpl
-      @tooltip(message={'something'})=#tlp>
-        Something
-    </div>
-
-    <Child #child />
-
-    <!-- binding to a function -->
-
-    <Child ref={(c) => many.update(v => [...v, c])} />
-    <Child ref={(c) => many.update(v => [...v, c])} />
-
-    <button on:click={() => tlp().toggle()}> Toggle tlp </button>`,
+  template: (
+    <>
+      <div
+        #el
+        @ripple=#rpl
+        @tooltip(message={'something'})=#tlp>
+          Something
+      </div>
+  
+      <Child #child />
+  
+      <!-- binding to a function -->
+  
+      <Child ref={(c) => many.update(v => [...v, c])} />
+      <Child ref={(c) => many.update(v => [...v, c])} />
+  
+      <button on:click={() => tlp().toggle()}> Toggle tlp </button>
+    </>
+  ),
 }));
 ```
 
@@ -623,12 +683,15 @@ export const AdminLinkWithTooltip = component(({
   tooltipMessage = input.required<string>(),
   hasPermissions = input.required<boolean>(),
 }) => ({
-  template: `
-    <MatButton:a
-      href="/admin"
-      @MatTooltip(message={tooltipMessage()} disabled={hasPermissions()})>
-        Admin
-    </MatButton:a>`,
+  template: (
+    <>
+      <MatButton:a
+        href="/admin"
+        @MatTooltip(message={tooltipMessage()} disabled={hasPermissions()})>
+          Admin
+      </MatButton:a>
+    </>
+  )`,
 }));
 ```
 
@@ -687,8 +750,8 @@ const Comp = component(({
   return {
     providers: [...],
     script: () => {...},
-    template: `...`,
-    style: `...`,
+    template: (<>...</>),
+    style: (<>...</>),
   };
 });
 
@@ -718,8 +781,8 @@ component Comp = ({
 }) => {
   providers: [...],
   script: () => {...},
-  template: `...`,
-  style: `...`,
+  template: (<>...</>),
+  style: (<>...</>),
 };
 
 directive dir = ({

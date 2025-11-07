@@ -24,11 +24,14 @@ export const Counter = component(({
   script: () => {
     const store = inject(CounterStore);
   },
-  template: `
-    <h1>Counter</h1>
-    <div>Value: {store.value()}</div>
-    <button on:click={() => store.decrease()}>-</button>
-    <button on:click={() => store.increase()}>+</button>`,
+  template: (
+    <>
+      <h1>Counter</h1>
+      <div>Value: {store.value()}</div>
+      <button on:click={() => store.decrease()}>-</button>
+      <button on:click={() => store.increase()}>+</button>
+    </>
+  ),
 }));
 ```
 

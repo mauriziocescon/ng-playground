@@ -33,20 +33,23 @@ export const ItemsPage = component(() => {
         goTo,
       };
     },
-    template: `
-      <List items={store.items()}>
-        @fragment item(i: Item) {
-          <Card on:click={goTo(i)}>
-            <HStack width={100}>
-              <Img url={i.imgUrl} />
-              <VStack>
-                <Title title={i.title} />
-                <Description description={i.description} />
-              </VStack>
-            </HStack>
-          </Card>
-        }
-      </List>`,
+    template: (
+      <>
+        <List items={store.items()}>
+          @fragment item(i: Item) {
+            <Card on:click={goTo(i)}>
+              <HStack width={100}>
+                <Img url={i.imgUrl} />
+                <VStack>
+                  <Title title={i.title} />
+                  <Description description={i.description} />
+                </VStack>
+              </HStack>
+            </Card>
+          }
+        </List>
+      </>
+    ),
     styleUrl: './items-page.css',
   };
 });
@@ -58,10 +61,13 @@ export const List = component(({
   const unwanted = 'unwanted';
   
   return {
-    template: `
-      @for (i of items(); track item.id) {
-        <Render fragment={item()} inputs={[i]} />
-      }`,
+    template: (
+      <>
+        @for (i of items(); track item.id) {
+          <Render fragment={item()} inputs={[i]} />
+        }
+      </>
+    ),
   };
 });
 
@@ -131,20 +137,23 @@ export component ItemsPage = () => {
       goTo,
     };
   },
-  template: `
-    <List items={store.items()}>
-      @fragment item(i: Item) {
-        <Card on:click={goTo(i)}>
-          <HStack width={100}>
-            <Img url={i.imgUrl} />
-            <VStack>
-              <Title title={i.title} />
-              <Description description={i.description} />
-            </VStack>
-          </HStack>
-        </Card>
-      }
-    </List>`,
+  template: (
+    <>
+      <List items={store.items()}>
+        @fragment item(i: Item) {
+          <Card on:click={goTo(i)}>
+            <HStack width={100}>
+              <Img url={i.imgUrl} />
+              <VStack>
+                <Title title={i.title} />
+                <Description description={i.description} />
+              </VStack>
+            </HStack>
+          </Card>
+        }
+      </List>
+    </>
+  ),
   styleUrl: './items-page.css',
 };
 
@@ -152,10 +161,13 @@ export component List = ({
   items = input.required<Item[]>(),
   item = input.required<Fragment<[Item]>>(),
 }) => {
-  template: `
-    @for (i of items(); track item.id) {
-      <Render fragment={item()} inputs={[i]} />
-    }`,
+  template: (
+    <>
+      @for (i of items(); track item.id) {
+        <Render fragment={item()} inputs={[i]} />
+      }
+    </>
+  ),
 };
 
 export directive tooltip = ({
