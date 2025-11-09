@@ -56,7 +56,7 @@ export const ItemsPage = component(() => {
   };
 });
 
-export const List = component(({
+const List = component(({
   items = input.required<Item[]>(),
   item = input.required<Fragment<[Item]>>(),
 }) => {
@@ -73,7 +73,7 @@ export const List = component(({
   };
 });
 
-export const tooltip = directive(({
+const tooltip = directive(({
   message = input.required<string>(),
   elRef = ref<HTMLElement>(),
 }) => {
@@ -90,7 +90,7 @@ export const tooltip = directive(({
   };
 });
 
-export const currency = declaration(() => {
+const currency = declaration(() => {
   const unwanted = 'unwanted';
   
   return {
@@ -160,7 +160,7 @@ export component ItemsPage = () => {
   styleUrl: './items-page.css',
 };
 
-export component List = ({
+component List = ({
   items = input.required<Item[]>(),
   item = input.required<Fragment<[Item]>>(),
 }) => {
@@ -173,7 +173,7 @@ export component List = ({
   ),
 };
 
-export directive tooltip = ({
+directive tooltip = ({
   message = input.required<string>(),
   elRef = ref<HTMLElement>(),
 }) => {
@@ -186,7 +186,7 @@ export directive tooltip = ({
   },
 };
 
-export declaration currency = () => {
+declaration currency = () => {
   script: () => {
     const localeId = inject(LOCALE_ID);
     
