@@ -14,7 +14,8 @@ Points:
 5. component inputs: lifted up + immediately available in the script,
 6. composition with fragments, directives and fallthrough attributes,
 7. template ref,
-8. Final considerations (`!important`).
+8. DI enhancements, 
+9. Final considerations (`!important`).
 
 ## Components
 Component structure and element bindings:
@@ -669,6 +670,93 @@ export const Parent = component(() => ({
       <button on:click={() => tlp().toggle()}> Toggle tlp </button>
     </>
   ),
+}));
+```
+
+## DI enhancements
+Better ergonomics around types / tokens:
+```ts
+import { component, inject, provide, injectionToken, input } from '@angular/core';
+
+/**
+ * not provided in root by default: the token
+ * must be provided somewhere
+ * 
+ * a factory defines a default implementation and type
+ */
+const compToken = injectionToken('desc', {
+  factory: () => {
+    const counter = signal(0);
+
+    return {
+      value: counter.asReadonly(),
+      decrease: () => {
+        counter.update(v => v - 1);
+      },
+      increase: () => {
+        counter.update(v => v + 1);
+      },
+    };
+  },
+});
+
+/**
+ * root provider: no need to provide it
+ */
+const rootToken = injectionToken('desc', {
+  level: 'root',
+  factory: () => {
+    const counter = signal(0);
+
+    return {
+      value: counter.asReadonly(),
+      decrease: () => {
+        counter.update(v => v - 1);
+      },
+      increase: () => {
+        counter.update(v => v + 1);
+      },
+    };
+  },
+});
+
+/**
+ * multi defined at token creation
+ */
+const multiToken = injectionToken('desc', {
+  multi: true,
+  factory: () => Math.random(),
+});
+
+/**
+ * class
+ */
+class Store {}
+
+export const Counter = component(({
+  initialValue = input<number>(),
+}) => ({
+  providers: [
+    // provide compToken at Counter level using the default factory
+    provide(compToken),
+    
+    // multi
+    provide(multiToken),
+    provide(multiToken),
+    provide({ token: multiToken, useFactory: () => 10 }),
+    provide({ token: multiToken, useFactory: () => initialValue() }),
+    
+    // class
+    provide({ token: Store, useFactory: () => new Store() }),
+  ],
+  script: () => {
+    const rootCounter = inject(rootToken);
+    const compCounter = inject(compToken);
+    const multi = inject(multiToken); // array of numbers
+    const store = inject(Store);
+    // ...
+  },
+  // ...
 }));
 ```
 
