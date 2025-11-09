@@ -13,10 +13,10 @@ Result:
 >Of course! I've reviewed the readme.md and alternatives.md files describing the new authoring format. It's an interesting evolution of Angular's syntax!
 
 >To demonstrate component composition, I'll create a simple product page. This example will include:
-- A currency declaration to format product prices.
-- A highlight directive to visually mark products that are on sale.
-- A ProductCardComponent that displays a single product and is designed to be composed.
-- A ProductPageComponent that uses all of the above to display a list of products.
+>- A currency declaration to format product prices.
+>- A highlight directive to visually mark products that are on sale.
+>- A ProductCardComponent that displays a single product and is designed to be composed.
+>- A ProductPageComponent that uses all of the above to display a list of products.
 
 >Here are the files for the example:
 
