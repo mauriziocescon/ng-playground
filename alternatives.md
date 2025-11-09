@@ -40,7 +40,9 @@ export const ItemsPage = component(() => {
                 <VStack>
                   <Title title={i.title} />
                   <Description @tooltip(message={i.title}) description={i.description} />
+                  
                   <hr />
+                  
                   @const price = @currency(i.price, 'EUR');
                   <p>Price: {price}</p>
                 </VStack>
@@ -143,7 +145,9 @@ export component ItemsPage = () => {
               <VStack>
                 <Title title={i.title} />
                 <Description @tooltip(message={i.title}) description={i.description} />
+                
                 <hr />                
+                
                 @const price = @currency(i.price, 'EUR');
                 <p>Price: {price}</p>
               </VStack>
