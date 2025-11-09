@@ -43,7 +43,7 @@ export const ItemsPage = component(() => {
                   
                   <hr />
                   
-                  @const price = @currency(i.price, 'EUR');
+                  @const price = @currency(() => i.price, 'EUR');
                   <p>Price: {price}</p>
                 </VStack>
               </HStack>
@@ -148,7 +148,7 @@ export component ItemsPage = () => {
                 
                 <hr />                
                 
-                @const price = @currency(i.price, 'EUR');
+                @const price = @currency(() => i.price, 'EUR');
                 <p>Price: {price}</p>
               </VStack>
             </HStack>
