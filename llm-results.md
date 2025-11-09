@@ -1,169 +1,175 @@
 # LLM Results
 Prompt (gemini 2.5 pro):
 
->Hey!
+>Hey! 
 
->In readme.md and alternatives.md, I drafted a possible evolution of the angular syntax in templates and proposed a new authoring format.
+>In readme.md and alternatives.md, I drafted a possible evolution of the angular syntax in templates and proposed a new authoring format. 
 
->Considering such files and the current angular best practices, could you please create a todo-list component following the style?
+>Considering such files and the current angular best practices, could you please create an example of components composition using directives and declarations?  
 
 >Thanks
 
 Result:
 >Of course! I've reviewed the readme.md and alternatives.md files describing the new authoring format. It's an interesting evolution of Angular's syntax!
 
->I'll create the TodoList component for you. As suggested in your documents, I'll use the more abstract export component syntax, which is presented as a more robust solution.
+>To demonstrate component composition, I'll create a simple product page. This example will include:
+- A currency declaration to format product prices.
+- A highlight directive to visually mark products that are on sale.
+- A ProductCardComponent that displays a single product and is designed to be composed.
+- A ProductPageComponent that uses all of the above to display a list of products.
 
->Here are the files for the new component:
+>Here are the files for the example:
 
->First, I'll create a todo.model.ts file for the data model:
+>First, a simple data model for our products in product.model.ts:
 
 ```ts
-export interface Todo {
+export interface Product {
   id: number;
-  text: string;
-  completed: boolean;
+  name: string;
+  price: number;
+  onSale: boolean;
 }
 ```
->Next, here is the `TodoListComponent` in `todo-list.component.ng.ts`. This is a presentational component that manages the presentation of the todo list. It uses `model` to get a writable signal of the todos.
+>Next, I'll create the `currency` declaration in `currency.declaration.ts`. This will be used to format the product price in the template. It uses dependency injection to get the current locale.
 
 ```ts
-import { model, computed, signal } from '@angular/core';
-import { type Todo } from './todo.model';
+import { declaration, computed, inject, LOCALE_ID } from '@angular/core';
+import { formatCurrency } from '@angular/common';
 
-export component TodoListComponent = ({
-  todos = model.required<Todo[]>(),
+export declaration currency = () => {
+  script: () => {
+    const localeId = inject(LOCALE_ID);
+
+    return (
+      value: () => number | undefined,
+      currencyCode: () => string,
+      display: 'symbol' | 'narrowSymbol' | 'code' | 'symbol-narrow' | 'name' = 'symbol'
+    ) => computed(() => {
+      const v = value();
+      if (v === undefined) {
+        return '';
+      }
+      return formatCurrency(v, localeId, display, currencyCode());
+    });
+  },
+};
+```
+
+>Here's the `highlight` directive in `highlight.directive.ts`. It will change the background color of the element it's applied to.
+
+```ts
+import { directive, input, ref, inject, Renderer2, effect } from '@angular/core';
+
+export directive highlight = ({
+  color = input('yellow'),
+  elRef = ref<HTMLElement>(),
 }) => {
   script: () => {
-    const newTodoText = signal('');
-    const remaining = computed(() => todos().filter(t => !t.completed).length);
+    const renderer = inject(Renderer2);
 
-    function addTodo() {
-      if (newTodoText().trim() === '') return;
-      const newTodo: Todo = {
-        id: Date.now(),
-        text: newTodoText(),
-        completed: false,
-      };
-      todos.update(currentTodos => [...currentTodos, newTodo]);
-      newTodoText.set('');
-    }
-
-    function removeTodo(todoId: number) {
-      todos.update(currentTodos => currentTodos.filter(t => t.id !== todoId));
-    }
-
-    function toggleCompletion(todoId: number) {
-      todos.update(currentTodos =>
-        currentTodos.map(t =>
-          t.id === todoId ? { ...t, completed: !t.completed } : t
-        )
-      );
-    }
+    effect(() => {
+      renderer.setStyle(elRef(), 'backgroundColor', color());
+      renderer.setStyle(elRef(), 'transition', 'background-color 0.5s');
+    });
   },
+};
+```
+
+>Now, the `ProductCardComponent` in `product-card.component.ng.ts`. This component is designed for composition. It accepts a `product` input, a `children` fragment for custom content, and uses `fallthroughAttrs` with `@**` to allow directives like `highlight` to be passed down from a parent to its own template elements.
+
+```ts
+import { component, input, fallthroughAttrs, Fragment } from '@angular/core';
+import { HTMLAttributes } from '@angular/core/elements';
+import { Render } from '@angular/common';
+import { type Product } from './product.model';
+
+export component ProductCardComponent = ({
+  product = input.required<Product>(),
+  children = input<Fragment<void>>(),
+  attrs = fallthroughAttrs<HTMLAttributes>(),
+}) => {
   template: (
     <>
-      <h2>Todo List ({remaining()} remaining)</h2>
-
-      <div class="add-todo">
-        <input type="text" placeholder="What needs to be done?" model:value={newTodoText} on:keydown.enter={addTodo}/>
-        <button on:click={addTodo} disabled={newTodoText().trim().length === 0}>Add</button>
-      </div>
-
-      <ul>
-        @for (todo of todos(); track todo.id) {
-          <li>
-            <input
-              type="checkbox"
-              checked={todo.completed}
-              on:change={() => toggleCompletion(todo.id)}
-            />
-            <span class:completed={todo.completed}>
-              {todo.text}
-            </span>
-            <button class="remove" on:click={() => removeTodo(todo.id)}>❌</button>
-          </li>
+      <div class="product-card" @** bind:**={attrs.in} on:**={attrs.on}>
+        <h3>{product().name}</h3>
+        @if (children()) {
+          <div class="content">
+            <Render fragment={children()} />
+          </div>
         }
-      </ul>
+      </div>
     </>
   ),
   style: (
     <>
-      :host {
-        display: block;
-        max-width: 500px;
-        margin: 2rem auto;
+      .product-card {
+        border: 1px solid #ccc;
+        padding: 16px;
+        margin: 8px;
+        border-radius: 8px;
       }
-      .add-todo {
-        display: flex;
-        gap: 0.5rem;
-        margin-bottom: 1rem;
-      }
-      input[type="text"] {
-        flex-grow: 1;
-      }
-      ul {
-        list-style: none;
-        padding: 0;
-      }
-      li {
-        display: flex;
-        align-items: center;
-        padding: 0.5rem 0;
-        gap: 0.5rem;
-      }
-      li span {
-        flex-grow: 1;
-      }
-      .completed {
-        text-decoration: line-through;
-        color: #888;
-      }
-      .remove {
-        background: none;
-        border: none;
-        cursor: pointer;
-        padding: 0;
-        font-size: 1rem;
+      .content {
+        margin-top: 1rem;
       }
     </>
   ),
 };
 ```
 
->Finally, here’s a `TodoAppComponent` that consumes the `TodoListComponent` and manages the application state.
+>Finally, the `ProductPageComponent` in `product-page.component.ng.ts` brings everything together. It defines a list of products, uses the `@currency` declaration to format prices, and applies the `@highlight` directive to the `ProductCardComponent` when a product is on sale.
 
 ```ts
 import { component, signal } from '@angular/core';
-import { TodoListComponent } from './todo-list.component.ng';
-import { type Todo } from './todo.model';
+import { ProductCardComponent } from './product-card.component.ng';
+import { highlight } from './highlight.directive';
+import { currency } from './currency.declaration';
+import { type Product } from './product.model';
 
-export const TodoAppComponent = component(() => ({
+export component ProductPageComponent = () => {
   script: () => {
-    const todos = signal<Todo[]>([
-      { id: 1, text: 'Learn new Angular syntax', completed: true },
-      { id: 2, text: 'Create a todo app', completed: false },
+    const products = signal<Product[]>([
+      { id: 1, name: 'Fancy Keyboard', price: 99, onSale: true },
+      { id: 2, name: 'Ergonomic Mouse', price: 75, onSale: false },
+      { id: 3, name: '4K Monitor', price: 499, onSale: true },
     ]);
+
+    function addToCart(product: Product) {
+      console.log(`${product.name} added to cart!`);
+    }
+    
+    function toggleSale(product: Product) {
+      products.update(ps => ps.map(p => p.id === product.id ? {...p, onSale: !p.onSale} : p));
+    }
   },
   template: (
     <>
-      <h1>My Todo App</h1>
-      <TodoListComponent model:todos={todos} />
+      <h1>Products</h1>
+      <div class="product-list">
+        @for (product of products(); track product.id) {
+          @const formattedPrice = @currency(() => product.price, () => 'USD');
+          
+          <ProductCardComponent 
+            product={product}
+            @highlight(color={product.onSale ? 'lightgreen' : 'transparent'})
+            on:click={() => toggleSale(product)}>
+            
+            <p>Price: {formattedPrice()}</p>
+            
+            <button on:click={(e) => { e.stopPropagation(); addToCart(product)}}>Add to Cart</button>
+          </ProductCardComponent>
+        }
+      </div>
     </>
   ),
   style: (
     <>
-      :host {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-        font-size: 14px;
-        color: #333;
-        box-sizing: border-box;
-      }
-      h1 {
-        text-align: center;
+      .product-list {
+        display: flex;
+        flex-wrap: wrap;
       }
     </>
-  )
-}));
+  ),
+};
 ```
->These components follow the proposed syntax and structure, using signals for state management and the new template features like `model:` binding and `@for` block. Let me know if you have any other questions
+
+>This example illustrates how directives and declarations can be combined with component composition to create flexible and reusable UIs, following the elegant syntax you've proposed. Let me know if you have any other questions
