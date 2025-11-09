@@ -53,7 +53,7 @@ const List = component(({
   return {
     template: (
       <>
-        @for (i of items(); track item.id) {
+        @for (i of items(); track i.id) {
           <Render fragment={item()} inputs={[i]} />
         }
       </>
@@ -150,7 +150,7 @@ component List = ({
 }) => {
   template: (
     <>
-      @for (i of items(); track item.id) {
+      @for (i of items(); track i.id) {
         <Render fragment={item()} inputs={[i]} />
       }
     </>
