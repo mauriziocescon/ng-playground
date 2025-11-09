@@ -190,7 +190,7 @@ export const TextSearch = component(() => ({
 }));
 
 // -- tooltip in @mylib/tooltip --------------------
-import { directive, input, output, inject, Renderer2, ref, afterNextRender } from '@angular/core';
+import { directive, input, output, inject, Renderer2, ref, afterRenderEffect } from '@angular/core';
 
 export const tooltip = directive(({
   message = input.required<string>(),
@@ -205,7 +205,7 @@ export const tooltip = directive(({
   script: () => {
     const renderer = inject(Renderer2);
 
-    afterNextRender(() => {
+    afterRenderEffect(() => {
       // something with elRef
     });
   },
@@ -244,10 +244,11 @@ const currency = declaration(() => ({
 export const Counter = component(() => ({
   template: (
     <>
+      <!-- it gets created once with scope similar to @let -->
       @const count = counter(0);
     
       <!-- any declaration can be used directly in the template (**.ng files) -->
-      <!-- declaration requires @ -->
+      <!-- declarations require @ -->
       @const price = @currency(count.value, 'EUR');
     
       <h1>Counter</h1>
@@ -829,6 +830,7 @@ Pros:
 - no early return or `splitProps` drama 😅, 
 
 Cons:
+- any `@const` is ambiguous with `components` / `directives` / `declarations`,
 - the general definition for `components` / `directives` / `declarations` has a major problem: 
 ```ts
 const Comp = component(({
@@ -860,7 +862,7 @@ const decl = declaration(() => {
   };
 });
 ```
-Since angular is a compiled framework, the problem can be fixed by introducing
+Since angular is a compiled framework, such problems can be fixed by introducing
 - `component` / `directive` / `declaration` keywords (see RippleJS) 
 and by applying some special remapping rules: 
 ```ts

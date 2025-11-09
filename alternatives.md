@@ -9,6 +9,7 @@ export interface Item {
   imgUrl: string;
   title: string;
   description: string;
+  price: number;
 }
 
 class ItemsStore {
@@ -28,10 +29,6 @@ export const ItemsPage = component(() => {
       function goTo(item: Item) {
         // ..
       }
-  
-      return {
-        goTo,
-      };
     },
     template: (
       <>
@@ -42,7 +39,10 @@ export const ItemsPage = component(() => {
                 <Img url={i.imgUrl} />
                 <VStack>
                   <Title title={i.title} />
-                  <Description description={i.description} />
+                  <Description @tooltip(message={i.title}) description={i.description} />
+                  <hr />
+                  @const price = @currency(i.price, 'EUR');
+                  <p>Price: {price}</p>
                 </VStack>
               </HStack>
             </Card>
@@ -73,7 +73,6 @@ export const List = component(({
 
 export const tooltip = directive(({
   message = input.required<string>(),
-  dismiss = output<void>(),
   elRef = ref<HTMLElement>(),
 }) => {
   const unwanted = 'unwanted';
@@ -82,8 +81,8 @@ export const tooltip = directive(({
     script: () => {
       const renderer = inject(Renderer2);
   
-      afterNextRender(() => {
-        //...
+      afterRenderEffect(() => {
+        /** ... **/
       });
     },
   };
@@ -106,7 +105,7 @@ export const currency = declaration(() => {
 ```
 
 ## More abstract approach
-`**.ng` files (typescript superset) and `component` / `directive` / `declaration` keywords (see RippleJS): 
+`**.ng` files (typescript superset) and `component` / `directive` / `declaration` keywords (see RippleJS). 
 ```ts
 import { ... } from '@angular/core';
 import { Card, HStack, Img, VStack, Title, Description } from '@lib/card';
@@ -116,6 +115,7 @@ export interface Item {
   imgUrl: string;
   title: string;
   description: string;
+  price: number;
 }
 
 class ItemsStore {
@@ -132,10 +132,6 @@ export component ItemsPage = () => {
     function goTo(item: Item) {
       // ..
     }
-  
-    return {
-      goTo,
-    };
   },
   template: (
     <>
@@ -146,7 +142,10 @@ export component ItemsPage = () => {
               <Img url={i.imgUrl} />
               <VStack>
                 <Title title={i.title} />
-                <Description description={i.description} />
+                <Description @tooltip(message={i.title}) description={i.description} />
+                <hr />                
+                @const price = @currency(i.price, 'EUR');
+                <p>Price: {price}</p>
               </VStack>
             </HStack>
           </Card>
@@ -172,14 +171,13 @@ export component List = ({
 
 export directive tooltip = ({
   message = input.required<string>(),
-  dismiss = output<void>(),
   elRef = ref<HTMLElement>(),
 }) => {
   script: () => {
     const renderer = inject(Renderer2);
 
-    afterNextRender(() => {
-      // ...
+    afterRenderEffect(() => {
+      /** ... **/
     });
   },
 };
