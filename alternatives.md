@@ -105,7 +105,7 @@ export const currency = declaration(() => {
 ```
 
 ## More abstract approach
-`**.ng` files (typescript superset) and `component` / `directive` / `declaration` keywords (see RippleJS). 
+`**.ng` files (typescript superset) with `component` / `directive` / `declaration` keywords (see RippleJS). 
 ```ts
 import { ... } from '@angular/core';
 import { Card, HStack, Img, VStack, Title, Description } from '@lib/card';

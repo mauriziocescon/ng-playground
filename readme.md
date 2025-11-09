@@ -830,8 +830,8 @@ Pros:
 - no early return or `splitProps` drama 😅, 
 
 Cons:
-- any `@const` is ambiguous with `components` / `directives` / `declarations`,
-- the general definition for `components` / `directives` / `declarations` has a major problem: 
+- `@const` definitions with `component` / `directive` / `declaration` are off,
+- you can define variables before returning the object which makes no sense: 
 ```ts
 const Comp = component(({
   /** ... **/
