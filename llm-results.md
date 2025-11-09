@@ -2,14 +2,21 @@
 Prompt (gemini 2.5 pro):
 
 >Hey!
-In readme.md and di.md, I drafted a possible evolution of the angular syntax in templates and proposed a new authoring format.
-Considering such file and the current angular best practices, could you please create a todo-list component following the style?
-Thanks
+
+>In readme.md and alternatives.md, I drafted a possible evolution of the angular syntax in templates and proposed a new authoring format.
+
+>Considering such files and the current angular best practices, could you please create a todo-list component following the style?
+
+>Thanks
 
 Result:
->Of course! Based on the new authoring format you've drafted in and Angular's best practices, I've created a `TodoList` component. `readme.md`
-Here are the files for the new component:
-I'll create a `todo.model.ts` file for the data model:
+>Of course! I've reviewed the readme.md and alternatives.md files describing the new authoring format. It's an interesting evolution of Angular's syntax!
+
+>I'll create the TodoList component for you. As suggested in your documents, I'll use the more abstract export component syntax, which is presented as a more robust solution.
+
+>Here are the files for the new component:
+
+>First, I'll create a todo.model.ts file for the data model:
 
 ```ts
 export interface Todo {
@@ -18,16 +25,15 @@ export interface Todo {
   completed: boolean;
 }
 ```
->Next, here is the `TodoListComponent` in `todo-list.component.ng.ts`. It's a presentational component that receives the list of todos and emits events when the list is modified.
+>Next, here is the `TodoListComponent` in `todo-list.component.ng.ts`. This is a presentational component that manages the presentation of the todo list. It uses `model` to get a writable signal of the todos.
 
 ```ts
-import { component, input, output, signal, computed } from '@angular/core';
+import { model, computed, signal } from '@angular/core';
 import { type Todo } from './todo.model';
 
-export const TodoListComponent = component(({
-  todos = input.required<Todo[]>(),
-  todosChange = output<Todo[]>(),
-}) => ({
+export component TodoListComponent = ({
+  todos = model.required<Todo[]>(),
+}) => {
   script: () => {
     const newTodoText = signal('');
     const remaining = computed(() => todos().filter(t => !t.completed).length);
@@ -39,26 +45,28 @@ export const TodoListComponent = component(({
         text: newTodoText(),
         completed: false,
       };
-      todosChange.emit([...todos(), newTodo]);
+      todos.update(currentTodos => [...currentTodos, newTodo]);
       newTodoText.set('');
     }
 
     function removeTodo(todoId: number) {
-      todosChange.emit(todos().filter(t => t.id !== todoId));
+      todos.update(currentTodos => currentTodos.filter(t => t.id !== todoId));
     }
 
     function toggleCompletion(todoId: number) {
-      todosChange.emit(
-        todos().map(t => (t.id === todoId ? { ...t, completed: !t.completed } : t))
+      todos.update(currentTodos =>
+        currentTodos.map(t =>
+          t.id === todoId ? { ...t, completed: !t.completed } : t
+        )
       );
     }
   },
   template: (
     <>
       <h2>Todo List ({remaining()} remaining)</h2>
-      
+
       <div class="add-todo">
-        <input type="text" placeholder="What needs to be done?" model:value={newTodoText} />
+        <input type="text" placeholder="What needs to be done?" model:value={newTodoText} on:keydown.enter={addTodo}/>
         <button on:click={addTodo} disabled={newTodoText().trim().length === 0}>Add</button>
       </div>
 
@@ -120,10 +128,10 @@ export const TodoListComponent = component(({
       }
     </>
   ),
-}));
+};
 ```
 
->Finally, here’s a `TodoAppComponent` that consumes the `TodoListComponent` and manages the state.
+>Finally, here’s a `TodoAppComponent` that consumes the `TodoListComponent` and manages the application state.
 
 ```ts
 import { component, signal } from '@angular/core';
@@ -158,4 +166,4 @@ export const TodoAppComponent = component(() => ({
   )
 }));
 ```
->These components follow the proposed syntax and structure, using signals for state management and the new template features like `model:` binding and `@for` block. Let me know if you have any other questions 
+>These components follow the proposed syntax and structure, using signals for state management and the new template features like `model:` binding and `@for` block. Let me know if you have any other questions
