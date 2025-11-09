@@ -52,7 +52,7 @@ export const TextSearch = component(({
       <!-- but can use multiple class: and style: -->
       <!-- ✅ <span class="..." class:some-class={...} class:some-other-class={...}> ✅ -->
   
-      <label class:danger={isDanger()}> Text: </label>
+      <label class:danger={isDanger()}>Text:</label>
       <input type="text" model:value={text} on:input={textChange} />
   
       <button disabled={text().length === 0} on:click={() => text.set('')}>
