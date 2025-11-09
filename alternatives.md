@@ -12,6 +12,55 @@ export interface Item {
   price: number;
 }
 
+const tooltip = directive(({
+  message = input.required<string>(),
+  elRef = ref<HTMLElement>(),
+}) => {
+  const unwanted = 'unwanted';
+  
+  return {
+    script: () => {
+      const renderer = inject(Renderer2);
+  
+      afterRenderEffect(() => {
+        /** ... **/
+      });
+    },
+  };
+});
+
+const currency = declaration(() => {
+  const unwanted = 'unwanted';
+  
+  return {
+    script: () => {
+      const localeId = inject(LOCALE_ID);
+      
+      return (
+        value: () => (number | undefined),
+        currencyCode: string | undefined,
+      ) => computed(/** ... **/);
+    },    
+  };
+});
+
+const List = component(({
+  items = input.required<Item[]>(),
+  item = input.required<Fragment<[Item]>>(),
+}) => {
+  const unwanted = 'unwanted';
+  
+  return {
+    template: (
+      <>
+        @for (i of items(); track item.id) {
+          <Render fragment={item()} inputs={[i]} />
+        }
+      </>
+    ),
+  };
+});
+
 class ItemsStore {
   /** ... **/
 }
@@ -55,55 +104,6 @@ export const ItemsPage = component(() => {
     styleUrl: './items-page.css',
   };
 });
-
-const List = component(({
-  items = input.required<Item[]>(),
-  item = input.required<Fragment<[Item]>>(),
-}) => {
-  const unwanted = 'unwanted';
-  
-  return {
-    template: (
-      <>
-        @for (i of items(); track item.id) {
-          <Render fragment={item()} inputs={[i]} />
-        }
-      </>
-    ),
-  };
-});
-
-const tooltip = directive(({
-  message = input.required<string>(),
-  elRef = ref<HTMLElement>(),
-}) => {
-  const unwanted = 'unwanted';
-  
-  return {
-    script: () => {
-      const renderer = inject(Renderer2);
-  
-      afterRenderEffect(() => {
-        /** ... **/
-      });
-    },
-  };
-});
-
-const currency = declaration(() => {
-  const unwanted = 'unwanted';
-  
-  return {
-    script: () => {
-      const localeId = inject(LOCALE_ID);
-      
-      return (
-        value: () => (number | undefined),
-        currencyCode: string | undefined,
-      ) => computed(/** ... **/);
-    },    
-  };
-});
 ```
 
 ## More abstract approach
@@ -119,6 +119,43 @@ export interface Item {
   description: string;
   price: number;
 }
+
+directive tooltip = ({
+  message = input.required<string>(),
+  elRef = ref<HTMLElement>(),
+}) => {
+  script: () => {
+    const renderer = inject(Renderer2);
+
+    afterRenderEffect(() => {
+      /** ... **/
+    });
+  },
+};
+
+declaration currency = () => {
+  script: () => {
+    const localeId = inject(LOCALE_ID);
+    
+    return (
+      value: () => (number | undefined),
+      currencyCode: string | undefined,
+    ) => computed(/** ... **/);
+  },
+};
+
+component List = ({
+  items = input.required<Item[]>(),
+  item = input.required<Fragment<[Item]>>(),
+}) => {
+  template: (
+    <>
+      @for (i of items(); track item.id) {
+        <Render fragment={item()} inputs={[i]} />
+      }
+    </>
+  ),
+};
 
 class ItemsStore {
   /** ... **/
@@ -158,42 +195,5 @@ export component ItemsPage = () => {
     </>
   ),
   styleUrl: './items-page.css',
-};
-
-component List = ({
-  items = input.required<Item[]>(),
-  item = input.required<Fragment<[Item]>>(),
-}) => {
-  template: (
-    <>
-      @for (i of items(); track item.id) {
-        <Render fragment={item()} inputs={[i]} />
-      }
-    </>
-  ),
-};
-
-directive tooltip = ({
-  message = input.required<string>(),
-  elRef = ref<HTMLElement>(),
-}) => {
-  script: () => {
-    const renderer = inject(Renderer2);
-
-    afterRenderEffect(() => {
-      /** ... **/
-    });
-  },
-};
-
-declaration currency = () => {
-  script: () => {
-    const localeId = inject(LOCALE_ID);
-    
-    return (
-      value: () => (number | undefined),
-      currencyCode: string | undefined,
-    ) => computed(/** ... **/);
-  },
 };
 ```
