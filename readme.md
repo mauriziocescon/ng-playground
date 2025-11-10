@@ -827,6 +827,7 @@ export const AdminLinkWithTooltip = component(({
 Pros: 
 - familiar enough, 
 - not impossible to automagically migrate the code (mostly move + reshuffle),
+- not affected by typical SFC limitations, 
 - no early return or `splitProps` drama 😅, 
 
 Cons:
