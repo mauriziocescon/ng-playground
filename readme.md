@@ -826,11 +826,12 @@ export const AdminLinkWithTooltip = component(({
 ### Pros and cons and evolution
 Pros: 
 - familiar enough, 
-- not impossible to automagically migrate the code (mostly move + reshuffle),
 - not affected by typical SFC limitations, 
-- no early return or `splitProps` drama 😅, 
+- no early return, 
+- no `splitProps` drama 😅. 
 
 Cons:
+- deeper gap with plain typescript,  
 - `@const` definitions with `component` / `directive` / `declaration` are off,
 - you can define variables before returning the object which makes no sense: 
 ```ts
@@ -863,7 +864,7 @@ const decl = declaration(() => {
   };
 });
 ```
-Since angular is a compiled framework, such problems can be fixed by introducing
+Since angular is a compiled framework, the last two problems can be fixed by introducing
 - `component` / `directive` / `declaration` keywords (see RippleJS) 
 and by applying some special remapping rules: 
 ```ts
