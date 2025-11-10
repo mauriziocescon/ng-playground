@@ -33,7 +33,7 @@ const decl = declaration(() => {
 });
 ```
 
-But this way, you get unwanted flexility while defining basic blocks and strange behaviours: for example, you can define variables before returning the object which makes no sense. Since angular is a compiled framework, the problem can be fixed by introducing
+But this way you get unwanted flexility (blocks definition) and strange behaviours: for example, you can define variables before returning the object which makes no sense. Since angular is a compiled framework, the problem can be fixed by introducing
 - `component` / `directive` / `declaration` keywords (see RippleJS)
 - and by applying some special rules.
 ```ts
