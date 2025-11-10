@@ -1,5 +1,64 @@
-## Returns an object
-You can define variables before returning the object which makes no sense.  
+## Why keywords
+In theory, a `component` / `directive` / `declaration` could be defined like this: 
+```ts
+import { component, directive, declaration, ... } from '@angular/core';
+
+const Comp = component(({
+  /** ... **/
+}) => {
+  const unwanted = 'unwanted';
+  return {
+    providers: [...],
+    script: () => {...},
+    template: (<>...</>),
+    style: (<>...</>),
+  };
+});
+
+const dir = directive(({
+  /** ... **/
+  elRef = ref<HTMLElement>(),
+}) => {
+  const unwanted = 'unwanted';
+  return {
+    script: () => {...},
+  };
+});
+
+const decl = declaration(() => {
+  const unwanted = 'unwanted';
+  return {
+    script: () => {...},
+  };
+});
+```
+
+But this way, you get unwanted flexility while defining basic blocks and strange behaviours: for example, you can define variables before returning the object which makes no sense. Since angular is a compiled framework, the problem can be fixed by introducing
+- `component` / `directive` / `declaration` keywords (see RippleJS)
+- and by applying some special rules.
+```ts
+#component Comp = ({
+  /** ... **/
+}) => {
+  providers: [...],
+  script: () => {...},
+  template: (<>...</>),
+  style: (<>...</>),
+};
+
+#directive dir = ({
+  /** ... **/
+  elRef = ref<HTMLElement>(),
+}) => {
+  script: () => {...},
+};
+
+#declaration decl = () => {
+  script: () => {...},
+};
+```
+
+Here is a full example comparing the 2 approaches: 
 ```ts
 import { component, directive, declaration, ... } from '@angular/core';
 import { Card, HStack, Img, VStack, Title, Description } from '@lib/card';
@@ -105,9 +164,7 @@ export const ItemsPage = component(() => {
   };
 });
 ```
-
-## More abstract approach
-`**.ng` files (typescript superset) with `component` / `directive` / `declaration` keywords (see RippleJS). 
+ 
 ```ts
 import { ... } from '@angular/core';
 import { Card, HStack, Img, VStack, Title, Description } from '@lib/card';
@@ -120,7 +177,7 @@ export interface Item {
   price: number;
 }
 
-directive tooltip = ({
+#directive tooltip = ({
   message = input.required<string>(),
   elRef = ref<HTMLElement>(),
 }) => {
@@ -133,7 +190,7 @@ directive tooltip = ({
   },
 };
 
-declaration currency = () => {
+#declaration currency = () => {
   script: () => {
     const localeId = inject(LOCALE_ID);
     
@@ -144,7 +201,7 @@ declaration currency = () => {
   },
 };
 
-component List = ({
+#component List = ({
   items = input.required<Item[]>(),
   item = input.required<Fragment<[Item]>>(),
 }) => {
@@ -161,7 +218,7 @@ class ItemsStore {
   /** ... **/
 }
 
-export component ItemsPage = () => {
+export #component ItemsPage = () => {
   providers: [
     provide({ token: ItemsStore, useFactory: () => new ItemsStore() }),
   ],
