@@ -1,154 +1,180 @@
-# Gemini pro 2.5
-Prompt:
+# Gemini 2.5 pro
+## Prompt:
 
->Hey! 
+Hey! 
 
->In readme.md and why-macros.md, I drafted a possible evolution of the angular syntax in templates and proposed a new authoring format.
+In readme.md and why-macros.md, I drafted a possible evolution of the angular syntax in templates and proposed a new authoring format.
 
->Considering such files and the current angular best practices, could you please create an example of components composition using directives and declarations?  
+Considering such files and the current angular best practices, could you please create an example of components composition using directives and declarations?  
 
->Thanks
+Thanks
 
-Result:
->Of course! I've reviewed your documents and the proposed syntax. It's an interesting take on evolving Angular's authoring format, emphasizing explicitness and reducing magic.
+## Result:
 
->Based on your ideas and current Angular best practices, here is an example of component composition that uses your proposed #component, #directive, and #declaration macros.
+Based on the new syntax and concepts you've outlined in your readme.md and why-macros.md files, here is an example of component composition that uses both a declaration and a directive.
 
->This example showcases:
->- A currency declaration to format prices.
->- A tooltip directive to show hints.
->- A Card component for UI structure.
->- A main ProductPage component that composes everything.
+The scenario is a ProductCard component that:
 
->I've combined them into a single file for clarity.
+- Uses a #declaration (@formatPrice) to format a product's price, which requires LOCALE_ID from the dependency injection (DI) system.
+
+- Uses a #directive (@trackView) to notify a parent component or service when the product card's image is viewed (e.g., via on:click).
+
+- Composes these pieces together in its template.
+
+### The Declaration (@formatPrice)
+First, we define a #declaration. According to your notes, this is a way to declare a const variable in the template that can use DI. This example creates a price-formatting function that injects the LOCALE_ID.
+
 ```ts
-import {
-  signal,
-  computed,
-  input,
-  output,
-  ref,
-  inject,
-  afterRenderEffect,
-  Renderer2,
-  LOCALE_ID,
-  Fragment,
-} from '@angular/core';
-import { Render } from '@angular/common';
+// --- format-price.ng.ts ---
+import { computed, inject, LOCALE_ID } from '@angular/core';
 
-// 1. DECLARATION
-// A declaration for creating a computed currency value in a template.
-// It uses dependency injection to get the current locale.
-
-#declaration currency = () => {
+/**
+ * A declaration that creates a computed signal
+ * for a formatted currency string, using DI to get the locale.
+ *
+ */
+#declaration formatPrice = () => {
   script: () => {
-    const localeId = inject(LOCALE_ID);
-
+    // 1. Uses the injection context
+    const locale = inject(LOCALE_ID);
+    
+    // 2. Returns a function to be used in the template
     return (
-      value: () => (number | undefined),
-      currencyCode: string = 'USD',
+      price: () => (number | undefined),
+      currencyCode: string = 'USD'
     ) => computed(() => {
-      const val = value();
-      if (val === undefined) {
-        return '';
+      const p = price();
+      if (p === undefined) {
+        return 'Price unavailable';
       }
-      return new Intl.NumberFormat(localeId, {
+      return new Intl.NumberFormat(locale, {
         style: 'currency',
         currency: currencyCode,
-      }).format(val);
+      }).format(p);
     });
   },
 };
+```
 
-// 2. DIRECTIVE
-// A directive that adds a simple browser tooltip to an element.
-// It receives the message via an input.
+### The Directive (@trackView)
+Next, we define a #directive. This directive will be applied to an element and will emit an output event when clicked. It also gets a reference to its host element (elRef).
 
-export #directive tooltip = ({
-  message = input.required<string>(),
+```ts
+// --- track-view.ng.ts ---
+import { input, output, ref, inject, Renderer2, afterRenderEffect } from '@angular/core';
+
+/**
+ * A directive that changes the behavior of a DOM element.
+ * It attaches a click listener and emits an event.
+ */
+export #directive trackView = ({
+  /**
+   * An input to identify what is being viewed.
+   */
+  itemId = input.required<string>(),
+  
+  /**
+   * An output to notify when the element is clicked.
+   */
+  viewed = output<string>(),
+  
+  /**
+   * The reference to the host element, managed by Angular.
+   */
   elRef = ref<HTMLElement>(),
 }) => {
   script: () => {
     const renderer = inject(Renderer2);
 
-    afterRenderEffect(() => {
-      // In a real scenario, you might create a custom tooltip element,
-      // but for this example, we'll just use the native `title` attribute.
-      renderer.setAttribute(elRef(), 'title', message());
+    // Use afterRenderEffect to interact with the DOM element
+    afterRenderEffect((onCleanup) => {
+      const element = elRef(); // Get the native element
+      if (!element) return;
+
+      const onClick = ()R => {
+        // Emit the itemId when clicked
+        viewed.emit(itemId());
+      };
+
+      const unlisten = renderer.listen(element, 'click', onClick);
+      
+      // Clean up the listener when the directive is destroyed
+      onCleanup(() => unlisten());
     });
   },
 };
+```
 
-// 3. CHILD COMPONENT
-// A simple, reusable Card component with a title input
-// and a slot for content projection (`children`).
+### The Component (ProductCard)
+Finally, the ProductCard component composes these pieces. It imports the declaration and directive, then uses them in its template:
 
-export #component Card = ({
-  title = input.required<string>(),
-  children = input<Fragment<void>>(),
+- @const price = @formatPrice(...) to use the declaration.
+- @trackView(...) to apply the directive to the image.
+```ts
+// --- product-card.ng.ts ---
+import { signal, input } from '@angular/core';
+import { formatPrice } from './format-price.ng';
+import { trackView } from './track-view.ng';
+
+// Interface for the product
+export interface Product {
+  id: string;
+  name: string;
+  price: number;
+  imageUrl: string;
+}
+
+export #component ProductCard = ({
+  product = input.required<Product>(),
 }) => {
+  script: () => {
+    // This function will be called by the @trackView directive's output
+    function onProductViewed(id: string) {
+      console.log(`Product ${id} was viewed!`);
+      // --> Here you could call an injected AnalyticsService
+    }
+    
+    // Expose the handler to the template
+    return { onProductViewed };
+  },
   template: (
     <>
+      @const price = @formatPrice(
+        () => product().price, 
+        'EUR'
+      );
+
       <div class="card">
-        <h2>{title()}</h2>
-        @if (children()) {
-          <div class="card-content">
-            <Render fragment={children()} />
-          </div>
-        }
+        <img 
+          src={product().imageUrl} 
+          alt={product().name}
+          @trackView(
+            itemId={product().id} 
+            on:viewed={onProductViewed}
+          ) 
+        />
+        
+        <h3>{product().name}</h3>
+        
+        <p>{price()}</p>
       </div>
     </>
   ),
   style: (
     <>
       .card {
-        border: 1px solid #ccc;
+        border: 1px solid #eee;
         border-radius: 8px;
-        padding: 16px;
-        margin: 8px;
+        padding: 1rem;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        max-width: 300px;
       }
-      .card-content {
-        margin-top: 12px;
-        font-style: italic;
+      img {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        object-fit: cover;
+        cursor: pointer;
       }
-      h2 {
-        margin-top: 0;
-      }
-    </>
-  )
-};
-
-
-// 4. PARENT COMPONENT (COMPOSITION ROOT)
-// The main component that composes the Card, tooltip, and currency declaration.
-
-export #component ProductPage = () => {
-  script: () => {
-    const product = signal({
-      name: 'Awesome Gadget',
-      description: 'A truly awesome gadget that will solve all your problems. Hover for details!',
-      price: 99.99,
-    });
-  },
-  template: (
-    <>
-      <h1>Product Details</h1>
-
-      <Card title={product().name}>
-        {/* The tooltip directive is applied to this paragraph */}
-        <p @tooltip(message={product().description})>
-          {product().description}
-        </p>
-
-        {/* The currency declaration is used to create a formatted price constant */}
-        @const price = @currency(() => product().price, 'EUR');
-        <p><strong>Price:</strong> {price()}</p>
-      </Card>
     </>
   ),
 };
 ```
-
->This example aligns with modern Angular ideas like signals, computed values, and clear dependency injection, while fitting into the new authoring format you've proposed. Let me know if you have any other questions
