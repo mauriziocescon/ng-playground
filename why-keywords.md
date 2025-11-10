@@ -58,7 +58,9 @@ But this way you get unwanted flexility (blocks definition) and strange behaviou
 };
 ```
 
-Here is a full example comparing the 2 approaches: 
+Here is a full example comparing the 2 approaches. 
+
+## Functions
 ```ts
 import { component, directive, declaration, ... } from '@angular/core';
 import { Card, HStack, Img, VStack, Title, Description } from '@lib/card';
@@ -164,7 +166,8 @@ export const ItemsPage = component(() => {
   };
 });
 ```
- 
+
+## Keywords
 ```ts
 import { ... } from '@angular/core';
 import { Card, HStack, Img, VStack, Title, Description } from '@lib/card';

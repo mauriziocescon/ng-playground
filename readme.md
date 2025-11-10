@@ -629,7 +629,7 @@ import { tooltip } from '@mylib/tooltip';
       text: text.asReadonly(),
     };
   },
-  template: `<!-- ... -->`,
+  template: (<><!-- ... --></>),
 };
 
 export #component Parent = () => {

@@ -3,97 +3,96 @@ Prompt (gemini 2.5 pro):
 
 >Hey! 
 
->In readme.md and alternatives.md, I drafted a possible evolution of the angular syntax in templates and proposed a new authoring format. 
+>In readme.md and why-keywords.md, I drafted a possible evolution of the angular syntax in templates and proposed a new authoring format.
 
 >Considering such files and the current angular best practices, could you please create an example of components composition using directives and declarations?  
 
 >Thanks
 
 Result:
->Of course! I've reviewed the readme.md and alternatives.md files describing the new authoring format. It's an interesting evolution of Angular's syntax!
+>Of course! I've reviewed your documents and the proposed syntax. It's an interesting take on evolving Angular's authoring format, emphasizing explicitness and reducing magic.
 
->To demonstrate component composition, I'll create a simple product page. This example will include:
->- A currency declaration to format product prices.
->- A highlight directive to visually mark products that are on sale.
->- A ProductCardComponent that displays a single product and is designed to be composed.
->- A ProductPageComponent that uses all of the above to display a list of products.
+>Based on your ideas and current Angular best practices, here is an example of component composition that uses your proposed #component, #directive, and #declaration keywords.
 
->Here are the files for the example:
+>This example showcases:
+>- A currency declaration to format prices.
+>- A tooltip directive to show hints.
+>- A Card component for UI structure.
+>- A main ProductPage component that composes everything.
 
->First, a simple data model for our products in product.model.ts:
-
+>I've combined them into a single file for clarity.
 ```ts
-export interface Product {
-  id: number;
-  name: string;
-  price: number;
-  onSale: boolean;
-}
-```
->Next, I'll create the `currency` declaration in `currency.declaration.ts`. This will be used to format the product price in the template. It uses dependency injection to get the current locale.
+import {
+  signal,
+  computed,
+  input,
+  output,
+  ref,
+  inject,
+  afterRenderEffect,
+  Renderer2,
+  LOCALE_ID,
+  Fragment,
+} from '@angular/core';
+import { Render } from '@angular/common';
 
-```ts
-import { declaration, computed, inject, LOCALE_ID } from '@angular/core';
-import { formatCurrency } from '@angular/common';
+// 1. DECLARATION
+// A declaration for creating a computed currency value in a template.
+// It uses dependency injection to get the current locale.
 
-export declaration currency = () => {
+#declaration currency = () => {
   script: () => {
     const localeId = inject(LOCALE_ID);
 
     return (
-      value: () => number | undefined,
-      currencyCode: () => string,
-      display: 'symbol' | 'narrowSymbol' | 'code' | 'symbol-narrow' | 'name' = 'symbol'
+      value: () => (number | undefined),
+      currencyCode: string = 'USD',
     ) => computed(() => {
-      const v = value();
-      if (v === undefined) {
+      const val = value();
+      if (val === undefined) {
         return '';
       }
-      return formatCurrency(v, localeId, display, currencyCode());
+      return new Intl.NumberFormat(localeId, {
+        style: 'currency',
+        currency: currencyCode,
+      }).format(val);
     });
   },
 };
-```
 
->Here's the `highlight` directive in `highlight.directive.ts`. It will change the background color of the element it's applied to.
+// 2. DIRECTIVE
+// A directive that adds a simple browser tooltip to an element.
+// It receives the message via an input.
 
-```ts
-import { directive, input, ref, inject, Renderer2, effect } from '@angular/core';
-
-export directive highlight = ({
-  color = input('yellow'),
+export #directive tooltip = ({
+  message = input.required<string>(),
   elRef = ref<HTMLElement>(),
 }) => {
   script: () => {
     const renderer = inject(Renderer2);
 
-    effect(() => {
-      renderer.setStyle(elRef(), 'backgroundColor', color());
-      renderer.setStyle(elRef(), 'transition', 'background-color 0.5s');
+    afterRenderEffect(() => {
+      // In a real scenario, you might create a custom tooltip element,
+      // but for this example, we'll just use the native `title` attribute.
+      renderer.setAttribute(elRef(), 'title', message());
     });
   },
 };
-```
 
->Now, the `ProductCardComponent` in `product-card.component.ng.ts`. This component is designed for composition. It accepts a `product` input, a `children` fragment for custom content, and uses `fallthroughAttrs` with `@**` to allow directives like `highlight` to be passed down from a parent to its own template elements.
+// 3. CHILD COMPONENT
+// A simple, reusable Card component with a title input
+// and a slot for content projection (`children`).
 
-```ts
-import { component, input, fallthroughAttrs, Fragment } from '@angular/core';
-import { HTMLAttributes } from '@angular/core/elements';
-import { Render } from '@angular/common';
-import { type Product } from './product.model';
-
-export component ProductCardComponent = ({
-  product = input.required<Product>(),
+export #component Card = ({
+  title = input.required<string>(),
   children = input<Fragment<void>>(),
-  attrs = fallthroughAttrs<HTMLAttributes>(),
 }) => {
   template: (
     <>
-      <div class="product-card" @** bind:**={attrs.in} on:**={attrs.on}>
-        <h3>{product().name}</h3>
+      <div class="card">
+        <h2>{title()}</h2>
         @if (children()) {
-          <div class="content">
+          <div class="card-content">
             <Render fragment={children()} />
           </div>
         }
@@ -102,74 +101,54 @@ export component ProductCardComponent = ({
   ),
   style: (
     <>
-      .product-card {
+      .card {
         border: 1px solid #ccc;
+        border-radius: 8px;
         padding: 16px;
         margin: 8px;
-        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        max-width: 300px;
       }
-      .content {
-        margin-top: 1rem;
+      .card-content {
+        margin-top: 12px;
+        font-style: italic;
+      }
+      h2 {
+        margin-top: 0;
       }
     </>
-  ),
+  )
 };
-```
 
->Finally, the `ProductPageComponent` in `product-page.component.ng.ts` brings everything together. It defines a list of products, uses the `@currency` declaration to format prices, and applies the `@highlight` directive to the `ProductCardComponent` when a product is on sale.
 
-```ts
-import { component, signal } from '@angular/core';
-import { ProductCardComponent } from './product-card.component.ng';
-import { highlight } from './highlight.directive';
-import { currency } from './currency.declaration';
-import { type Product } from './product.model';
+// 4. PARENT COMPONENT (COMPOSITION ROOT)
+// The main component that composes the Card, tooltip, and currency declaration.
 
-export component ProductPageComponent = () => {
+export #component ProductPage = () => {
   script: () => {
-    const products = signal<Product[]>([
-      { id: 1, name: 'Fancy Keyboard', price: 99, onSale: true },
-      { id: 2, name: 'Ergonomic Mouse', price: 75, onSale: false },
-      { id: 3, name: '4K Monitor', price: 499, onSale: true },
-    ]);
-
-    function addToCart(product: Product) {
-      console.log(`${product.name} added to cart!`);
-    }
-    
-    function toggleSale(product: Product) {
-      products.update(ps => ps.map(p => p.id === product.id ? {...p, onSale: !p.onSale} : p));
-    }
+    const product = signal({
+      name: 'Awesome Gadget',
+      description: 'A truly awesome gadget that will solve all your problems. Hover for details!',
+      price: 99.99,
+    });
   },
   template: (
     <>
-      <h1>Products</h1>
-      <div class="product-list">
-        @for (product of products(); track product.id) {
-          @const formattedPrice = @currency(() => product.price, () => 'USD');
-          
-          <ProductCardComponent 
-            product={product}
-            @highlight(color={product.onSale ? 'lightgreen' : 'transparent'})
-            on:click={() => toggleSale(product)}>
-            
-            <p>Price: {formattedPrice()}</p>
-            
-            <button on:click={(e) => { e.stopPropagation(); addToCart(product)}}>Add to Cart</button>
-          </ProductCardComponent>
-        }
-      </div>
-    </>
-  ),
-  style: (
-    <>
-      .product-list {
-        display: flex;
-        flex-wrap: wrap;
-      }
+      <h1>Product Details</h1>
+
+      <Card title={product().name}>
+        {/* The tooltip directive is applied to this paragraph */}
+        <p @tooltip(message={product().description})>
+          {product().description}
+        </p>
+
+        {/* The currency declaration is used to create a formatted price constant */}
+        @const price = @currency(() => product().price, 'EUR');
+        <p><strong>Price:</strong> {price()}</p>
+      </Card>
     </>
   ),
 };
 ```
 
->This example illustrates how directives and declarations can be combined with component composition to create flexible and reusable UIs, following the elegant syntax you've proposed. Let me know if you have any other questions
+>This example aligns with modern Angular ideas like signals, computed values, and clear dependency injection, while fitting into the new authoring format you've proposed. Let me know if you have any other questions
