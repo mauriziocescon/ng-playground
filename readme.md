@@ -3,7 +3,7 @@
 
 Points:
 1. building blocks as functions:
-    - `**.ng` files (typescript superset) with keywords (see [`why keywords`](https://github.com/mauriziocescon/ng-playground/blob/main/why-keywords.md) for more info), 
+    - `**.ng` files (typescript superset) with macros (see [`why macros`](https://github.com/mauriziocescon/ng-playground/blob/main/why-macros.md) for more info), 
     - `component`: a quad `providers` / `script` / `template` / `style`,
     - `directive`: a `script` that can change the appearance or behaviour of DOM elements,
     - `declaration`: a way to declare `const` variables in templates that depend on DI,

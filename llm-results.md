@@ -3,7 +3,7 @@ Prompt (gemini 2.5 pro):
 
 >Hey! 
 
->In readme.md and why-keywords.md, I drafted a possible evolution of the angular syntax in templates and proposed a new authoring format.
+>In readme.md and why-macros.md, I drafted a possible evolution of the angular syntax in templates and proposed a new authoring format.
 
 >Considering such files and the current angular best practices, could you please create an example of components composition using directives and declarations?  
 
@@ -12,7 +12,7 @@ Prompt (gemini 2.5 pro):
 Result:
 >Of course! I've reviewed your documents and the proposed syntax. It's an interesting take on evolving Angular's authoring format, emphasizing explicitness and reducing magic.
 
->Based on your ideas and current Angular best practices, here is an example of component composition that uses your proposed #component, #directive, and #declaration keywords.
+>Based on your ideas and current Angular best practices, here is an example of component composition that uses your proposed #component, #directive, and #declaration macros.
 
 >This example showcases:
 >- A currency declaration to format prices.

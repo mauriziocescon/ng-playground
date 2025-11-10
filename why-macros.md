@@ -1,4 +1,4 @@
-## Why keywords
+## Why macros
 A `component` / `directive` / `declaration` could be defined like this: 
 ```ts
 import { component, directive, declaration, ... } from '@angular/core';
@@ -34,8 +34,8 @@ const decl = declaration(() => {
 ```
 
 But this way you get unwanted flexility (blocks definition) and strange behaviours: for example, you could define variables before returning the object which makes no sense. Since angular is a compiled framework, the problem can be fixed by introducing
-- `component` / `directive` / `declaration` keywords (see RippleJS)
-- and by applying some special rules mapping keywords to definitions above.
+- `component` / `directive` / `declaration` macros (see RippleJS)
+- and by applying some special rules mapping macros to definitions above.
 ```ts
 #component Comp = ({
   /** ... **/
@@ -167,7 +167,7 @@ export const ItemsPage = component(() => {
 });
 ```
 
-### Keywords
+### Macros
 ```ts
 import { ... } from '@angular/core';
 import { Card, HStack, Img, VStack, Title, Description } from '@lib/card';
