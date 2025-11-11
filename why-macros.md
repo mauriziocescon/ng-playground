@@ -34,7 +34,7 @@ const decl = declaration(() => {
 ```
 
 But this way you get unwanted flexility (definitions) and strange behaviours: for example, you could define variables before returning the object which makes no sense. Since angular is a compiled framework, the problem can be fixed by introducing
-- `component` / `directive` / `declaration` macros (see RippleJS)
+- `component` / `directive` / `declaration` macros (see RippleJS with keywords)
 - and by applying some special rules mapping macros to definitions above.
 ```ts
 #component Comp = ({
@@ -76,95 +76,79 @@ export interface Item {
 const tooltip = directive(({
   message = input.required<string>(),
   elRef = ref<HTMLElement>(),
-}) => {
-  const unwanted = 'unwanted';
-  
-  return {
-    script: () => {
-      const renderer = inject(Renderer2);
-  
-      afterRenderEffect(() => {
-        /** ... **/
-      });
-    },
-  };
-});
+}) => ({
+  script: () => {
+    const renderer = inject(Renderer2);
 
-const currency = declaration(() => {
-  const unwanted = 'unwanted';
-  
-  return {
-    script: () => {
-      const localeId = inject(LOCALE_ID);
-      
-      return (
-        value: () => (number | undefined),
-        currencyCode: string | undefined,
-      ) => computed(/** ... **/);
-    },    
-  };
-});
+    afterRenderEffect(() => {
+      /** ... **/
+    });
+  },
+}));
+
+const currency = declaration(() => ({
+  script: () => {
+    const localeId = inject(LOCALE_ID);
+    
+    return (
+      value: () => (number | undefined),
+      currencyCode: string | undefined,
+    ) => computed(/** ... **/);
+  },
+}));
 
 const List = component(({
   items = input.required<Item[]>(),
   item = input.required<Fragment<[Item]>>(),
-}) => {
-  const unwanted = 'unwanted';
-  
-  return {
-    template: (
-      <>
-        @for (i of items(); track i.id) {
-          <Render fragment={item()} inputs={[i]} />
-        }
-      </>
-    ),
-  };
-});
+}) => ({
+  template: (
+    <>
+      @for (i of items(); track i.id) {
+        <Render fragment={item()} inputs={[i]} />
+      }
+    </>
+  ),
+}));
 
 class ItemsStore {
   /** ... **/
 }
 
-export const ItemsPage = component(() => {
-  const unwanted = 'unwanted';
+export const ItemsPage = component(() => ({
+  providers: [
+    provide({ token: ItemsStore, useFactory: () => new ItemsStore() }),
+  ],
+  script: () => {
+    const store = inject(ItemsStore);
   
-  return {
-    providers: [
-      provide({ token: ItemsStore, useFactory: () => new ItemsStore() }),
-    ],
-    script: () => {
-      const store = inject(ItemsStore);
-  
-      function goTo(item: Item) {
-        // ..
-      }
-    },
-    template: (
-      <>
-        <List items={store.items()}>
-          @fragment item(i: Item) {
-            <Card on:click={goTo(i)}>
-              <HStack width={100}>
-                <Img url={i.imgUrl} />
-                <VStack>
-                  <Title title={i.title} />
-                  <Description @tooltip(message={i.title}) description={i.description} />
-                  
-                  <hr />
-                  
-                  @const price = @currency(() => i.price, 'EUR');
-                  <p>Price: {price}</p>
-                </VStack>
-              </HStack>
-            </Card>
-          }
-        </List>
-      </>
-    ),
-    styleUrl: './items-page.css',
-  };
-});
+    function goTo(item: Item) {
+      // ..
+    }
+  },
+  template: (
+    <>
+      <List items={store.items()}>
+        @fragment item(i: Item) {
+          <Card on:click={goTo(i)}>
+            <HStack width={100}>
+              <Img url={i.imgUrl} />
+              <VStack>
+                <Title title={i.title} />
+                <Description @tooltip(message={i.title}) description={i.description} />
+                
+                <hr />
+                
+                @const price = @currency(() => i.price, 'EUR');
+                <p>Price: {price}</p>
+              </VStack>
+            </HStack>
+          </Card>
+        }
+      </List>
+    </>
+  ),
+  styleUrl: './items-page.css',
+}));
 ```
 
 ### Macros
