@@ -799,6 +799,7 @@ export #component AdminLinkWithTooltip = ({
 - in general, the concept of injecting components / directives inside each others should be restricted cause it generates lots of indirection / complexity; the downside is that some ng-reserved names are necessary.
 
 ### Unresolved points
+- other decorator props: in this proposal, components and directives have only `providers` / `script` / `template` / `style` entries. On the other hand, `@Component` and `@Directive` have many more and some of them (like `preserveWhitespaces`) should probably stay. They are not considered to avoid digressions; 
 - `providers` defined at `directive` level: never really understood the added value, but experienced the confusion they generate; not really sure if they have a meaning or not; 
 - there isn't any obvious `short notation` for passing signals (like svelte / vue);
 ```ts
