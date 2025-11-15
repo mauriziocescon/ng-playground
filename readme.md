@@ -504,7 +504,7 @@ export #component MyUserDetail = ({
    *
    * attrs: name reserved to the framework
    */
-  attrs = fallthroughAttrs<Omit<Props<UserDetail>, 'user'>>(),
+  attrs = fallthroughAttrs<Props<UserDetail>>(),
 }) => {
   script: () => {
     const other = computed(() => /** something depending on user or a default value **/);
@@ -574,7 +574,7 @@ import { HTMLButtonAttributes } from '@angular/core/elements';
 export #component Button = ({
   children = input.required<Fragment<void>>(),
   class = input<string>(''),
-  attrs = fallthroughAttrs<Omit<HTMLButtonAttributes, 'class'>>(),
+  attrs = fallthroughAttrs<HTMLButtonAttributes>(),
 }) => {
   script: () => {
     const innerClass = computed(() => `{class()} other-class`);
