@@ -243,10 +243,12 @@ export #component Counter = () => {
   template: (
     <>
       <!-- it gets created once with scope similar to @let -->
+
       @const count = counter(0);
     
       <!-- any declaration can be used directly in the template (**.ng files) -->
       <!-- declarations require @ -->
+
       @const price = @currency(count.value, 'EUR');
     
       <h1>Counter</h1>
