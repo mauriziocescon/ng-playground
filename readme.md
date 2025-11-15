@@ -313,7 +313,7 @@ export #component MenuConsumer = () => {
   },
   template: (
     <>
-      <!-- markup inside comp tag => implicitly become an input called children -->
+      <!-- markup inside comp tag => implicitly becomes an input called children -->
   
       <Menu>
         <MenuItem>{first()}</MenuItem>
