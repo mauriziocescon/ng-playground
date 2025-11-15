@@ -495,7 +495,7 @@ export #component MyUserDetail = ({
   /**
    * whatever is not matching inputs / outputs / models
    * defined explicitly (like user). In a way, it's like: 
-   * const f = ({ user, ...rest }: Props) => ({...});
+   * Comp = ({ user, ...rest }: Props) => {...};
    *
    * attrs entries:
    * - in: inputs (or meaningful attributes),
