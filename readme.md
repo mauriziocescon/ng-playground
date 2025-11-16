@@ -444,19 +444,25 @@ export #component ButtonConsumer = () => {
 };
 
 // -- button in @mylib/button --------------------
-import { input, output } from '@angular/core';
+import { input, output, fallthroughDirectives } from '@angular/core';
 import { Render } from '@angular/common';
 
 export #component Button = ({
   children = input.required<Fragment<void>>(),
   disabled = input<boolean>(false),
   click = output<void>(),
+  /**
+   * directives applied to Button
+   *
+   * dirs: name reserved to the framework
+   */
+  dirs = fallthroughDirectives<HtmlButtonElement>(),
 }) => {
   template: (
     <>
-      <!-- @** => fallthrough directives (ripple / tooltip) from the consumer -->
+      <!-- @** => fallthroughDirectives (ripple / tooltip) from the consumer -->
     
-      <button @** disabled={disabled()} on:click={() => click.emit()}>
+      <button @**={dirs} disabled={disabled()} on:click={() => click.emit()}>
         <Render fragment={children()} />
       </button>
     </>
@@ -569,12 +575,13 @@ export #component ButtonConsumer = () => {
 };
 
 // -- button in @mylib/button --------------------
-import { input, fallthroughAttrs, computed } from '@angular/core';
+import { input, fallthroughAttrs, fallthroughDirectives, computed } from '@angular/core';
 import { HTMLButtonAttributes } from '@angular/core/elements';
 
 export #component Button = ({
   children = input.required<Fragment<void>>(),
   class = input<string>(''),
+  dirs = fallthroughDirectives<HtmlButtonElement>(),
   attrs = fallthroughAttrs<HTMLButtonAttributes>(),
 }) => {
   script: () => {
@@ -582,7 +589,7 @@ export #component Button = ({
   },
   template: (
     <>
-      <button @** bind:**={attrs} class={innerClass()}>
+      <button @**={dirs} bind:**={attrs} class={innerClass()}>
         <Render fragment={children()} />
       </button>
     </>
