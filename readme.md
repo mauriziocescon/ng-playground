@@ -24,10 +24,6 @@ import { signal, linkedSignal, input, output } from '@angular/core';
 
 export #component TextSearch = ({
   /**
-   * value / valueChange are always created
-   * for interoperability
-   * (no real "props deconstruction")
-   *
    * by the time script is called,
    * inputs are populated with parent data
    */
@@ -76,7 +72,7 @@ External template / style files:
 import { input, output } from '@angular/core';
 
 /**
- * Have to import what's used in **.ng.html:
+ * have to import what's used in **.ng.html:
  * @import { Comp } from '...';
  */
 export #component Checkbox = ({
@@ -121,6 +117,21 @@ import { input, model, output } from '@angular/core';
 
 export interface User { /** ... **/ }
 
+/**
+ * mental model (props deconstruction): 
+ * <UserDetail 
+ *   user={user()} 
+ *   model:email={email} 
+ *   on:makeAdmin={makeAdmin} />
+ * 
+ * similar to  
+ * UserDetail({ 
+ *   user: () => user(), 
+ *   email: () => email(), 
+ *   emailChange: (v: string) => email.set(v), 
+ *   makeAdmin: () => makeAdmin(),
+ * })
+ */
 export #component UserDetail = ({
   user = input<User>(),
   email = model<string>(),
@@ -191,7 +202,7 @@ export #directive tooltip = ({
   message = input.required<string>(),
   dismiss = output<void>(),
   /**
-   * Readonly signal managed by ng.
+   * readonly signal managed by ng.
    *
    * elRef: name reserved to the framework
    */
@@ -464,17 +475,13 @@ export #component UserDetailConsumer = () => {
     const email = signal<string>(...);
 
     function makeAdmin() { /** ... **/ }
-
-    const inputs = {
-      user: () => user(),
-    };
   },
   template: (
     <>
       <!-- bind:**={object} bind all entries of object; same for model / on -->
   
       <MyUserDetail
-        bind:**={inputs}
+        bind:**={{user}}
         model:**={{email}}
         on:**={{makeAdmin}} />
     </>
@@ -488,7 +495,7 @@ export #component MyUserDetail = ({
    * defined explicitly (like user). In a way, it's like: 
    * Comp = ({ user, ...attrs }: Props<UserDetail>) => {...};
    *
-   * attrs entries:
+   * attrs:
    * - inputs (or meaningful attributes),
    * - outputs (or meaningful event handlers),
    * - 2way: input name + output nameChange.
