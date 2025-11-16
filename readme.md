@@ -31,7 +31,7 @@ export #component TextSearch = ({
    * by the time script is called,
    * inputs are populated with parent data
    */
-  value = input.required<string>(), // definition + type
+  value = input.required<string>(),
   valueChange = output<string>(),
 }) => {
   script: () => {
@@ -99,7 +99,6 @@ export #component UserDetailConsumer = () => {
     const user = signal<User>(...);
     const email = signal<string>(...);
 
-    function processEmail() { /** ... **/ }
     function makeAdmin() { /** ... **/ }
   },
   template: (
@@ -107,13 +106,11 @@ export #component UserDetailConsumer = () => {
       <!-- any component can be used directly in the template (**.ng files) -->
       <!-- cannot duplicate inputs / outputs -->
       
-      <!-- bind: and on: behaves the same as for native elements -->
-      <!-- 2way binding for comp: model:name={var} on:nameChange={func} -->
-  
+      <!-- bind: model: on: behaves the same as for native elements -->
+      
       <UserDetail
         user={user()}
         model:email={email}
-        on:emailChange={() => processEmail()}
         on:makeAdmin={makeAdmin} />
     </>
   ),
@@ -466,16 +463,10 @@ export #component UserDetailConsumer = () => {
     const user = signal<User>(...);
     const email = signal<string>(...);
 
-    function processEmail() { /** ... **/ }
     function makeAdmin() { /** ... **/ }
 
     const inputs = {
       user: () => user(),
-    };
-    
-    const outputs = {
-      makeAdmin,
-      emailChange: () => processEmail()
     };
   },
   template: (
@@ -485,7 +476,7 @@ export #component UserDetailConsumer = () => {
       <MyUserDetail
         bind:**={inputs}
         model:**={{email}}
-        on:**={outputs} />
+        on:**={{makeAdmin}} />
     </>
   ),
 };
