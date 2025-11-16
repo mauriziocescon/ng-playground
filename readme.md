@@ -455,7 +455,7 @@ export #component Button = ({
 
 Wrapping components and passing inputs / outputs:
 ```ts
-import { input, computed, fallthroughAttrs, Props } from '@angular/core';
+import { input, computed, fallthroughAttrs, Attributes } from '@angular/core';
 import { UserDetail, User } from './user-detail.ng';
 
 export #component UserDetailConsumer = () => {
@@ -489,13 +489,18 @@ export #component MyUserDetail = ({
    * Comp = ({ user, ...attrs }: Props<UserDetail>) => {...};
    *
    * attrs entries:
-   * - in: inputs (or meaningful attributes),
-   * - on: outputs (or meaningful event handlers),
-   * - mod: 2way.
+   * - inputs (or meaningful attributes),
+   * - outputs (or meaningful event handlers),
+   * - 2way: input name + output nameChange.
+
+   * user: () => user(), 
+   * email: () => email(),
+   * emailChange: (e: string) => email.set(e),
+   * makeAdmin: makeAdmin,
    *
    * attrs: name reserved to the framework
    */
-  attrs = fallthroughAttrs<Props<UserDetail>>(),
+  attrs = fallthroughAttrs<Attributes<UserDetail>>(),
 }) => {
   script: () => {
     const other = computed(() => /** something depending on user or a default value **/);
@@ -504,15 +509,13 @@ export #component MyUserDetail = ({
     <>
       <UserDetail
         user={other()}
-        bind:**={attrs.in}
-        model:**={attrs.mod}
-        on:**={attrs.on} />
+        bind:**={attrs} />
     </>
   ),
 };
 
 // -- UserDetail -----------------------------------
-import { input, model, output, Props } from '@angular/core';
+import { input, model, output } from '@angular/core';
 
 export interface User { /** ... **/ }
 
@@ -572,7 +575,7 @@ export #component Button = ({
   },
   template: (
     <>
-      <button @** bind:**={attrs.in} class={innerClass()} on:**={attrs.on}>
+      <button @** bind:**={attrs} class={innerClass()}>
         <Render fragment={children()} />
       </button>
     </>
