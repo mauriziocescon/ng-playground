@@ -201,13 +201,12 @@ import { input, output, inject, Renderer2, ref, afterRenderEffect } from '@angul
 export #directive tooltip = ({
   message = input.required<string>(),
   dismiss = output<void>(),
+},
   /**
-   * readonly signal managed by ng.
-   *
-   * elRef: name reserved to the framework
-   */
+  * readonly signal managed by ng (not an input / model / output)
+  */
   elRef = ref<HTMLElement>(),
-}) => {
+) => {
   script: () => {
     const renderer = inject(Renderer2);
 
@@ -451,13 +450,12 @@ export #component Button = ({
   children = input.required<Fragment<void>>(),
   disabled = input<boolean>(false),
   click = output<void>(),
+},
   /**
-   * directives applied to Button
-   *
-   * dirs: name reserved to the framework
-   */
+  * directives applied to Button: managed by ng (not an input / model / output)
+  */
   dirs = fallthroughDirectives<HtmlButtonElement>(),
-}) => {
+) => {
   template: (
     <>
       <!-- @** => fallthroughDirectives (ripple / tooltip) from the consumer -->
@@ -472,7 +470,7 @@ export #component Button = ({
 
 Wrapping components and passing inputs / outputs:
 ```ts
-import { input, computed, fallthroughAttrs, Attributes } from '@angular/core';
+import { input, computed, Attributes } from '@angular/core';
 import { UserDetail, User } from './user-detail.ng';
 
 export #component UserDetailConsumer = () => {
@@ -498,23 +496,21 @@ export #component MyUserDetail = ({
   user = input<User>(),
   /**
    * whatever is not matching inputs / outputs / models
-   * defined explicitly (like user). In a way, it's like: 
-   * Comp = ({ user, ...attrs }: Props<UserDetail>) => {...};
+   * defined explicitly (like user):
+   * Comp = ({ user, ...rest }: Attributes<UserDetail>) => {...};
    *
    * attrs:
    * - inputs (or meaningful attributes),
    * - outputs (or meaningful event handlers),
    * - 2way: input name + output nameChange.
-
+   *
    * user: () => user(), 
    * email: () => email(),
    * 'on:emailChange': (e: string) => email.set(e),
    * 'on:makeAdmin': makeAdmin,
-   *
-   * attrs: name reserved to the framework
    */
-  attrs = fallthroughAttrs<Attributes<UserDetail>>(),
-}) => {
+  ...rest,
+}: Attributes<UserDetail>) => {
   script: () => {
     const other = computed(() => /** something depending on user or a default value **/);
   },
@@ -522,7 +518,7 @@ export #component MyUserDetail = ({
     <>
       <UserDetail
         user={other()}
-        bind:**={attrs} />
+        bind:**={rest} />
     </>
   ),
 };
@@ -575,21 +571,22 @@ export #component ButtonConsumer = () => {
 };
 
 // -- button in @mylib/button --------------------
-import { input, fallthroughAttrs, fallthroughDirectives, computed } from '@angular/core';
+import { input, fallthroughDirectives, computed } from '@angular/core';
 import { HTMLButtonAttributes } from '@angular/core/elements';
 
 export #component Button = ({
   children = input.required<Fragment<void>>(),
   class = input<string>(''),
+  ...rest,
+}: HTMLButtonAttributes,
   dirs = fallthroughDirectives<HtmlButtonElement>(),
-  attrs = fallthroughAttrs<HTMLButtonAttributes>(),
-}) => {
+) => {
   script: () => {
     const innerClass = computed(() => `{class()} other-class`);
   },
   template: (
     <>
-      <button @**={dirs} bind:**={attrs} class={innerClass()}>
+      <button @**={dirs} bind:**={rest} class={innerClass()}>
         <Render fragment={children()} />
       </button>
     </>
@@ -806,7 +803,7 @@ export #component AdminLinkWithTooltip = ({
 - `directive` types: since `ref` is defined as a parameter of a function (rather then injected), static types checking can be introduced (directives can be applied only to compatible elementes),
 - `queries`: if `ref` makes sense, likely not needed anymore; if they stay, it would be nice to limit their DI capabilities: no way to `read` providers from `injector` tree (see [`viewChild abuses`](https://stackblitz.com/edit/stackblitz-starters-wkkqtd9j)),
 - multiple `directives` applied to the same element: as for the previous point, it would be nice to avoid directives injection when applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy)); instead, it should be an explicit template operation with a `ref` passed as an `input`,
-- in general, the concept of injecting components / directives inside each others should be restricted cause it generates lots of indirection / complexity; the downside is that some ng-reserved names are necessary.
+- in general, the concept of injecting components / directives inside each others should be restricted cause it generates lots of indirection / complexity.
 
 ### Unresolved points
 - other decorator props: in this proposal, components and directives have only `providers` / `script` / `template` / `style` entries. On the other hand, `@Component` and `@Directive` have many more and some of them (like `preserveWhitespaces`) should probably stay. They are not considered to avoid digressions; 
