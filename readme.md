@@ -201,12 +201,13 @@ import { input, output, inject, Renderer2, ref, afterRenderEffect } from '@angul
 export #directive tooltip = ({
   message = input.required<string>(),
   dismiss = output<void>(),
-},
   /**
-  * readonly signal managed by ng (not an input / model / output)
-  */
+   * readonly signal provided by ng (not bindable)
+   * 
+   * elRef: name reserved to the framework
+   */
   elRef = ref<HTMLElement>(),
-) => {
+}) => {
   script: () => {
     const renderer = inject(Renderer2);
 
@@ -336,6 +337,8 @@ import { Render } from '@angular/common';
 
 export #component Menu = ({
   /**
+   * markup inside Menu: managed by ng (not bindable as other inputs)
+   * 
    * children: name reserved to the framework
    */
   children = input<Fragment<void>>(),
@@ -431,6 +434,8 @@ export #component ButtonConsumer = () => {
   },
   template: (
     <>
+      <!-- @directive on a component => implicitly becomes part of an input called directives -->
+    
       <Button
         @ripple
         @tooltip(message={tooltipMsg()})
@@ -443,24 +448,25 @@ export #component ButtonConsumer = () => {
 };
 
 // -- button in @mylib/button --------------------
-import { input, output, fallthroughDirectives } from '@angular/core';
+import { input, output, Fragment, Directive } from '@angular/core';
 import { Render } from '@angular/common';
 
 export #component Button = ({
+  /**
+   * directives applied to Button: managed by ng (not bindable as other inputs)
+   * 
+   * directives: name reserved to the framework
+   */
+  directives = input<Directive<HtmlButtonElement>[]>([]),
   children = input.required<Fragment<void>>(),
   disabled = input<boolean>(false),
   click = output<void>(),
-},
-  /**
-  * directives applied to Button: managed by ng (not an input / model / output)
-  */
-  dirs = fallthroughDirectives<HtmlButtonElement>(),
-) => {
+}) => {
   template: (
     <>
-      <!-- @** => fallthroughDirectives (ripple / tooltip) from the consumer -->
+      <!-- @** => directives (ripple / tooltip) from the consumer -->
     
-      <button @**={dirs} disabled={disabled()} on:click={() => click.emit()}>
+      <button @**={directives()} disabled={disabled()} on:click={() => click.emit()}>
         <Render fragment={children()} />
       </button>
     </>
@@ -482,7 +488,7 @@ export #component UserDetailConsumer = () => {
   },
   template: (
     <>
-      <!-- bind:**={object} bind all entries of object; same for model / on -->
+      <!-- bind:**={object} bind entries of object; same for model / on -->
   
       <MyUserDetail
         bind:**={{user}}
@@ -524,7 +530,7 @@ export #component MyUserDetail = ({
 };
 
 // -- UserDetail -----------------------------------
-import { input, model, output } from '@angular/core';
+import { input, model, output, Directive } from '@angular/core';
 
 export interface User { /** ... **/ }
 
@@ -532,6 +538,7 @@ export #component UserDetail = ({
   user = input.required<User>(),
   email = model.required<string>(),
   makeAdmin = output<void>(),
+  directives = input<Directive<HtmlElement>[]>([]),
 }) => {
   // ...
 };
@@ -576,17 +583,16 @@ import { HTMLButtonAttributes } from '@angular/core/elements';
 
 export #component Button = ({
   children = input.required<Fragment<void>>(),
+  directives = input<Directive<HtmlButtonElement>[]>([]),
   class = input<string>(''),
   ...rest,
-}: HTMLButtonAttributes,
-  dirs = fallthroughDirectives<HtmlButtonElement>(),
-) => {
+}: HTMLButtonAttributes) => {
   script: () => {
     const innerClass = computed(() => `{class()} other-class`);
   },
   template: (
     <>
-      <button @**={dirs} bind:**={rest} class={innerClass()}>
+      <button @**={directives()} bind:**={rest} class={innerClass()}>
         <Render fragment={children()} />
       </button>
     </>
@@ -766,29 +772,6 @@ export #component Counter = ({
 };
 ```
 
-## Backward compatibility
-Still can use legacy concepts for composition:
-```ts
-import { input } from '@angular/core';
-import { MatButton } from '@angular/material/button';
-import { MatTooltip } from '@angular/material/tooltip';
-
-export #component AdminLinkWithTooltip = ({
-  tooltipMessage = input.required<string>(),
-  hasPermissions = input.required<boolean>(),
-}) => {
-  template: (
-    <>
-      <MatButton:a
-        href="/admin"
-        @MatTooltip(message={tooltipMessage()} disabled={hasPermissions()})>
-          Admin
-      </MatButton:a>
-    </>
-  )`,
-};
-```
-
 ## Final considerations
 
 ### Concepts affected by these changes
@@ -803,7 +786,7 @@ export #component AdminLinkWithTooltip = ({
 - `directive` types: since `ref` is defined as a parameter of a function (rather then injected), static types checking can be introduced (directives can be applied only to compatible elementes),
 - `queries`: if `ref` makes sense, likely not needed anymore; if they stay, it would be nice to limit their DI capabilities: no way to `read` providers from `injector` tree (see [`viewChild abuses`](https://stackblitz.com/edit/stackblitz-starters-wkkqtd9j)),
 - multiple `directives` applied to the same element: as for the previous point, it would be nice to avoid directives injection when applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy)); instead, it should be an explicit template operation with a `ref` passed as an `input`,
-- in general, the concept of injecting components / directives inside each others should be restricted cause it generates lots of indirection / complexity.
+- in general, the concept of injecting components / directives inside each others should be restricted cause it generates lots of indirection / complexity; the downside is that some ng-reserved names are necessary (`elRef`, `children`, `directives`).
 
 ### Unresolved points
 - other decorator props: in this proposal, components and directives have only `providers` / `script` / `template` / `style` entries. On the other hand, `@Component` and `@Directive` have many more and some of them (like `preserveWhitespaces`) should probably stay. They are not considered to avoid digressions; 
