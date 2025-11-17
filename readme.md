@@ -128,8 +128,8 @@ export interface User { /** ... **/ }
  * UserDetail({ 
  *   user: () => user(), 
  *   email: () => email(), 
- *   emailChange: (v: string) => email.set(v), 
- *   makeAdmin: () => makeAdmin(),
+ *   'on:emailChange': (v: string) => email.set(v), 
+ *   'on:makeAdmin': () => makeAdmin(),
  * })
  */
 export #component UserDetail = ({
@@ -508,8 +508,8 @@ export #component MyUserDetail = ({
 
    * user: () => user(), 
    * email: () => email(),
-   * emailChange: (e: string) => email.set(e),
-   * makeAdmin: makeAdmin,
+   * 'on:emailChange': (e: string) => email.set(e),
+   * 'on:makeAdmin': makeAdmin,
    *
    * attrs: name reserved to the framework
    */
