@@ -322,7 +322,7 @@ export #component MenuConsumer = () => {
   },
   template: (
     <>
-      <!-- markup inside comp tag => implicitly becomes an input called children -->
+      <!-- markup inside comp tag => implicitly becomes a fragment called children -->
   
       <Menu>
         <MenuItem>{first()}</MenuItem>
@@ -333,14 +333,14 @@ export #component MenuConsumer = () => {
 };
 
 // -- Menu in @mylib/menu --------------------------
-import { input, Fragment } from '@angular/core';
+import { input, fragment } from '@angular/core';
 import { Render } from '@angular/common';
 
 export #component Menu = ({
   /**
    * children: name reserved to the framework
    */
-  children = input<Fragment<void>>(),
+  children = fragment<void>(),
 }) => {
   script: () => { /** ... **/ },
   template: (
@@ -357,7 +357,7 @@ export #component Menu = ({
 };
 
 export #component MenuItem = ({
-  children = input.required<Fragment<void>>(),
+  children = fragment<void>(),
 }) => {
   template: (
     <>
@@ -384,7 +384,7 @@ export #component MenuConsumer = () => {
   },
   template: (
     <>
-      <!-- menuItem inside <Menu></Menu> automatically becomes an input -->
+      <!-- menuItem inside <Menu></Menu> automatically becomes a fragment input -->
   
       @fragment menuItem(item: Item) {
         <div class="my-menu-item">
@@ -398,12 +398,12 @@ export #component MenuConsumer = () => {
 };
 
 // -- Menu in @mylib/menu --------------------------
-import { input, Fragment } from '@angular/core';
+import { input, fragment } from '@angular/core';
 import { Render } from '@angular/common';
 
 export #component Menu = ({
   items = input.required<{ id: string, desc: string }[]>(),
-  menuItem = input.required<Fragment<[{ id: string, desc: string }]>>(),
+  menuItem = fragment<[{ id: string, desc: string }]>(),
 }) => {
   template: (
     <>
@@ -417,7 +417,7 @@ export #component Menu = ({
 };
 ```
 
-Directives passed as inputs and bound to an element at runtime:
+Directives attached to a component and bound to an element at runtime:
 ```ts
 import { signal } from '@angular/core';
 import { Button } from '@mylib/button';
@@ -433,7 +433,7 @@ export #component ButtonConsumer = () => {
   },
   template: (
     <>
-      <!-- @directive on a component => implicitly becomes part of an input called directives -->
+      <!-- @directive on a component => implicitly becomes part of attachments -->
     
       <Button
         @ripple
@@ -447,15 +447,15 @@ export #component ButtonConsumer = () => {
 };
 
 // -- button in @mylib/button --------------------
-import { input, output, Fragment, Directive } from '@angular/core';
+import { input, output, fragment, attachment } from '@angular/core';
 import { Render } from '@angular/common';
 
 export #component Button = ({
   /**
-   * directives: name reserved to the framework
+   * attachments: name reserved to the framework
    */
-  directives = input<Directive<HtmlButtonElement>[]>([]),
-  children = input.required<Fragment<void>>(),
+  attachments = attachment<HtmlButtonElement>(),
+  children = fragment<void>(),
   disabled = input<boolean>(false),
   click = output<void>(),
 }) => {
@@ -463,7 +463,7 @@ export #component Button = ({
     <>
       <!-- @** => directives (ripple / tooltip) from the consumer -->
     
-      <button @**={directives()} disabled={disabled()} on:click={() => click.emit()}>
+      <button @**={attachments()} disabled={disabled()} on:click={() => click.emit()}>
         <Render fragment={children()} />
       </button>
     </>
@@ -498,7 +498,7 @@ export #component UserDetailConsumer = () => {
 export #component MyUserDetail = ({
   user = input<User>(),
   /**
-   * whatever is not matching inputs / outputs / models
+   * whatever is not matching inputs / outputs / models / fragments / attachments
    * defined explicitly (like user):
    * Comp = ({ user, ...rest }: Props<UserDetail>) => {...};
    *
@@ -527,7 +527,7 @@ export #component MyUserDetail = ({
 };
 
 // -- UserDetail -----------------------------------
-import { input, model, output, Directive } from '@angular/core';
+import { input, model, output, attachment, fragment } from '@angular/core';
 
 export interface User { /** ... **/ }
 
@@ -535,8 +535,8 @@ export #component UserDetail = ({
   user = input.required<User>(),
   email = model.required<string>(),
   makeAdmin = output<void>(),
-  directives = input<Directive<HtmlElement>[]>([]),
-  children = input.required<Fragment<void>>(),
+  attachments = attachment<HtmlElement>(),
+  children = fragment<void>(),
 }) => {
   // ...
 };
@@ -576,21 +576,21 @@ export #component ButtonConsumer = () => {
 };
 
 // -- button in @mylib/button --------------------
-import { input, fallthroughDirectives, computed } from '@angular/core';
+import { input, computed, fragment, attachment } from '@angular/core';
 import { HTMLButtonAttributes } from '@angular/core/elements';
 
 export #component Button = ({
-  children = input.required<Fragment<void>>(),
-  directives = input<Directive<HtmlButtonElement>[]>([]),
-  class = input<string>(''),
+  children = fragment<void>(),
+  attachments = attachment<HtmlButtonElement>(),
+  style = input<string>(''),
   ...rest,
 }: HTMLButtonAttributes) => {
   script: () => {
-    const innerClass = computed(() => `{class()} other-class`);
+    const innerStyle = computed(() => `{style()}; background-color: red;`);
   },
   template: (
     <>
-      <button @**={directives()} bind:**={rest} class={innerClass()}>
+      <button @**={attachments()} bind:**={rest} style={innerStyle()}>
         <Render fragment={children()} />
       </button>
     </>
