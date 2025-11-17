@@ -203,6 +203,7 @@ export #directive tooltip = ({
   dismiss = output<void>(),
   /**
    * readonly signal provided by ng (not bindable)
+   * this directive can be attached to any HTMLElement
    * 
    * elRef: name reserved to the framework
    */
