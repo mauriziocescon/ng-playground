@@ -338,8 +338,6 @@ import { Render } from '@angular/common';
 
 export #component Menu = ({
   /**
-   * markup inside Menu: managed by ng (not bindable as other inputs)
-   * 
    * children: name reserved to the framework
    */
   children = input<Fragment<void>>(),
@@ -454,8 +452,6 @@ import { Render } from '@angular/common';
 
 export #component Button = ({
   /**
-   * directives applied to Button: managed by ng (not bindable as other inputs)
-   * 
    * directives: name reserved to the framework
    */
   directives = input<Directive<HtmlButtonElement>[]>([]),
@@ -477,7 +473,7 @@ export #component Button = ({
 
 Wrapping components and passing inputs / outputs:
 ```ts
-import { input, computed, Attributes } from '@angular/core';
+import { input, computed, Props } from '@angular/core';
 import { UserDetail, User } from './user-detail.ng';
 
 export #component UserDetailConsumer = () => {
@@ -504,9 +500,9 @@ export #component MyUserDetail = ({
   /**
    * whatever is not matching inputs / outputs / models
    * defined explicitly (like user):
-   * Comp = ({ user, ...rest }: Attributes<UserDetail>) => {...};
+   * Comp = ({ user, ...rest }: Props<UserDetail>) => {...};
    *
-   * attrs:
+   * props:
    * - inputs (or meaningful attributes),
    * - outputs (or meaningful event handlers),
    * - 2way: input name + output nameChange.
@@ -517,7 +513,7 @@ export #component MyUserDetail = ({
    * 'on:makeAdmin': makeAdmin,
    */
   ...rest,
-}: Attributes<UserDetail>) => {
+}: Props<UserDetail>) => {
   script: () => {
     const other = computed(() => /** something depending on user or a default value **/);
   },
@@ -540,6 +536,7 @@ export #component UserDetail = ({
   email = model.required<string>(),
   makeAdmin = output<void>(),
   directives = input<Directive<HtmlElement>[]>([]),
+  children = input.required<Fragment<void>>(),
 }) => {
   // ...
 };
