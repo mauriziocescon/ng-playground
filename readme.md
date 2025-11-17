@@ -117,22 +117,22 @@ import { input, model, output } from '@angular/core';
 
 export interface User { /** ... **/ }
 
-/**
- * mental model (props deconstruction): 
- * <UserDetail 
- *   user={user()} 
- *   model:email={email} 
- *   on:makeAdmin={makeAdmin} />
- * 
- * similar to  
- * UserDetail({ 
- *   user: () => user(), 
- *   email: () => email(), 
- *   'on:emailChange': (v: string) => email.set(v), 
- *   'on:makeAdmin': () => makeAdmin(),
- * })
- */
 export #component UserDetail = ({
+  /**
+   * mental model (props deconstruction): 
+   * <UserDetail 
+   *   user={user()} 
+   *   model:email={email} 
+   *   on:makeAdmin={makeAdmin} />
+   * 
+   * similar to  
+   * UserDetail({ 
+   *   user: () => user(), 
+   *   email: () => email(), 
+   *   'on:emailChange': (v: string) => email.set(v), 
+   *   'on:makeAdmin': () => makeAdmin(),
+   * })
+   */
   user = input<User>(),
   email = model<string>(),
   makeAdmin = output<void>(),
