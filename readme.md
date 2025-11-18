@@ -519,9 +519,7 @@ export #component MyUserDetail = ({
   },
   template: (
     <>
-      <UserDetail
-        user={other()}
-        bind:**={rest} />
+      <UserDetail user={other()} {...rest} />
     </>
   ),
 };
@@ -590,7 +588,7 @@ export #component Button = ({
   },
   template: (
     <>
-      <button @**={attachments()} bind:**={rest} style={innerStyle()}>
+      <button @**={attachments()} {...rest} style={innerStyle()}>
         <Render fragment={children()} />
       </button>
     </>
