@@ -433,7 +433,7 @@ export #component ButtonConsumer = () => {
   },
   template: (
     <>
-      <!-- @directive on a component => implicitly becomes part of attachments -->
+      <!-- @directive on a component => implicitly becomes part of rest -->
     
       <Button
         @ripple
@@ -447,23 +447,24 @@ export #component ButtonConsumer = () => {
 };
 
 // -- button in @mylib/button --------------------
-import { input, output, fragment, attachment } from '@angular/core';
+import { input, output, fragment, retrieveDirectives } from '@angular/core';
 import { Render } from '@angular/common';
 
 export #component Button = ({
-  /**
-   * attachments: name reserved to the framework (not bindable directly)
-   */
-  attachments = attachment<HtmlButtonElement>(),
   children = fragment<void>(),
   disabled = input<boolean>(false),
   click = output<void>(),
+  ...rest,
 }) => {
+  script: () => {
+    // retrieve attached directives
+    const dirs = retrieveDirectives(rest);
+  },
   template: (
     <>
-      <!-- @** => directives (ripple / tooltip) from the consumer -->
+      <!-- rest is carrying directives (ripple / tooltip) as well -->
     
-      <button @**={attachments()} disabled={disabled()} on:click={() => click.emit()}>
+      <button @**={dirs()} disabled={disabled()} on:click={() => click.emit()}>
         <Render fragment={children()} />
       </button>
     </>
@@ -498,14 +499,16 @@ export #component UserDetailConsumer = () => {
 export #component UserDetailWrapper = ({
   user = input<User>(),
   /**
-   * whatever is not matching inputs / outputs / models / fragments / attachments
+   * whatever is not matching inputs / outputs / models / fragments
    * defined explicitly (like user):
    * Comp = ({ user, ...rest }: Props<UserDetail>) => {...};
    *
    * props:
    * - inputs (or meaningful attributes),
    * - outputs (or meaningful event handlers),
-   * - 2way: input name + output nameChange.
+   * - 2way (input name + output nameChange),
+   * - fragments, 
+   * - directives.
    *
    * user: () => user(), 
    * email: () => email(),
@@ -525,7 +528,7 @@ export #component UserDetailWrapper = ({
 };
 
 // -- UserDetail -----------------------------------
-import { input, model, output, attachment, fragment } from '@angular/core';
+import { input, model, output, fragment, retrieveDirectives } from '@angular/core';
 
 export interface User { /** ... **/ }
 
@@ -533,10 +536,17 @@ export #component UserDetail = ({
   user = input.required<User>(),
   email = model.required<string>(),
   makeAdmin = output<void>(),
-  attachments = attachment<HtmlElement>(),
   children = fragment<void>(),
+  ...rest,
 }) => {
-  // ...
+  script: () => {
+    const dirs = retrieveDirectives(rest);
+  },
+  template: (
+    <>
+      <!-- ... -->
+    </>
+  ),
 };
 ```
 
@@ -574,12 +584,11 @@ export #component ButtonConsumer = () => {
 };
 
 // -- button in @mylib/button --------------------
-import { input, computed, fragment, attachment } from '@angular/core';
+import { input, computed, fragment } from '@angular/core';
 import { HTMLButtonAttributes } from '@angular/core/elements';
 
 export #component Button = ({
   children = fragment<void>(),
-  attachments = attachment<HtmlButtonElement>(),
   style = input<string>(''),
   ...rest,
 }: HTMLButtonAttributes) => {
@@ -588,7 +597,9 @@ export #component Button = ({
   },
   template: (
     <>
-      <button @**={attachments()} {...rest} style={innerStyle()}>
+      <!-- {...rest} attaches directives as well -->
+      
+      <button {...rest} style={innerStyle()}>
         <Render fragment={children()} />
       </button>
     </>
@@ -778,11 +789,11 @@ export #component Counter = ({
 - `pipes`: replaced by declarations,
 - `event delegation`: not explicitly considered, but it could fit as "special attributes" (`onClick`, ...) similarly to [solid events](https://docs.solidjs.com/concepts/components/event-handlers),
 - `@let`: likely obsolete and not needed anymore,
-- `directives` attached to the host (components): not possible anymore, but you can pass directives and use `@**`,
+- `directives` attached to the host (components): not possible anymore, but you can pass directives and use `@**` / spread them,
 - `directive` types: since `ref` is defined as a parameter of a function (rather then injected), static types checking can be introduced (directives can be applied only to compatible elementes),
 - `queries`: if `ref` makes sense, likely not needed anymore; if they stay, it would be nice to limit their DI capabilities: no way to `read` providers from `injector` tree (see [`viewChild abuses`](https://stackblitz.com/edit/stackblitz-starters-wkkqtd9j)),
 - multiple `directives` attached to the same element: as for the previous point, it would be nice to avoid directives injection when applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy)); instead, it should be an explicit template operation with a `ref` passed as an `input`,
-- in general, the concept of injecting components / directives inside each others should be restricted cause it generates lots of indirection / complexity; the downside is that some ng-reserved names are necessary (`elRef`, `children`, `attachments`).
+- in general, the concept of injecting components / directives inside each others should be restricted cause it generates lots of indirection / complexity; the downside is that some ng-reserved names are necessary (`elRef`, `children`).
 
 ### Unresolved points
 - other decorator props: in this proposal, components and directives have only `providers` / `script` / `template` / `style` entries. On the other hand, `@Component` and `@Directive` have many more and some of them (like `preserveWhitespaces`) should probably stay. They are not considered to avoid digressions; 
