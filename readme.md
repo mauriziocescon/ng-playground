@@ -12,7 +12,7 @@ Points:
 3. extra bindings for DOM elements: `bind:`, `on:`, `model:`, `class:`, `style:`, `animate:`,
 4. hostless components + ts lexical scoping for templates,
 5. component inputs: lifted up + immediately available in the script,
-6. composition with fragments, directives and fallthrough attributes,
+6. composition with fragments, directives and spread syntax,
 7. template ref,
 8. DI enhancements, 
 9. Final considerations (`!important`).
@@ -203,7 +203,7 @@ export #directive tooltip = ({
   dismiss = output<void>(),
   /**
    * readonly signal provided by ng (not bindable)
-   * this directive can be attached to any HTMLElement
+   * tooltip can be attached to any HTMLElement
    * 
    * elRef: name reserved to the framework
    */
@@ -307,8 +307,8 @@ export #component Counter = ({
 };
 ```
 
-## Composition with fragments, directives and fallthrough attributes
-Fragments are very similar to [`svelte snippets`](https://svelte.dev/docs/svelte/snippet): functions returning html markup. Returned markup is opaque: cannot manipulate it similarly to [`react Children (legacy)`](https://react.dev/reference/react/Children) or [`solid children`](https://www.solidjs.com/tutorial/props_children). Directives behave similarly to [`svelte attachments`](https://svelte.dev/docs/svelte/@attach). Fallthrough attributes are partially inspired by the same concept in [`vue`](https://vuejs.org/guide/components/attrs.html) and covers the usual react `spread props` need. Note: the examples below are simplified.
+## Composition with fragments, directives and spread syntax
+Fragments are very similar to [`svelte snippets`](https://svelte.dev/docs/svelte/snippet): functions returning html markup. Returned markup is opaque: cannot manipulate it similarly to [`react Children (legacy)`](https://react.dev/reference/react/Children) or [`solid children`](https://www.solidjs.com/tutorial/props_children). Directives behave similarly to [`svelte attachments`](https://svelte.dev/docs/svelte/@attach). Spread syntax can be used at component function level similarly to react. Note: the examples below are simplified.
 
 Implicit children fragment (where + when) and binding context:
 ```ts
@@ -338,7 +338,7 @@ import { Render } from '@angular/common';
 
 export #component Menu = ({
   /**
-   * children: name reserved to the framework
+   * children: name reserved to the framework (not bindable directly)
    */
   children = fragment<void>(),
 }) => {
@@ -452,7 +452,7 @@ import { Render } from '@angular/common';
 
 export #component Button = ({
   /**
-   * attachments: name reserved to the framework
+   * attachments: name reserved to the framework (not bindable directly)
    */
   attachments = attachment<HtmlButtonElement>(),
   children = fragment<void>(),
@@ -487,7 +487,7 @@ export #component UserDetailConsumer = () => {
     <>
       <!-- bind:**={object} bind entries of object; same for model / on -->
   
-      <MyUserDetail
+      <MyUserDetail        
         bind:**={{user}}
         model:**={{email}}
         on:**={{makeAdmin}} />
@@ -780,11 +780,11 @@ export #component Counter = ({
 - `pipes`: replaced by declarations,
 - `event delegation`: not explicitly considered, but it could fit as "special attributes" (`onClick`, ...) similarly to [solid events](https://docs.solidjs.com/concepts/components/event-handlers),
 - `@let`: likely obsolete and not needed anymore,
-- `directives` attached to the host (components): not possible anymore, but you can pass directives as inputs and use `@**` (or equivalent syntax),
+- `directives` attached to the host (components): not possible anymore, but you can pass directives and use `@**`,
 - `directive` types: since `ref` is defined as a parameter of a function (rather then injected), static types checking can be introduced (directives can be applied only to compatible elementes),
 - `queries`: if `ref` makes sense, likely not needed anymore; if they stay, it would be nice to limit their DI capabilities: no way to `read` providers from `injector` tree (see [`viewChild abuses`](https://stackblitz.com/edit/stackblitz-starters-wkkqtd9j)),
-- multiple `directives` applied to the same element: as for the previous point, it would be nice to avoid directives injection when applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy)); instead, it should be an explicit template operation with a `ref` passed as an `input`,
-- in general, the concept of injecting components / directives inside each others should be restricted cause it generates lots of indirection / complexity; the downside is that some ng-reserved names are necessary (`elRef`, `children`, `directives`).
+- multiple `directives` attached to the same element: as for the previous point, it would be nice to avoid directives injection when applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy)); instead, it should be an explicit template operation with a `ref` passed as an `input`,
+- in general, the concept of injecting components / directives inside each others should be restricted cause it generates lots of indirection / complexity; the downside is that some ng-reserved names are necessary (`elRef`, `children`, `attachments`).
 
 ### Unresolved points
 - other decorator props: in this proposal, components and directives have only `providers` / `script` / `template` / `style` entries. On the other hand, `@Component` and `@Directive` have many more and some of them (like `preserveWhitespaces`) should probably stay. They are not considered to avoid digressions; 
