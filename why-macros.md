@@ -99,12 +99,12 @@ const currency = declaration(() => ({
 
 const List = component(({
   items = input.required<Item[]>(),
-  item = input.required<Fragment<[Item]>>(),
+  item = fragment<[Item]>(),
 }) => ({
   template: (
     <>
       @for (i of items(); track i.id) {
-        <Render fragment={item()} inputs={[i]} />
+        <Render fragment={item()} params={[i]} />
       }
     </>
   ),
@@ -129,7 +129,7 @@ export const ItemsPage = component(() => ({
     <>
       <List items={store.items()}>
         @fragment item(i: Item) {
-          <Card on:click={goTo(i)}>
+          <Card on:click={(i: Item) => goTo(i)}>
             <HStack width={100}>
               <Img url={i.imgUrl} />
               <VStack>
@@ -190,12 +190,12 @@ export interface Item {
 
 #component List = ({
   items = input.required<Item[]>(),
-  item = input.required<Fragment<[Item]>>(),
+  item = fragment<[Item]>(),
 }) => {
   template: (
     <>
       @for (i of items(); track i.id) {
-        <Render fragment={item()} inputs={[i]} />
+        <Render fragment={item()} params={[i]} />
       }
     </>
   ),
@@ -220,7 +220,7 @@ export #component ItemsPage = () => {
     <>
       <List items={store.items()}>
         @fragment item(i: Item) {
-          <Card on:click={goTo(i)}>
+          <Card on:click={(i: Item) => goTo(i)}>
             <HStack width={100}>
               <Img url={i.imgUrl} />
               <VStack>
