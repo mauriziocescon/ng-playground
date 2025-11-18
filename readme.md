@@ -487,7 +487,7 @@ export #component UserDetailConsumer = () => {
     <>
       <!-- bind:**={object} bind entries of object; same for model / on -->
   
-      <MyUserDetail        
+      <UserDetailWrapper
         bind:**={{user}}
         model:**={{email}}
         on:**={{makeAdmin}} />
@@ -495,7 +495,7 @@ export #component UserDetailConsumer = () => {
   ),
 };
 
-export #component MyUserDetail = ({
+export #component UserDetailWrapper = ({
   user = input<User>(),
   /**
    * whatever is not matching inputs / outputs / models / fragments / attachments
