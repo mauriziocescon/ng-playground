@@ -597,7 +597,7 @@ export #component Button = ({
   },
   template: (
     <>
-      <!-- {...rest} attaches directives as well -->
+      <!-- {...rest} adds type / class and attaches directives -->
       
       <button {...rest} style={innerStyle()}>
         <Render fragment={children()} />
