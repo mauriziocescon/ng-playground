@@ -11,152 +11,192 @@ Thanks
 
 ## Result:
 
-Based on your request and the provided documents (why-macros.md and readme.md), I have designed a composition example demonstrating a Data Grid scenario.
+Based on the speculative syntax outlined in your uploaded files (readme.md and why-macros.md), here is a comprehensive example of a Product Showcase feature.
 
-This example highlights how the proposed "Signal Components" replace traditional patterns:
+This example demonstrates:
 
-- Declarations replace Pipes.
-- Fragments replace ng-template/ng-content.
-- Directives are function-based and attach to elements via elRef.
+- Directives: To handle DOM manipulations (animations).
+- Declarations: To handle reusable template logic (price calculation).
+- Fragments: To allow the parent component to compose the content of the child component (inversion of control).
 
-We will build a grid that accepts a custom row layout (Fragment), formats dates (Declaration), and highlights rows on hover (Directive).
+The Scenario: E-Commerce Product List
 
-### The Declaration: Date Formatter
-Instead of a Pipe, we use a #declaration. It runs in an injection context and returns a transformation function.
+We are building a list of products where the parent component decides exactly how the "Action Area" (e.g., Add to Cart button) looks for each card using fragments, while the logic for calculating discounts is handled by a declaration, and the entry animation is handled by a directive.
 
-```ts
-import { inject, LOCALE_ID, formatDate, computed } from '@angular/core';
-
-// Replaces the DatePipe
-export #declaration dateFmt = () => {
-  script: () => {
-    const locale = inject(LOCALE_ID);
-    
-    // Returns a function that accepts a signal (or getter) and returns a computed signal
-    return (value: () => string | Date, format: string = 'medium') => 
-      computed(() => formatDate(value(), format, locale));
-  },
-};
-```
-
-### The Directive: Hover Highlighter
-This directive encapsulates DOM behavior. Note that elRef is a reserved name injected by the framework.
+### The Directive (fadeIn) and Declaration (discount)
+First, we define the reusable building blocks.
 
 ```ts
-import { input, ref, inject, Renderer2, afterNextRender } from '@angular/core';
+import { 
+  input, 
+  ref, 
+  inject, 
+  computed, 
+  ElementRef, 
+  afterNextRender 
+} from '@angular/core';
 
-export #directive highlight = ({
-  color = input<string>('#f0f0f0'),
-  elRef = ref<HTMLElement>(), 
+// --- DIRECTIVE: Fade In Animation ---
+// Manipulates the DOM element to add a class when mounted
+export #directive fadeIn = ({
+  // duration input with a default value
+  duration = input<number>(500),
+  elRef = ref<HTMLElement>(),
 }) => {
   script: () => {
-    const renderer = inject(Renderer2);
-
     afterNextRender(() => {
       const el = elRef();
-      // Simple event binding via renderer (or native addEventListener)
-      el.addEventListener('mouseenter', () => {
-        el.style.backgroundColor = color();
-      });
-      el.addEventListener('mouseleave', () => {
-        el.style.backgroundColor = '';
-      });
+      if (el) {
+        el.style.transition = `opacity ${duration()}ms ease-in`;
+        el.style.opacity = '0';
+        
+        // Trigger reflow/wait a tick
+        requestAnimationFrame(() => {
+           el.style.opacity = '1';
+        });
+      }
     });
   },
 };
+
+// --- DECLARATION: Discount Calculator ---
+// Reusable logic instantiated in the template injection context
+export #declaration discount = () => {
+  script: () => {
+    // Logic that might rely on DI (e.g., current currency settings)
+    // const config = inject(AppConfig); 
+
+    // Returns a function acceptable by the template
+    return (originalPrice: () => number, discountPct: number) => 
+      computed(() => {
+        const price = originalPrice();
+        return price - (price * (discountPct / 100));
+      });
+  },
+};
 ```
 
-### The Container Component
-This component accepts a Fragment (template snippet) to define how rows are rendered. This replaces ng-content and ng-template.
+### The Child Component (ProductCard)
+This component handles the layout but delegates the rendering of the specific action button to the parent via a fragment.
 
 ```ts
 import { input, fragment } from '@angular/core';
 import { Render } from '@angular/common';
 
-interface GridProps<T> {
-  data: T[];
+export interface Product {
+  id: string;
+  name: string;
+  price: number;
 }
 
-export #component DataGrid = ({
-  items = input.required<any[]>(),
-  // Define a fragment input that accepts a single parameter of type any
-  rowTemplate = fragment<[any]>(),
+export #component ProductCard = ({
+  data = input.required<Product>(),
+  // The parent will provide this HTML fragment
+  actionArea = fragment<[Product]>(), 
 }) => {
   template: (
     <>
-      <table class="grid-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Content</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (item of items(); track item.id) {
-             <Render fragment={rowTemplate()} params={[item]} />
-          }
-        </tbody>
-      </table>
+      <div class="card">
+        <h3>{data().name}</h3>
+        
+        <div class="actions">
+           <Render fragment={actionArea()} params={[data()]} />
+        </div>
+      </div>
     </>
   ),
   style: (
     <>
-      .grid-table { width: 100%; border-collapse: collapse; }
-      th { text-align: left; border-bottom: 1px solid #ccc; }
+      .card {
+        border: 1px solid #ccc;
+        padding: 1rem;
+        border-radius: 8px;
+      }
+      .actions {
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px dashed #eee;
+      }
     </>
   )
 };
 ```
 
-### The Consumer (Composition)
-Here we bring it all together. We use lexical scoping to access the imports directly in the template.
+### The Parent Component (ProductPage)
+This component composes everything together. It uses the fadeIn directive on the list, uses the discount declaration to calculate prices inside the fragment, and passes that fragment down to the ProductCard.
 
 ```ts
-import { signal } from '@angular/core';
-import { DataGrid } from './data-grid.ng'; // The component
-import { highlight } from './highlight.ng'; // The directive
-import { dateFmt } from './date-fmt.ng'; // The declaration
+import { signal, computed } from '@angular/core';
+import { fadeIn, discount } from './utils.ng'; // Assuming previous block
+import { ProductCard, Product } from './product-card.ng';
 
-interface User {
-  id: number;
-  name: string;
-  role: string;
-  lastLogin: string;
-}
-
-export #component UserPage = () => {
+export #component ProductPage = () => {
   script: () => {
-    const users = signal<User[]>([
-      { id: 1, name: 'Alice', role: 'Admin', lastLogin: '2023-11-01T10:00:00' },
-      { id: 2, name: 'Bob', role: 'User', lastLogin: '2023-11-02T14:30:00' },
+    const products = signal<Product[]>([
+      { id: '1', name: 'Super Gadget', price: 100 },
+      { id: '2', name: 'Mega Widget', price: 200 },
     ]);
-    
-    const activeColor = signal('cyan');
+
+    const cartCount = signal(0);
+
+    function addToCart(p: Product) {
+      console.log(`Added ${p.name}`);
+      cartCount.update(c => c + 1);
+    }
   },
   template: (
     <>
-      <h1>User Management</h1>
-      
-      <DataGrid items={users()}>
-      
-        @fragment row(u: User) {
+      <h1>Shop (Items: {cartCount()})</h1>
+
+      <div class="grid">
+        @for (p of products(); track p.id) {
           
-          <tr @highlight(color={activeColor()})>
+          <div @fadeIn(duration={800})>
             
-            <td>{u.id}</td>
-            <td>
-              <strong>{u.name}</strong> ({u.role})
-              <br/>
+            <ProductCard data={p}>
               
-              @const lastSeen = @dateFmt(() => u.lastLogin, 'shortDate');
-              
-              <small>Last seen: {lastSeen()}</small>
-            </td>
-            
-          </tr>
+              @fragment actionArea(item: Product) {
+                
+                @const finalPrice = @discount(() => item.price, 20); 
+                
+                <div class="price-tag">
+                  <span class="strikethrough">${item.price}</span>
+                  <strong> ${finalPrice()} </strong>
+                </div>
+
+                <button 
+                  class="btn-primary"
+                  on:click={() => addToCart(item)}>
+                    Buy {item.name}
+                </button>
+              }
+
+            </ProductCard>
+          </div>
         }
-      </DataGrid>
+      </div>
     </>
   ),
+  style: (
+    <>
+      .grid { display: grid; gap: 1rem; grid-template-columns: 1fr 1fr; }
+      .strikethrough { text-decoration: line-through; color: #999; margin-right: 8px; }
+      .btn-primary { background: blue; color: white; }
+    </>
+  )
 };
 ```
+
+### Analysis of the Syntax Used
+- Macro Definitions: We used #component, #directive, and #declaration to define the blocks, which prevents the "unwanted flexibility" of returning objects directly and enforces the structure providers / script / template / style.
+
+- Script & Lexical Scope: Inputs (like data in ProductCard) are immediately available in the script block as signals.
+
+- Fragments:
+    1. Defined in the parent using @fragment name(params) { ... }.
+    2. Passed to the child implicitly (or explicitly as an input if named).
+    3. Rendered in the child using <Render fragment={...} />. This effectively replaces ng-content and ng-template.
+
+- Directives: The @fadeIn directive is applied using the @ syntax (@fadeIn(duration={800})). It uses elRef to access the native element safely.
+
+- Declarations: The @discount declaration creates a reactive value (finalPrice) within the template scope. This acts as a replacement for Pipes, allowing logic that depends on DI (though not used in this specific mock, it runs in an injection context).
