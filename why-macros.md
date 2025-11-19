@@ -37,25 +37,25 @@ But this way you get unwanted flexility (definitions) and strange behaviours: fo
 - `component` / `directive` / `declaration` macros (see RippleJS with keywords)
 - and by applying some special rules mapping macros to definitions above.
 ```ts
-#component Comp = ({
+#component Comp({
   /** ... **/
-}) => {
+}) {
   providers: [...],
   script: () => {...},
   template: (<>...</>),
   style: (<>...</>),
-};
+}
 
-#directive dir = ({
+#directive dir({
   /** ... **/
   elRef = ref<HTMLElement>(),
-}) => {
+}) {
   script: () => {...},
-};
+}
 
-#declaration decl = () => {
+#declaration decl() {
   script: () => {...},
-};
+}
 ```
 
 Here is a full example comparing the 2 approaches. 
@@ -164,10 +164,10 @@ export interface Item {
   price: number;
 }
 
-#directive tooltip = ({
+#directive tooltip({
   message = input.required<string>(),
   elRef = ref<HTMLElement>(),
-}) => {
+}) {
   script: () => {
     const renderer = inject(Renderer2);
 
@@ -175,9 +175,9 @@ export interface Item {
       /** ... **/
     });
   },
-};
+}
 
-#declaration currency = () => {
+#declaration currency() {
   script: () => {
     const localeId = inject(LOCALE_ID);
     
@@ -186,12 +186,12 @@ export interface Item {
       currencyCode: string | undefined,
     ) => computed(/** ... **/);
   },
-};
+}
 
-#component List = ({
+#component List({
   items = input.required<Item[]>(),
   item = fragment<[Item]>(),
-}) => {
+}) {
   template: (
     <>
       @for (i of items(); track i.id) {
@@ -199,13 +199,13 @@ export interface Item {
       }
     </>
   ),
-};
+}
 
 class ItemsStore {
   /** ... **/
 }
 
-export #component ItemsPage = () => {
+export #component ItemsPage() {
   providers: [
     provide({ token: ItemsStore, useFactory: () => new ItemsStore() }),
   ],
@@ -239,5 +239,5 @@ export #component ItemsPage = () => {
     </>
   ),
   styleUrl: './items-page.css',
-};
+}
 ```
