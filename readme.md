@@ -508,7 +508,7 @@ export #component UserDetailWrapper({
   /**
    * whatever is not matching inputs / outputs / models / fragments
    * defined explicitly (like user):
-   * Comp = ({ user, ...rest }: Props<UserDetail>) => {...};
+   * Comp({ user, ...rest }: Props<UserDetail>) {...};
    *
    * props:
    * - inputs (or meaningful attributes),
@@ -516,11 +516,6 @@ export #component UserDetailWrapper({
    * - 2way (input name + output nameChange),
    * - fragments, 
    * - directives.
-   *
-   * user: () => user(), 
-   * email: () => email(),
-   * 'on:emailChange': (e: string) => email.set(e),
-   * 'on:makeAdmin': makeAdmin,
    */
   ...rest,
 }: Props<UserDetail>) {
