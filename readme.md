@@ -127,8 +127,8 @@ export #component UserDetail = ({
    * 
    * similar to  
    * UserDetail({ 
-   *   user: () => user(), 
-   *   email: () => email(), 
+   *   user: input(() => user(), {transform: ...}), 
+   *   email: input(() => email()), 
    *   'on:emailChange': (v: string) => email.set(v), 
    *   'on:makeAdmin': () => makeAdmin(),
    * })
