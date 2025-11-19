@@ -120,17 +120,24 @@ export interface User { /** ... **/ }
 export #component UserDetail = ({
   /**
    * mental model (props deconstruction): 
+   * 
    * <UserDetail 
-   *   user={user()} 
+   *   user={user()}
    *   model:email={email} 
    *   on:makeAdmin={makeAdmin} />
    * 
-   * similar to  
+   * const UserDetail_ctx = {
+   *  user: () => user(), 
+   *  email: () => email(),
+   *  'on:emailChange': (v: string) => {email.set(v)},
+   *  'on:makeAdmin': () => {makeAdmin()},
+   * }
+   * 
    * UserDetail({ 
-   *   user: input(() => user(), {transform: ...}), 
-   *   email: input(() => email()), 
-   *   'on:emailChange': (v: string) => email.set(v), 
-   *   'on:makeAdmin': () => makeAdmin(),
+   *   user: computedInput(ctx['user'], {transform: ...}),
+   *   email: computedInput(ctx['email']),
+   *   'on:emailChange': (v: string) => {ctx['email'].set(v)},
+   *   'on:makeAdmin': () => {makeAdmin()},
    * })
    */
   user = input<User>(),
