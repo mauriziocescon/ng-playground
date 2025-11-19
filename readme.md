@@ -119,7 +119,7 @@ export interface User { /** ... **/ }
 
 export #component UserDetail = ({
   /**
-   * mental model (props deconstruction): 
+   * mental model: 
    * 
    * <UserDetail 
    *   user={user()}
