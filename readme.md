@@ -39,9 +39,9 @@ export #component TextSearch({
     }
   },
   /**
-   * 1way bind:property={var} (bind: can be omitted)
-   * 2way binding for input / select / textarea: model:property={var}
-   * events on:event_name={handler}
+   * 1way: bind:property={var} (bind: can be omitted)
+   * 2way: binding for input / select / textarea: model:property={var}
+   * events: on:event_name={handler}
    * 
    * cannot duplicate attribute names: only one (static or bound)
    * ‼️ <span class="..." class="..." class={...} on:click={...} on:click={...}> ‼️
