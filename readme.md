@@ -107,8 +107,7 @@ export #component UserDetailConsumer() {
       <!-- must provide all required inputs / models -->
       
       <!-- cannot duplicate prop names: only one -->
-      <!-- ‼️ <UserDetail user={...} user={...} model:user={...} 
-      <!--                on:makeAdmin={...} on:makeAdmin={...} /> ‼️ -->
+      <!-- ‼️ <UserDetail user={...} user={...} model:user={...} on:makeAdmin={...} on:makeAdmin={...} /> ‼️ -->
       
       <!-- cannot use 'on' prefix with input / model / output -->
       <!-- ‼️ <UserDetail onInput={...} model:onModel={...} on:onEvent={...} /> ‼️ -->
