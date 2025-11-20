@@ -484,6 +484,11 @@ export #component Button({
   children = fragment<void>(),
   disabled = input<boolean>(false),
   click = output<void>(),
+  /**
+   * destruction syntax: whatever is not matching 
+   * inputs / outputs / models / fragments
+   * defined explicitly (like children, disabled, click).
+   */
   ...rest,
 }) {
   script: () => {
@@ -529,16 +534,9 @@ export #component UserDetailConsumer() {
 export #component UserDetailWrapper({
   user = input<User>(),
   /**
-   * whatever is not matching inputs / outputs / models / fragments
-   * defined explicitly (like user):
-   * Comp({ user, ...rest }: Props<UserDetail>) {...};
-   *
-   * props:
-   * - inputs (or meaningful attributes),
-   * - outputs (or meaningful event handlers),
-   * - 2way (input name + output nameChange),
-   * - fragments, 
-   * - directives.
+   * destruction syntax: whatever is not matching 
+   * inputs / outputs / models / fragments
+   * defined explicitly (like user).
    */
   ...rest,
 }: Props<UserDetail>) {
