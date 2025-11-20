@@ -489,9 +489,6 @@ export #component Button({
     // retrieve attached directives
     const dirs = retrieveDirectives(rest);
   },
-  /**
-   * rest is carrying directives (ripple / tooltip) as well
-   */
   template: (
     <>    
       <button @**={dirs()} disabled={disabled()} on:click={() => click.emit()}>
@@ -706,7 +703,7 @@ export #component Parent() {
       <Child ref={(c) => many.update(v => [...v, c])} />
       <Child ref={(c) => many.update(v => [...v, c])} />
   
-      <button on:click={() => tlp().toggle()}> Toggle tlp </button>
+      <button on:click={() => tlp().toggle()}>Toggle tlp</button>
     </>
   ),
 }
@@ -721,7 +718,7 @@ import { inject, provide, injectionToken, input } from '@angular/core';
  * not provided in root by default: the token
  * must be provided somewhere
  * 
- * a factory defines a default implementation and type
+ * factory defines a default implementation and type
  */
 const compToken = injectionToken('desc', {
   factory: () => {
@@ -760,7 +757,7 @@ const rootToken = injectionToken('desc', {
 });
 
 /**
- * multi defined at token creation
+ * multi
  */
 const multiToken = injectionToken('desc', {
   multi: true,
@@ -843,7 +840,7 @@ export #component Counter({
 Pros: 
 - familiar enough, 
 - not affected by typical SFC limitations, 
-- no early return, 
+- strict structure, 
 - no `splitProps` drama 😅. 
 
 Cons:
