@@ -145,28 +145,13 @@ export #component UserDetail({
    *   model:email={email} 
    *   on:makeAdmin={makeAdmin} />
    * 
-   * const UserDetail_ctx = {
-   *  style="..."
-   *  user: () => user(), 
-   *  email: () => email(),
-   *  'on:emailChange': (v: string) => {email.set(v)},
-   *  'on:makeAdmin': () => {makeAdmin()},
-   * }
-   * 
-   * UserDetail({
-   *   style="..." 
-   *   user: computedInput(ctx['user'], {transform: ...}),
-   *   email: computedInput(ctx['email']),
+   * function UserDetail({
+   *   style: '...', 
+   *   user: computedInput(() => user(), {transform: ...}),
+   *   email: computedInput(() => email()),
    *   'on:emailChange': (v: string) => {ctx['email'].set(v)},
    *   'on:makeAdmin': () => {makeAdmin()},
-   * }: Props)
-   * 
-   * Props {
-   *  user: User;
-   *  email?: string;
-   *  'on:emailChange'?: (v: string) => {email.set(v)},
-   *  'on:makeAdmin'?: () => {makeAdmin()},
-   * }
+   * }) {...}
    */
   user = input.required<User>(),
   email = model<string>(),
