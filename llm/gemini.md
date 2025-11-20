@@ -38,11 +38,11 @@ import {
 
 // --- DIRECTIVE: Fade In Animation ---
 // Manipulates the DOM element to add a class when mounted
-export #directive fadeIn = ({
+export #directive fadeIn({
   // duration input with a default value
   duration = input<number>(500),
   elRef = ref<HTMLElement>(),
-}) => {
+}) {
   script: () => {
     afterNextRender(() => {
       const el = elRef();
@@ -57,11 +57,11 @@ export #directive fadeIn = ({
       }
     });
   },
-};
+}
 
 // --- DECLARATION: Discount Calculator ---
 // Reusable logic instantiated in the template injection context
-export #declaration discount = () => {
+export #declaration discount() {
   script: () => {
     // Logic that might rely on DI (e.g., current currency settings)
     // const config = inject(AppConfig); 
@@ -73,7 +73,7 @@ export #declaration discount = () => {
         return price - (price * (discountPct / 100));
       });
   },
-};
+}
 ```
 
 ### The Child Component (ProductCard)
@@ -89,11 +89,11 @@ export interface Product {
   price: number;
 }
 
-export #component ProductCard = ({
+export #component ProductCard({
   data = input.required<Product>(),
   // The parent will provide this HTML fragment
   actionArea = fragment<[Product]>(), 
-}) => {
+}) {
   template: (
     <>
       <div class="card">
@@ -119,7 +119,7 @@ export #component ProductCard = ({
       }
     </>
   )
-};
+}
 ```
 
 ### The Parent Component (ProductPage)
@@ -130,7 +130,7 @@ import { signal, computed } from '@angular/core';
 import { fadeIn, discount } from './utils.ng'; // Assuming previous block
 import { ProductCard, Product } from './product-card.ng';
 
-export #component ProductPage = () => {
+export #component ProductPage() {
   script: () => {
     const products = signal<Product[]>([
       { id: '1', name: 'Super Gadget', price: 100 },
@@ -184,7 +184,7 @@ export #component ProductPage = () => {
       .btn-primary { background: blue; color: white; }
     </>
   )
-};
+}
 ```
 
 ### Analysis of the Syntax Used
