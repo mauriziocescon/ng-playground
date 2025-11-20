@@ -106,7 +106,7 @@ export #component UserDetailConsumer() {
   /**
    * any component can be used directly in the template (**.ng files)
    * 
-   * ⚠️ must provide all required inputs / models
+   * ⚠️ must provide all required inputs / models ⚠️
    * 
    * cannot duplicate prop names: only one
    * ‼️ <UserDetail user={...} user={...} model:user={...} /> ‼️
@@ -455,9 +455,6 @@ export #component ButtonConsumer() {
 
     function doSomething() {/** ... **/}
   },
-  /**
-   * @directive on a component => implicitly becomes part of rest
-   */
   template: (
     <>    
       <Button
@@ -483,6 +480,8 @@ export #component Button({
    * destruction syntax: whatever is not matching 
    * inputs / outputs / models / fragments
    * defined explicitly (like children, disabled, click).
+   * 
+   * @directive on a component => implicitly becomes part of rest
    */
   ...rest,
 }) {
