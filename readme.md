@@ -112,8 +112,8 @@ export #component UserDetailConsumer() {
    * ‼️ <UserDetail user={...} user={...} model:user={...} /> ‼️
    * ‼️ <UserDetail on:makeAdmin={...} on:makeAdmin={...} /> ‼️
    * 
-   * cannot use 'on' prefix with input / model / output
-   * ‼️ <UserDetail onInput={...} model:onModel={...} on:onEvent={...} /> ‼️
+   * shouldn't use 'on' prefix with input / model / output
+   * ⚠️ <UserDetail onInput={...} model:onModel={...} on:onEvent={...} /> ⚠️
    * 
    * can bind not existing entries (ignored)
    * ✅ <UserDetail nonsense={...} on:nonsense={...} /> ✅
