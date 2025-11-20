@@ -46,8 +46,11 @@ export #component TextSearch({
       <!-- cannot duplicate attribute names: only one (static or bound) -->
       <!-- ‼️ <span class="..." class="..." class={...} on:click={...} on:click={...}> ‼️ -->
       
-      <!-- but can use multiple class: and style: -->
+      <!-- can use multiple class: and style: -->
       <!-- ✅ <span class="..." class:some-class={...} class:some-other-class={...}> ✅ -->
+      
+      <!-- can add not existing inputs / outputs (ignored) -->
+      <!-- ✅ <span nonsense={...} on:nonsense={...}> ✅ -->
   
       <label class:danger={isDanger()}>Text:</label>
       <input type="text" model:value={text} on:input={textChange} />
@@ -100,7 +103,15 @@ export #component UserDetailConsumer() {
   template: (
     <>
       <!-- any component can be used directly in the template (**.ng files) -->
-      <!-- cannot duplicate inputs / outputs -->
+      
+      <!-- cannot duplicate prop names: only one -->
+      <!-- ‼️ <UserDetail user={...} user={...} model:user={...} on:makeAdmin={...} on:makeAdmin={...} /> ‼️ -->
+      
+      <!-- cannot use 'on' prefix with input / model / output -->
+      <!-- ‼️ <UserDetail onInput={...} model:onModel={...} on:onEvent={...} /> ‼️ -->
+      
+      <!-- can add not existing entries (ignored) -->
+      <!-- ✅ <UserDetail nonsense={...} on:nonsense={...} /> ✅ -->
       
       <!-- bind: model: on: behaves the same as for native elements -->
       
@@ -122,11 +133,13 @@ export #component UserDetail({
    * mental model: 
    * 
    * <UserDetail 
+   *   style="..."
    *   user={user()}
    *   model:email={email} 
    *   on:makeAdmin={makeAdmin} />
    * 
    * const UserDetail_ctx = {
+   *  style="..."
    *  user: () => user(), 
    *  email: () => email(),
    *  'on:emailChange': (v: string) => {email.set(v)},
