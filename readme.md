@@ -49,7 +49,7 @@ export #component TextSearch({
       <!-- can use multiple class: and style: -->
       <!-- ✅ <span class="..." class:some-class={...} class:some-other-class={...}> ✅ -->
       
-      <!-- can add not existing inputs / outputs (ignored) -->
+      <!-- can bind not existing attributes (ignored) -->
       <!-- ✅ <span nonsense={...} on:nonsense={...}> ✅ -->
   
       <label class:danger={isDanger()}>Text:</label>
@@ -104,13 +104,15 @@ export #component UserDetailConsumer() {
     <>
       <!-- any component can be used directly in the template (**.ng files) -->
       
+      <!-- must provide all required inputs / models -->
+      
       <!-- cannot duplicate prop names: only one -->
       <!-- ‼️ <UserDetail user={...} user={...} model:user={...} on:makeAdmin={...} on:makeAdmin={...} /> ‼️ -->
       
       <!-- cannot use 'on' prefix with input / model / output -->
       <!-- ‼️ <UserDetail onInput={...} model:onModel={...} on:onEvent={...} /> ‼️ -->
       
-      <!-- can add not existing entries (ignored) -->
+      <!-- can bind not existing entries (ignored) -->
       <!-- ✅ <UserDetail nonsense={...} on:nonsense={...} /> ✅ -->
       
       <!-- bind: model: on: behaves the same as for native elements -->
@@ -146,14 +148,22 @@ export #component UserDetail({
    *  'on:makeAdmin': () => {makeAdmin()},
    * }
    * 
-   * UserDetail({ 
+   * UserDetail({
+   *   style="..." 
    *   user: computedInput(ctx['user'], {transform: ...}),
    *   email: computedInput(ctx['email']),
    *   'on:emailChange': (v: string) => {ctx['email'].set(v)},
    *   'on:makeAdmin': () => {makeAdmin()},
-   * })
+   * }: Props)
+   * 
+   * Props {
+   *  user: User;
+   *  email?: string;
+   *  'on:emailChange'?: (v: string) => {email.set(v)},
+   *  'on:makeAdmin'?: () => {makeAdmin()},
+   * }
    */
-  user = input<User>(),
+  user = input.required<User>(),
   email = model<string>(),
   makeAdmin = output<void>(),
 }) {
