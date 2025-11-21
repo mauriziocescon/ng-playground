@@ -22,7 +22,7 @@ So with macros and `**.ng` files
 - you have clear markers for tools,
 - you keep DI separated from the component and at the same time enable the definition of providers depending on inputs, but not on variables defined inside script. 
 
-Note that an alternative approach would be something like: 
+Note that an alternative approach (more verbose, but without the hoisting problem) would be something like: 
 ```ts
 import { linkedSignal, input, WritableSignal, provide, inject } from '@angular/core';
 
@@ -40,25 +40,24 @@ class CounterStore {
 
 export #component Counter({
   c = input.required<number>(),
-}) {  
-  const store = inject(CounterStore);
-  
-  return {
-    template: (
-      <>
-        <h1>Counter</h1>
-        <div>Value: {store.value()}</div>
-        <button on:click={() => store.decrease()}>-</button>
-        <button on:click={() => store.increase()}>+</button>
-      </>
-    ),
-    /**
-     * the scope of such array is limited to props
-     */
-    providers: [
-      provide({ token: CounterStore, useFactory: () => new CounterStore(c) }),
-    ],
-  };
+}) {
+  providers: [
+    provide({ token: CounterStore, useFactory: () => new CounterStore(c) }),
+  ],
+  script: () => {
+    const store = inject(CounterStore);
+    
+    return {
+      template: (
+        <>
+          <h1>Counter</h1>
+          <div>Value: {store.value()}</div>
+          <button on:click={() => store.decrease()}>-</button>
+          <button on:click={() => store.increase()}>+</button>
+        </>
+      ),
+    };
+  },
 }
 ```
 
