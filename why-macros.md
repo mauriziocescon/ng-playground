@@ -3,7 +3,7 @@ Angular components has already some special hoisting rules: class fields are vis
 ```ts
 import { component ... } from '@angular/core';
 
-const Comp = component(({
+let Comp = component(({
   /** ... **/
 }) => {
   const unwanted = 'unwanted';
