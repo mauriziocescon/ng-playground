@@ -20,7 +20,7 @@ So with macros and `**.ng` files
 - you avoid unwanted flexility (definitions: const / let / var),
 - you avoid strange scope behaviours (unwanted above),
 - you have clear markers for tools,
-- you keep DI separated from the component and at the same time enable the definition of providers depending on inputs, but not on variables defined inside script. 
+- you keep DI separated from script / template and at the same time enable the definition of providers depending on inputs, but not on variables defined inside script. 
 
 Note that an alternative approach (more verbose, but without the hoisting problem) would be something like: 
 ```ts
