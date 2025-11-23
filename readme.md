@@ -77,15 +77,15 @@ External template / style files:
 ```ts
 import { input, output } from '@angular/core';
 
-/**
- * have to import what's used in **.ng.html:
- * @import { Comp } from '...';
- */
 export #component Checkbox({
   value = input.required<boolean>(),
   valueChange = output<boolean>(),
 }) {
   script: () => {/** ... **/},
+  /**
+   * have to import what's used in **.ng.html:
+   * @import { Comp } from '...';
+   */
   templateUrl: './checkbox.ng.html',
   styleUrl: './checkbox.css',
 }
@@ -656,12 +656,13 @@ import { tooltip } from '@mylib/tooltip';
 #component Child() {
   script: () => {
     const text = signal('');
-    // ...
-
-    // can return an object that
-    // any ref can use to interact
-    // with the component
-    // (public interface)
+    
+    /**
+     * can return an object that
+     * any ref can use to interact
+     * with the component
+     * (public interface)
+     */
     return {
       text: text.asReadonly(),
     };
@@ -674,9 +675,11 @@ export #component Parent() {
     // readonly signal
     const el = ref<HTMLDivElement>('el');
 
-    // 1. can only use what's returned by Child.script
-    // 2. templates only lookup: cannot retrieve providers
-    //    defined in the Child comp tree
+    /**
+     * 1. can only use what's returned by Child.script
+     * 2. templates only lookup: cannot retrieve providers
+     *    defined in the Child comp tree
+     */
     const child = ref('child');
 
     // using what's returned by tooltip.script
