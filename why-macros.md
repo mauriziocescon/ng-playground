@@ -1,5 +1,5 @@
 ## Why macros
-Angular components has already some special hoisting rules: class fields are visible in templates (string literals) despite they are not in the same scope. Assuming such principles are applied to `script` and `template` (where template is resolved similarly to right now), one might argue that macros are not really necessary cause a component could be written as a "sort of valid function". On the other hand: 
+Angular components has already some special hoisting rules: class fields are visible in templates (string literals) despite they are not in the same ts scope. Assuming such principles are applied to `script` and `template` (where template is resolved similarly to right now), one might argue that macros are not really necessary cause a component could be written as a "sort of valid function". On the other hand: 
 ```ts
 import { component ... } from '@angular/core';
 
