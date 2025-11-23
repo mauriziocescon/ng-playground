@@ -10,8 +10,8 @@ let Comp = component(({
   return {
     providers: [...],
     script: () => {...},
-    template: (<>...</>),
-    style: (<>...</>),
+    template: (`...`),
+    style: `...`,
   };
 });
 ```
@@ -38,15 +38,12 @@ export #component Counter({
     const store = inject(CounterStore);
     
     return {
-      template: (
-        <>
-          <h1>Counter</h1>
-          <div>Value: {store.value()}</div>
-          <button on:click={() => store.decrease()}>-</button>
-          <button on:click={() => store.increase()}>+</button>
-        </>
-      ),
-      style: (<>...</>),
+      template: `
+        <h1>Counter</h1>
+        <div>Value: {store.value()}</div>
+        <button on:click={() => store.decrease()}>-</button>
+        <button on:click={() => store.increase()}>+</button>`,
+      style: `...`,
       exports: {/** public interface **/},
     };
   },
@@ -56,15 +53,12 @@ export #component CounterWithoutDefiningProviders() {
   const store = inject(CounterStore);
   
   return {
-    template: (
-      <>
-        <h1>Counter</h1>
-        <div>Value: {store.value()}</div>
-        <button on:click={() => store.decrease()}>-</button>
-        <button on:click={() => store.increase()}>+</button>
-      </>
-    ),
-    style: (<>...</>),
+    template: `
+      <h1>Counter</h1>
+      <div>Value: {store.value()}</div>
+      <button on:click={() => store.decrease()}>-</button>
+      <button on:click={() => store.increase()}>+</button>`,
+    style: `...`,
     exports: {/** public interface **/},
   };
 }
@@ -72,14 +66,11 @@ export #component CounterWithoutDefiningProviders() {
 export #component CounterTemplateOnly() {
   const store = inject(CounterStore);
   
-  return (
-    <>
-      <h1>Counter</h1>
-      <div>Value: {store.value()}</div>
-      <button on:click={() => store.decrease()}>-</button>
-      <button on:click={() => store.increase()}>+</button>
-    </>
-  );
+  return `
+    <h1>Counter</h1>
+    <div>Value: {store.value()}</div>
+    <button on:click={() => store.decrease()}>-</button>
+    <button on:click={() => store.increase()}>+</button>`;
 }
 ```
 
@@ -124,13 +115,10 @@ export interface Item {
   items = input.required<Item[]>(),
   item = fragment<[Item]>(),
 }) {
-  template: (
-    <>
-      @for (i of items(); track i.id) {
-        <Render fragment={item()} params={[i]} />
-      }
-    </>
-  ),
+  template: `
+    @for (i of items(); track i.id) {
+      <Render fragment={item()} params={[i]} />
+    }`,
 }
 
 class ItemsStore {
@@ -148,28 +136,25 @@ export #component ItemsPage() {
       // ..
     }
   },
-  template: (
-    <>
-      <List items={store.items()}>
-        @fragment item(i: Item) {
-          <Card on:click={(i: Item) => goTo(i)}>
-            <HStack width={100}>
-              <Img url={i.imgUrl} />
-              <VStack>
-                <Title title={i.title} />
-                <Description @tooltip(message={i.title}) description={i.description} />
-                
-                <hr />                
-                
-                @const price = @currency(() => i.price, 'EUR');
-                <p>Price: {price}</p>
-              </VStack>
-            </HStack>
-          </Card>
-        }
-      </List>
-    </>
-  ),
+  template: `
+    <List items={store.items()}>
+      @fragment item(i: Item) {
+        <Card on:click={(i: Item) => goTo(i)}>
+          <HStack width={100}>
+            <Img url={i.imgUrl} />
+            <VStack>
+              <Title title={i.title} />
+              <Description @tooltip(message={i.title}) description={i.description} />
+              
+              <hr />                
+              
+              @const price = @currency(() => i.price, 'EUR');
+              <p>Price: {price}</p>
+            </VStack>
+          </HStack>
+        </Card>
+      }
+    </List>`,
   styleUrl: './items-page.css',
 }
 ```
