@@ -31,10 +31,10 @@ class CounterStore {/** ... **/}
 export #component Counter({
   c = input.required<number>(),
 }) {
-  #providers([
+  providers([
     provide({ token: CounterStore, useFactory: () => new CounterStore(c) }),
   ]);
-  #script({
+  script({
     const store = inject(CounterStore);
     
     return {
