@@ -10,7 +10,7 @@ let Comp = component(({
   return {
     providers: [...],
     script: () => {...},
-    template: (`...`),
+    template: `...`,
     style: `...`,
   };
 });
@@ -42,7 +42,8 @@ export #component Counter({
         <h1>Counter</h1>
         <div>Value: {store.value()}</div>
         <button on:click={() => store.decrease()}>-</button>
-        <button on:click={() => store.increase()}>+</button>`,
+        <button on:click={() => store.increase()}>+</button>
+      `,
       style: `...`,
       exports: {/** public interface **/},
     };
@@ -57,7 +58,8 @@ export #component CounterWithoutDefiningProviders() {
       <h1>Counter</h1>
       <div>Value: {store.value()}</div>
       <button on:click={() => store.decrease()}>-</button>
-      <button on:click={() => store.increase()}>+</button>`,
+      <button on:click={() => store.increase()}>+</button>
+    `,
     style: `...`,
     exports: {/** public interface **/},
   };
@@ -118,7 +120,8 @@ export interface Item {
   template: `
     @for (i of items(); track i.id) {
       <Render fragment={item()} params={[i]} />
-    }`,
+    }
+  `,
 }
 
 class ItemsStore {
@@ -154,7 +157,8 @@ export #component ItemsPage() {
           </HStack>
         </Card>
       }
-    </List>`,
+    </List>
+  `,
   styleUrl: './items-page.css',
 }
 ```

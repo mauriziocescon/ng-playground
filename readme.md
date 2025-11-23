@@ -120,7 +120,8 @@ export #component UserDetailConsumer() {
     <UserDetail
       user={user()}
       model:email={email}
-      on:makeAdmin={makeAdmin} />`,
+      on:makeAdmin={makeAdmin} />
+  `,
 }
 
 // -- UserDetail -----------------------------------
@@ -171,7 +172,8 @@ export #component Counter() {
       <p>{counter(5)}</p>
     } @else {
       <span>Empty</span>
-    }`,
+    }
+  `,
 }
 ```
 
@@ -200,7 +202,8 @@ export #component TextSearch() {
       on:input={valueChange}
       @tooltip(message={message()} on:dismiss={doSomething}) />
   
-    <p>Value: {text()}</p>`,
+    <p>Value: {text()}</p>
+  `,
 }
 
 // -- tooltip in @mylib/tooltip --------------------
@@ -272,7 +275,8 @@ export #component PriceSimulation({
       <button on:click={() => qty.increase()}>+</button>
       <hr />
       <div>Price: {price()}</div>
-    }`,
+    }
+  `,
 }
 ```
 
@@ -306,7 +310,8 @@ export #component Counter({
     <h1>Counter</h1>
     <div>Value: {store.value()}</div>
     <button on:click={() => store.decrease()}>-</button>
-    <button on:click={() => store.increase()}>+</button>`,
+    <button on:click={() => store.increase()}>+</button>
+  `,
 }
 ```
 
@@ -330,7 +335,8 @@ export #component MenuConsumer() {
     <Menu>
       <MenuItem>{first()}</MenuItem>
       <MenuItem>{second()}</MenuItem>
-    </Menu>`,
+    </Menu>
+  `,
 }
 
 // -- Menu in @mylib/menu --------------------------
@@ -352,7 +358,8 @@ export #component Menu({
       <Render fragment={children()} />
     } @else {
       <span>Empty</span>
-    }`,
+    }
+  `,
 }
 
 export #component MenuItem({
@@ -387,7 +394,8 @@ export #component MenuConsumer() {
         <MyMenuItem>{item.desc}</MyMenuItem>
       </div>
     }
-    <Menu items={items()} menuItem={menuItem} />`,
+    <Menu items={items()} menuItem={menuItem} />
+  `,
   styleUrl: './menu-consumer.css',
 }
 
@@ -404,7 +412,8 @@ export #component Menu({
     
     @for (item of items(); track item.id) {
       <Render fragment={menuItem()} params={[item]} />
-    }`,
+    }
+  `,
 }
 ```
 
@@ -429,7 +438,8 @@ export #component ButtonConsumer() {
       disabled={!valid()}
       on:click={doSomething}>
         Click / Hover me
-    </Button>`,
+    </Button>
+  `,
 }
 
 // -- button in @mylib/button --------------------
@@ -456,7 +466,8 @@ export #component Button({
   template: `
     <button @**={dirs()} disabled={disabled()} on:click={() => click.emit()}>
       <Render fragment={children()} />
-    </button>`,
+    </button>
+  `,
 }
 ```
 
@@ -479,7 +490,8 @@ export #component UserDetailConsumer() {
     <UserDetailWrapper
       bind:**={{user}}
       model:**={{email}}
-      on:**={{makeAdmin}} />`,
+      on:**={{makeAdmin}} />
+  `,
 }
 
 export #component UserDetailWrapper({
@@ -495,7 +507,8 @@ export #component UserDetailWrapper({
     const other = computed(() => /** something depending on user or a default value **/);
   },
   template: `
-    <UserDetail user={other()} {...rest} />`,
+    <UserDetail user={other()} {...rest} />
+  `,
 }
 
 // -- UserDetail -----------------------------------
@@ -545,7 +558,8 @@ export #component ButtonConsumer() {
       disabled={!valid()}
       on:click={doSomething}>
         Click / Hover me
-    </Button>`,
+    </Button>
+  `,
 }
 
 // -- button in @mylib/button --------------------
@@ -566,7 +580,8 @@ export #component Button({
   template: `
     <button {...rest} style={innerStyle()}>
       <Render fragment={children()} />
-    </button>`,
+    </button>
+  `,
 }
 ```
 
@@ -584,7 +599,8 @@ export #component Something() {
     const inputs = computed(() => /** ... **/);
   },
   template: `
-    <Dynamic component={comp()} inputs={inputs()} />`,
+    <Dynamic component={comp()} inputs={inputs()} />
+  `,
 }
 ```
 
@@ -647,7 +663,8 @@ export #component Parent() {
     <Child ref={(c) => many.update(v => [...v, c])} />
     <Child ref={(c) => many.update(v => [...v, c])} />
   
-    <button on:click={() => tlp().toggle()}>Toggle tlp</button>`,
+    <button on:click={() => tlp().toggle()}>Toggle tlp</button>
+  `,
 }
 ```
 
