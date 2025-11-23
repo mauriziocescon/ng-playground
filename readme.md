@@ -255,7 +255,7 @@ function quantity(value?: number) {
   },
 }
 
-export #component PriceSimulation({
+export #component PriceSimulator({
   items = input.required<Item[]>(),
 }) {
   /**
