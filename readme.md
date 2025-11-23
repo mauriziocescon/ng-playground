@@ -246,7 +246,7 @@ Definition of `@const` variables in the template (creation happens once) that ca
 import { signal, computed, inject, input } from '@angular/core';
 import { Item, PriceManager } from '@mylib/item';
 
-const quantity = (value?: number) => {
+function quantity(value?: number) {
   const qty = signal(value ?? 0);
 
   return {
@@ -254,7 +254,7 @@ const quantity = (value?: number) => {
     decrease: () => qty.update(c => c - 1),
     increment: () => qty.update(c => c + 1),
   };
-};
+}
 
 #declaration price() {
   script: () => {
