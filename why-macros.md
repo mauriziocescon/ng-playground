@@ -18,11 +18,11 @@ let Comp = component(({
 
 So with macros and `**.ng` files
 - you avoid unwanted flexility (definitions: let / var),
-- you avoid strange scope behaviours (unwanted above),
+- you avoid strange scope behaviours (`unwanted` above),
 - you have clear markers for tools,
 - you keep DI separated from script / template and at the same time enable the definition of providers depending on inputs, but not on variables defined inside script. 
 
-Note that an alternative approach would be something like below: it's more verbose, but it doesn't suffer from the hoisting problem. I'd likely imply having 2 way of ways of defining components. 
+Note that an alternative approach would be something like below: it's more verbose, but it doesn't have the special `script` / `template` hoisting rules. It'd likely imply having 2 ways of defining components. 
 ```ts
 import { linkedSignal, input, WritableSignal, provide, inject } from '@angular/core';
 
