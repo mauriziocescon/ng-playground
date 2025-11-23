@@ -264,7 +264,7 @@ const counter = (value?: number) => {
     const localeId = inject(LOCALE_ID);
     const manager = inject(TranslationManager);
     
-    return (value: () => string[]) => computed(/** ... **/);
+    return (value: () => string[]) => (/** ... **/);
   },
 }
 
@@ -296,8 +296,8 @@ export #component Counter() {
         @const price = @currency(count.value, 'EUR');
       
         <h1>Counter</h1>
-        <div>{localizedLabels().value}: {count.value()}</div>
-        <div>{localizedLabels().price}: {price()}</div>
+        <div>{localizedLabels.value}: {count.value()}</div>
+        <div>{localizedLabels.price}: {price()}</div>
         <button on:click={() => count.decrease()}>-</button>
         <button on:click={() => count.increase()}>+</button>
       }
