@@ -22,9 +22,9 @@ So with macros and `**.ng` files
 - you have clear markers for tools,
 - you keep DI separated from script / template and at the same time enable the definition of providers depending on inputs, but not on variables defined inside script. 
 
-Note that an alternative approach would be something like below: it's more verbose, but it doesn't have the special `script` / `template` hoisting rules. It'd likely imply having 2 ways of defining components. 
+Note that an alternative approach would be something like below: it doesn't have the special `script` / `template` hoisting rules, but it'd likely imply having 2 or 3 ways of defining components. 
 ```ts
-import { linkedSignal, input, WritableSignal, provide, inject } from '@angular/core';
+import { input, provide, inject } from '@angular/core';
 
 class CounterStore {/** ... **/}
 
@@ -67,6 +67,19 @@ export #component CounterWithoutDefiningProviders() {
     style: (<>...</>),
     exports: {/** public interface **/},
   };
+}
+
+export #component CounterTemplateOnly() {
+  const store = inject(CounterStore);
+  
+  return (
+    <>
+      <h1>Counter</h1>
+      <div>Value: {store.value()}</div>
+      <button on:click={() => store.decrease()}>-</button>
+      <button on:click={() => store.increase()}>+</button>
+    </>
+  );
 }
 ```
 
