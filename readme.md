@@ -59,11 +59,13 @@ export #component TextSearch({
     
     <button disabled={text().length === 0} on:click={() => text.set('')}>
       {'Reset ' + text()}
-    </button>`,
+    </button>
+  `,
   style: `
     .danger {
       color: red;
-    }`,
+    }
+  `,
 }
 ```
 
