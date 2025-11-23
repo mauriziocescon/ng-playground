@@ -244,6 +244,7 @@ export #directive tooltip({
 Definition of `@const` variables in the template (creation happens once) that can run in an injection context:
 ```ts
 import { signal, computed, inject, LOCALE_ID } from '@angular/core';
+import { TranslationManager } from '@mylib/translations';
 
 const counter = (value?: number) => {
   const count = signal(value ?? 0);
@@ -256,6 +257,16 @@ const counter = (value?: number) => {
     increment: () => count. update(c => c + 1),
   };
 };
+
+#declaration traslations() {
+  script: () => {
+    // injection context
+    const localeId = inject(LOCALE_ID);
+    const manager = inject(TranslationManager);
+    
+    return (value: () => string[]) => computed(/** ... **/);
+  },
+}
 
 #declaration currency() {
   script: () => {
@@ -278,13 +289,15 @@ export #component Counter() {
    */
   template: (
     <>
+      @const localizedLabels = @translations(['value', 'price']);
+      
       @for (item of [0, 1, 2]; track item){
         @const count = counter(0);
         @const price = @currency(count.value, 'EUR');
       
         <h1>Counter</h1>
-        <div>Value: {count.value()}</div>
-        <div>Price: {price()}</div>
+        <div>{localizedLabels().value}: {count.value()}</div>
+        <div>{localizedLabels().price}: {price()}</div>
         <button on:click={() => count.decrease()}>-</button>
         <button on:click={() => count.increase()}>+</button>
       }
