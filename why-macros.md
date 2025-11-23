@@ -26,17 +26,7 @@ Note that an alternative approach would be something like below: it's more verbo
 ```ts
 import { linkedSignal, input, WritableSignal, provide, inject } from '@angular/core';
 
-class CounterStore {
-  private readonly counter: WritableSignal<number>;
-  readonly value = this.counter.asReadonly();
-
-  constructor(c = () => 0) {
-    this.counter = linkedSignal(() => c());
-  }
-
-  decrease() {/** ... **/}
-  increase() {/** ... **/}
-}
+class CounterStore {/** ... **/}
 
 export #component Counter({
   c = input.required<number>(),
