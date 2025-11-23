@@ -243,63 +243,49 @@ export #directive tooltip({
 ## Declarations and `@const` variables
 Definition of `@const` variables in the template (creation happens once) that can run in an injection context:
 ```ts
-import { signal, computed, inject, LOCALE_ID } from '@angular/core';
-import { TranslationManager } from '@mylib/translations';
+import { signal, computed, inject, input } from '@angular/core';
+import { Item, PriceManager } from '@mylib/item';
 
-const counter = (value?: number) => {
-  const count = signal(value ?? 0);
-  const price = computed(() => 10 * count());
+const quantity = (value?: number) => {
+  const qty = signal(value ?? 0);
 
   return {
-    value: count.asReadonly(),
-    price,
-    decrease: () => count.update(c => c - 1),
-    increment: () => count. update(c => c + 1),
+    value: qty.asReadonly(),
+    decrease: () => qty.update(c => c - 1),
+    increment: () => qty.update(c => c + 1),
   };
 };
 
-#declaration traslations() {
+#declaration price() {
   script: () => {
     // injection context
-    const localeId = inject(LOCALE_ID);
-    const manager = inject(TranslationManager);
+    const priceManager = inject(PriceManager);
     
-    return (value: () => string[]) => (/** ... **/);
+    return (qty: () => (number | undefined)) => computed(/** ... **/);
   },
 }
 
-#declaration currency() {
-  script: () => {
-    // injection context
-    const localeId = inject(LOCALE_ID);
-    
-    return (
-      value: () => (number | undefined),
-      currencyCode: string | undefined,
-    ) => computed(/** ... **/);
-  },
-}
-
-export #component Counter() {
+export #component PriceSimulation({
+  items = input.required<Item[]>(),
+}) {
   /**
-   * count / price get created once with scope similar to @let
+   * qty / price get created once with scope similar to @let
    * 
    * any declaration can be used directly in the template (**.ng files)
    * declarations require @
    */
   template: (
-    <>
-      @const localizedLabels = @translations(['value', 'price']);
+    <>      
+      @for (item of items(); track item.id){
+        @const qty = quantity(0);
+        @const price = @price(qty.value);
       
-      @for (item of [0, 1, 2]; track item){
-        @const count = counter(0);
-        @const price = @currency(count.value, 'EUR');
-      
-        <h1>Counter</h1>
-        <div>{localizedLabels.value}: {count.value()}</div>
-        <div>{localizedLabels.price}: {price()}</div>
-        <button on:click={() => count.decrease()}>-</button>
-        <button on:click={() => count.increase()}>+</button>
+        <h5>{item.desc}</h5>
+        <button on:click={() => qty.decrease()}>-</button>
+        <div>Quantity: {qty.value()}</div>
+        <button on:click={() => qty.increase()}>+</button>
+        <hr />
+        <div>Price: {price()}</div>
       }
     </>
   ),
