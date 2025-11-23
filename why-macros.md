@@ -34,7 +34,7 @@ export #component Counter({
   providers([
     provide({ token: CounterStore, useFactory: () => new CounterStore(c) }),
   ]);
-  script({
+  script(() => {
     const store = inject(CounterStore);
     
     return {
