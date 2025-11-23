@@ -278,14 +278,16 @@ export #component Counter() {
    */
   template: (
     <>
-      @const count = counter(0);
-      @const price = @currency(count.value, 'EUR');
-    
-      <h1>Counter</h1>
-      <div>Value: {count.value()}</div>
-      <div>Price: {price()}</div>
-      <button on:click={() => count.decrease()}>-</button>
-      <button on:click={() => count.increase()}>+</button>
+      @for (item of [0, 1, 2]; track item){
+        @const count = counter(0);
+        @const price = @currency(count.value, 'EUR');
+      
+        <h1>Counter</h1>
+        <div>Value: {count.value()}</div>
+        <div>Price: {price()}</div>
+        <button on:click={() => count.decrease()}>-</button>
+        <button on:click={() => count.increase()}>+</button>
+      }
     </>
   ),
 }
