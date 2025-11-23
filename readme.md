@@ -100,7 +100,7 @@ export #component UserDetailConsumer() {
     function makeAdmin() {/** ... **/}
   },
   /**
-   * any component can be used directly in the template (**.ng files)
+   * any component can be used directly in the template
    * 
    * ⚠️ must provide all required inputs / models ⚠️
    * 
@@ -193,7 +193,7 @@ export #component TextSearch() {
   },
   /**
    * encapsulation of directive data: @directive(...)
-   * any directive can be used directly in the template (**.ng files)
+   * any directive can be used directly in the template
    */
   template: `
     <input
@@ -261,7 +261,7 @@ export #component PriceSimulation({
   /**
    * qty / price get created once with scope similar to @let
    * 
-   * any declaration can be used directly in the template (**.ng files)
+   * any declaration can be used directly in the template
    * declarations require @
    */
   template: `
