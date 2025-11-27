@@ -143,7 +143,7 @@ export #component UserDetail({
    *   style: '...', 
    *   user: computedInput(() => user(), {transform: ...}),
    *   email: computedInput(() => email()),
-   *   'on:emailChange': (v: string) => {ctx['email'].set(v)},
+   *   'on:emailChange': (v: string) => {email.set(v)},
    *   'on:makeAdmin': () => {makeAdmin()},
    * }) {...}
    */
