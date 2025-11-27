@@ -101,6 +101,7 @@ export #component UserDetailConsumer() {
   },
   /**
    * any component can be used directly in the template
+   * bind: model: on: behaves the same as for native elements
    * 
    * ⚠️ must provide all required inputs / models ⚠️
    * 
@@ -113,8 +114,6 @@ export #component UserDetailConsumer() {
    * 
    * can bind not existing entries (ignored)
    * ✅ <UserDetail nonsense={...} on:nonsense={...} /> ✅
-   * 
-   * bind: model: on: behaves the same as for native elements
    */
   template: `
     <UserDetail
