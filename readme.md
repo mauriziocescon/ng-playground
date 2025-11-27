@@ -261,7 +261,7 @@ export #component PriceSimulator({
    * any declaration can be used directly in the template
    * declarations require @
    * 
-   * qty / price get created once with scope similar to @let
+   * qty / price have the same @let scope and get created once (no recreation after each CD)
    */
   template: `
     @for (item of items(); track item.id){
