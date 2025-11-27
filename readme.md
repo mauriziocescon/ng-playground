@@ -154,7 +154,7 @@ export #component UserDetail({
 }
 ```
 
-Lexical scoping: template => `script` => func / const / enum / interface imported in the file => global.
+Lexical scoping: template => script => func / const / enum / interface imported in the file => global.
 ```ts
 enum Type {
   Counter = 'counter',
@@ -258,10 +258,10 @@ export #component PriceSimulator({
   items = input.required<Item[]>(),
 }) {
   /**
-   * qty / price get created once with scope similar to @let
-   * 
    * any declaration can be used directly in the template
    * declarations require @
+   * 
+   * qty / price get created once with scope similar to @let
    */
   template: `
     @for (item of items(); track item.id){
@@ -506,7 +506,7 @@ export #component UserDetailWrapper({
     const other = computed(() => /** something depending on user or a default value **/);
   },
   template: `
-    <UserDetail user={other()} {...rest} />
+    <UserDetail {...rest} user={other()} />
   `,
 }
 
@@ -525,7 +525,7 @@ export #component UserDetail({
   script: () => {
     const dirs = retrieveDirectives(rest);
   },
-  template: ` ... `,
+  template: `...`,
 }
 ```
 
