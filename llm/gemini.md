@@ -1,4 +1,4 @@
-# Gemini 2.5 pro
+# Gemini 3 pro
 ## Prompt:
 
 Hey! 
@@ -11,192 +11,143 @@ Thanks
 
 ## Result:
 
-Based on the speculative syntax outlined in your uploaded files (readme.md and why-macros.md), here is a comprehensive example of a Product Showcase feature.
+Based on the hypothetical syntax outlined in your provided files (why-macros.md and readme.md), here is an example demonstrating component composition.
 
-This example demonstrates:
+This example builds a ProductCatalog where:
 
-- Directives: To handle DOM manipulations (animations).
-- Declarations: To handle reusable template logic (price calculation).
-- Fragments: To allow the parent component to compose the content of the child component (inversion of control).
+1. Directives handle user interaction tracking (Analytics).
+2. Declarations handle dependency-injected data formatting (Currency conversion).
+3. Fragments allow the parent to define exactly how each product card looks, while the child handles the layout logic.
 
-The Scenario: E-Commerce Product List
-
-We are building a list of products where the parent component decides exactly how the "Action Area" (e.g., Add to Cart button) looks for each card using fragments, while the logic for calculating discounts is handled by a declaration, and the entry animation is handled by a directive.
-
-### The Directive (fadeIn) and Declaration (discount)
-First, we define the reusable building blocks.
+### The Example: E-Commerce Product Catalog
+This example demonstrates how a generic Grid component receives a Fragment to render items. That fragment utilizes a Directive for behavior and a Declaration for pure data transformation.
 
 ```ts
-import { 
-  input, 
-  ref, 
-  inject, 
-  computed, 
-  ElementRef, 
-  afterNextRender 
-} from '@angular/core';
+import { input, output, inject, computed, fragment, LOCALE_ID } from '@angular/core';
+import { AnalyticsService, ExchangeRateService } from './services';
 
-// --- DIRECTIVE: Fade In Animation ---
-// Manipulates the DOM element to add a class when mounted
-export #directive fadeIn({
-  // duration input with a default value
-  duration = input<number>(500),
-  elRef = ref<HTMLElement>(),
+// --------------------------------------------------------------------------
+// 1. THE DIRECTIVE
+// A reusable behavior that can be attached to any element
+// --------------------------------------------------------------------------
+#directive TrackClick({
+  eventName = input.required<string>(),
+  elRef = ref<HTMLElement>(), // "elRef" is reserved for the host element
 }) {
   script: () => {
-    afterNextRender(() => {
-      const el = elRef();
-      if (el) {
-        el.style.transition = `opacity ${duration()}ms ease-in`;
-        el.style.opacity = '0';
-        
-        // Trigger reflow/wait a tick
-        requestAnimationFrame(() => {
-           el.style.opacity = '1';
-        });
-      }
+    const analytics = inject(AnalyticsService);
+
+    // Logic to bind click listener to elRef and log to analytics
+    function track() {
+      analytics.logEvent(eventName());
+    }
+    
+    // In a real scenario, we might use event delegation or direct binding here
+    return {
+      track
+    };
+  },
+}
+
+// --------------------------------------------------------------------------
+// 2. THE DECLARATION
+// A way to declare 'const' variables in templates that depend on DI
+// Effectively replaces Pipes.
+// --------------------------------------------------------------------------
+#declaration LocalCurrency() {
+  script: () => {
+    const rates = inject(ExchangeRateService);
+    const locale = inject(LOCALE_ID);
+
+    // Returns a function that takes a signal/function and returns a computed signal
+    return (
+      amount: () => number, 
+      currency: string
+    ) => computed(() => {
+      const converted = amount() * rates.getRate(currency);
+      return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(converted);
     });
   },
 }
 
-// --- DECLARATION: Discount Calculator ---
-// Reusable logic instantiated in the template injection context
-export #declaration discount() {
-  script: () => {
-    // Logic that might rely on DI (e.g., current currency settings)
-    // const config = inject(AppConfig); 
-
-    // Returns a function acceptable by the template
-    return (originalPrice: () => number, discountPct: number) => 
-      computed(() => {
-        const price = originalPrice();
-        return price - (price * (discountPct / 100));
-      });
-  },
+// --------------------------------------------------------------------------
+// 3. THE GENERIC COMPONENT
+// Uses fragments to delegate rendering logic to the parent
+// --------------------------------------------------------------------------
+export #component GridLayout({
+  items = input.required<any[]>(),
+  // "itemTemplate" is a fragment receiving a generic param
+  itemTemplate = fragment<[any]>(), 
+}) {
+  template: `
+    <div class="grid-container">
+      @for (item of items(); track item.id) {
+        <div class="grid-cell">
+          <Render fragment={itemTemplate()} params={[item]} />
+        </div>
+      }
+    </div>
+  `,
+  style: `
+    .grid-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .grid-cell { border: 1px solid #ccc; padding: 1rem; }
+  `
 }
-```
 
-### The Child Component (ProductCard)
-This component handles the layout but delegates the rendering of the specific action button to the parent via a fragment.
-
-```ts
-import { input, fragment } from '@angular/core';
-import { Render } from '@angular/common';
-
+// --------------------------------------------------------------------------
+// 4. THE COMPOSITION (Parent Component)
+// Combines Component + Fragment + Directive + Declaration
+// --------------------------------------------------------------------------
 export interface Product {
   id: string;
   name: string;
-  price: number;
+  priceUSD: number;
 }
-
-export #component ProductCard({
-  data = input.required<Product>(),
-  // The parent will provide this HTML fragment
-  actionArea = fragment<[Product]>(), 
-}) {
-  template: (
-    <>
-      <div class="card">
-        <h3>{data().name}</h3>
-        
-        <div class="actions">
-           <Render fragment={actionArea()} params={[data()]} />
-        </div>
-      </div>
-    </>
-  ),
-  style: (
-    <>
-      .card {
-        border: 1px solid #ccc;
-        padding: 1rem;
-        border-radius: 8px;
-      }
-      .actions {
-        margin-top: 10px;
-        padding-top: 10px;
-        border-top: 1px dashed #eee;
-      }
-    </>
-  )
-}
-```
-
-### The Parent Component (ProductPage)
-This component composes everything together. It uses the fadeIn directive on the list, uses the discount declaration to calculate prices inside the fragment, and passes that fragment down to the ProductCard.
-
-```ts
-import { signal, computed } from '@angular/core';
-import { fadeIn, discount } from './utils.ng'; // Assuming previous block
-import { ProductCard, Product } from './product-card.ng';
 
 export #component ProductPage() {
   script: () => {
+    // Inputs lifted up immediately available in script
+    // Mock data signal
     const products = signal<Product[]>([
-      { id: '1', name: 'Super Gadget', price: 100 },
-      { id: '2', name: 'Mega Widget', price: 200 },
+      { id: '1', name: 'Laptop', priceUSD: 1000 },
+      { id: '2', name: 'Mouse', priceUSD: 50 },
     ]);
 
-    const cartCount = signal(0);
-
     function addToCart(p: Product) {
-      console.log(`Added ${p.name}`);
-      cartCount.update(c => c + 1);
+      console.log('Added', p.name);
     }
   },
-  template: (
-    <>
-      <h1>Shop (Items: {cartCount()})</h1>
+  template: `
+    <h1>Summer Sale</h1>
 
-      <div class="grid">
-        @for (p of products(); track p.id) {
+    <GridLayout items={products()}>
+      
+      @fragment card(p: Product) {
+        <div class="product-card">
+          <h3>{p.name}</h3>
           
-          <div @fadeIn(duration={800})>
-            
-            <ProductCard data={p}>
-              
-              @fragment actionArea(item: Product) {
-                
-                @const finalPrice = @discount(() => item.price, 20); 
-                
-                <div class="price-tag">
-                  <span class="strikethrough">${item.price}</span>
-                  <strong> ${finalPrice()} </strong>
-                </div>
+          @const localPrice = @LocalCurrency(() => p.priceUSD, 'EUR');
+          
+          <p>Price: {localPrice()}</p>
 
-                <button 
-                  class="btn-primary"
-                  on:click={() => addToCart(item)}>
-                    Buy {item.name}
-                </button>
-              }
+          <button 
+            on:click={() => addToCart(p)}
+            @TrackClick(eventName={'add_to_cart_' + p.id})>
+            Add to Cart
+          </button>
+        </div>
+      }
 
-            </ProductCard>
-          </div>
-        }
-      </div>
-    </>
-  ),
-  style: (
-    <>
-      .grid { display: grid; gap: 1rem; grid-template-columns: 1fr 1fr; }
-      .strikethrough { text-decoration: line-through; color: #999; margin-right: 8px; }
-      .btn-primary { background: blue; color: white; }
-    </>
-  )
+    </GridLayout>
+  `,
 }
 ```
+Key Composition Features Highlighted: 
 
-### Analysis of the Syntax Used
-- Macro Definitions: We used #component, #directive, and #declaration to define the blocks, which prevents the "unwanted flexibility" of returning objects directly and enforces the structure providers / script / template / style.
+1. Scope Isolation: The TrackClick directive and LocalCurrency declaration logic reside in their own scripts with their own DI context. The ProductPage template simply consumes them without needing to instantiate services manually in its own script block. This keeps DI separated from the component script.
 
-- Script & Lexical Scope: Inputs (like data in ProductCard) are immediately available in the script block as signals.
+2. Fragment parameters: The GridLayout is agnostic of what it renders. It accepts a fragment<[any]>. The ProductPage defines the specific look (@fragment card(p: Product)), effectively passing a "render function" that retains access to the ProductPage's lexical scope (like addToCart).
 
-- Fragments:
-    1. Defined in the parent using @fragment name(params) { ... }.
-    2. Passed to the child implicitly (or explicitly as an input if named).
-    3. Rendered in the child using <Render fragment={...} />. This effectively replaces ng-content and ng-template.
+3. Declarations as reactive variables: Instead of using a pipe inside an interpolation string, @LocalCurrency creates a computed signal (localPrice) via @const. This allows the result to be used multiple times or logic-checked before rendering, offering a cleaner alternative to pipes.
 
-- Directives: The @fadeIn directive is applied using the @ syntax (@fadeIn(duration={800})). It uses elRef to access the native element safely.
-
-- Declarations: The @discount declaration creates a reactive value (finalPrice) within the template scope. This acts as a replacement for Pipes, allowing logic that depends on DI (though not used in this specific mock, it runs in an injection context).
+4. Implicit Directive Inputs: The TrackClick directive receives eventName as a reactive input. The syntax @TrackClick(eventName={...}) passes data directly to the directive's script input signal.
