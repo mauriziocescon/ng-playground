@@ -571,7 +571,7 @@ export #component Button({
   ...rest,
 }: HTMLButtonAttributes) {
   script: () => {
-    const innerStyle = computed(() => `${style()}; background-color: red;`);
+    const innerStyle = computed(() => `${style()}; color: red;`);
   },
   /**
    * {...rest} adds type / class and attaches directives
