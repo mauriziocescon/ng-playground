@@ -264,7 +264,7 @@ export #component PriceSimulator({
    * qty / price have the same @let scope and get created once (no recreation after each CD)
    */
   template: `
-    @for (item of items(); track item.id){
+    @for (item of items(); track item.id) {
       @const qty = quantity(0);
       @const price = @price(qty.value);
     
