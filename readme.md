@@ -365,7 +365,8 @@ export #component MenuItem({
   children = fragment<void>(),
 }) {
   template: `
-    <Render fragment={children()} />`,
+    <Render fragment={children()} />
+  `,
 }
 ```
 
