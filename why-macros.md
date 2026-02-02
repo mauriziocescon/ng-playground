@@ -8,7 +8,6 @@ let Comp = component(({
 }) => {
   const unwanted = 'unwanted';
   return {
-    providers: [...],
     script: () => {
       ...
       return {
@@ -16,6 +15,7 @@ let Comp = component(({
         style: `...`,
       };
     },
+    providers: [...],
   };
 });
 ```
