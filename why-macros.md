@@ -1,5 +1,5 @@
 ## Why macros
-Angular components has already some special hoisting rules: class fields are visible in templates (string literals) despite they are not in the same ts scope. Assuming such principles are applied to `script` and `template` (where template is resolved similarly to right now), one might argue that macros are not really necessary cause a component could be written as a "sort of valid function". On the other hand: 
+Angular components has already some special hoisting rules: class fields are visible in templates (string literals) despite they are not in the same ts scope. Assuming similar principles are applied to `script` and `template` (where template is resolved similarly to right now), one might argue that macros are not really necessary cause a component could be written as a "sort of valid function". On the other hand: 
 ```ts
 import { component, ... } from '@angular/core';
 
@@ -9,9 +9,13 @@ let Comp = component(({
   const unwanted = 'unwanted';
   return {
     providers: [...],
-    script: () => {...},
-    template: `...`,
-    style: `...`,
+    script: () => {
+      ...
+      return {
+        template: `...`,
+        style: `...`,
+      };
+    },
   };
 });
 ```
@@ -21,61 +25,6 @@ So with macros and `**.ng` files
 - you avoid strange scope behaviours (`unwanted` above),
 - you have clear markers for tools,
 - you keep DI separated from script / template and at the same time enable the definition of providers depending on inputs, but not on variables defined inside script. 
-
-Note that an alternative approach would be something like below: it has better `script` / `template` hoisting rules, but it'd likely imply having 2 or 3 ways of defining components. 
-```ts
-import { input, provide, inject } from '@angular/core';
-
-class CounterStore {/** ... **/}
-
-export #component Counter({
-  c = input.required<number>(),
-}) {
-  providers: [
-    provide({ token: CounterStore, useFactory: () => new CounterStore(c) }),
-  ], 
-  script: () => {
-    const store = inject(CounterStore);
-    
-    return {
-      template: `
-        <h1>Counter</h1>
-        <div>Value: {store.value()}</div>
-        <button on:click={() => store.decrease()}>-</button>
-        <button on:click={() => store.increase()}>+</button>
-      `,
-      style: `...`,
-      exports: {/** public interface **/},
-    };
-  },
-}
-
-export #component CounterWithoutDefiningProviders() {
-  const store = inject(CounterStore);
-  
-  return {
-    template: `
-      <h1>Counter</h1>
-      <div>Value: {store.value()}</div>
-      <button on:click={() => store.decrease()}>-</button>
-      <button on:click={() => store.increase()}>+</button>
-    `,
-    style: `...`,
-    exports: {/** public interface **/},
-  };
-}
-
-export #component CounterTemplateOnly() {
-  const store = inject(CounterStore);
-  
-  return `
-    <h1>Counter</h1>
-    <div>Value: {store.value()}</div>
-    <button on:click={() => store.decrease()}>-</button>
-    <button on:click={() => store.increase()}>+</button>
-  `;
-}
-```
 
 ### Another example
 ```ts
@@ -92,9 +41,8 @@ export interface Item {
 
 #directive tooltip({
   message = input.required<string>(),
-  elRef = ref<HTMLElement>(),
 }) {
-  script: () => {
+  script: ({ host }) => {
     const renderer = inject(Renderer2);
 
     afterRenderEffect(() => {
@@ -118,11 +66,13 @@ export interface Item {
   items = input.required<Item[]>(),
   item = fragment<[Item]>(),
 }) {
-  template: `
-    @for (i of items(); track i.id) {
-      <Render fragment={item()} params={[i]} />
-    }
-  `,
+  script: () => ({
+    template: `
+      @for (i of items(); track i.id) {
+        <Render fragment={item()} params={[i]} />
+      }
+    `,
+  }),
 }
 
 class ItemsStore {
@@ -130,36 +80,39 @@ class ItemsStore {
 }
 
 export #component ItemsPage() {
-  providers: [
-    provide({ token: ItemsStore, useFactory: () => new ItemsStore() }),
-  ],
   script: () => {
     const store = inject(ItemsStore);
   
     function goTo(item: Item) {
       // ..
     }
+    
+    return {
+      template: `
+        <List items={store.items()}>
+          @fragment item(i: Item) {
+            <Card on:click={(i: Item) => goTo(i)}>
+              <HStack width={100}>
+                <Img url={i.imgUrl} />
+                <VStack>
+                  <Title title={i.title} />
+                  <Description @tooltip(message={i.title}) description={i.description} />
+                  
+                  <hr />                
+                  
+                  @const price = @currency(() => i.price, 'EUR');
+                  <p>Price: {price}</p>
+                </VStack>
+              </HStack>
+            </Card>
+          }
+        </List>
+      `,
+      styleUrl: './items-page.css',
+    };
   },
-  template: `
-    <List items={store.items()}>
-      @fragment item(i: Item) {
-        <Card on:click={(i: Item) => goTo(i)}>
-          <HStack width={100}>
-            <Img url={i.imgUrl} />
-            <VStack>
-              <Title title={i.title} />
-              <Description @tooltip(message={i.title}) description={i.description} />
-              
-              <hr />                
-              
-              @const price = @currency(() => i.price, 'EUR');
-              <p>Price: {price}</p>
-            </VStack>
-          </HStack>
-        </Card>
-      }
-    </List>
-  `,
-  styleUrl: './items-page.css',
+  providers: [
+    provide({ token: ItemsStore, useFactory: () => new ItemsStore() }),
+  ],
 }
 ```
