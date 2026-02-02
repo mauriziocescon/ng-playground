@@ -244,8 +244,8 @@ export #directive tooltip({
 }
 ```
 
-## Declarations and `@const` variables
-Definition of `@const` variables in the template (creation happens once) that can run in an injection context:
+## Declarations and template-scope `@const` constants
+Definition of template-scoped constant `@const` where creation happens once and can run in an injection context:
 ```ts
 import { signal, computed, inject, input } from '@angular/core';
 import { Item, PriceManager } from '@mylib/item';
