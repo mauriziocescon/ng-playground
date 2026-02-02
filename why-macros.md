@@ -9,9 +9,13 @@ let Comp = component(({
   const unwanted = 'unwanted';
   return {
     providers: [...],
-    script: () => {...},
-    template: `...`,
-    style: `...`,
+    script: () => {
+      ...
+      return {
+        template: `...`,
+        style: `...`,
+      };
+    },
   };
 });
 ```
@@ -92,9 +96,8 @@ export interface Item {
 
 #directive tooltip({
   message = input.required<string>(),
-  elRef = ref<HTMLElement>(),
 }) {
-  script: () => {
+  script: ({ host }) => {
     const renderer = inject(Renderer2);
 
     afterRenderEffect(() => {
