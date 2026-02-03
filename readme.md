@@ -369,16 +369,19 @@ export #component MenuConsumer() {
 }
 
 // -- Menu in @mylib/menu --------------------------
-import { input } from '@angular/core';
+import { input, fragment } from '@angular/core';
 import { Render } from '@angular/common';
 
-export #component Menu() {
+export #component Menu({
   /**
    * children = fragment<void>()
    * 
    * readonly signal provided by ng (not bindable directly)
    */
-  script: ({ children }) => {
+   children = fragment<void>(),
+}) {
+  
+  script: () => {
     /** ... **/
     
     return {
@@ -396,8 +399,10 @@ export #component Menu() {
   },
 }
 
-export #component MenuItem() {
-  script: ({ children }) => ({
+export #component MenuItem({
+  children = fragment<void>(),
+}) {
+  script: () => ({
     template: `
       <Render fragment={children()} />
     `,      
@@ -486,31 +491,34 @@ export #component ButtonConsumer() {
 }
 
 // -- button in @mylib/button --------------------
-import { input, output } from '@angular/core';
+import { input, output, fragment } from '@angular/core';
 import { Render } from '@angular/common';
 
 export #component Button({
+  children = fragment<void>(),
   disabled = input<boolean>(false),
   click = output<void>(),
   /**
    * destruction syntax: whatever is not matching 
    * inputs / outputs / models / fragments
-   * defined explicitly (like disabled, click).
+   * defined explicitly (like children, disabled, click).
+   * 
+   * @directive on a component => implicitly becomes part of rest
+   * which can be further passed to a native element
    */
   ...rest,
 }) {
-  /**
-   * @directive on a component are provided 
-   * by the framework within script
-   */
-   */
-  script: ({ children, dirs }) => ({
-    template: `
-      <button @**={dirs()} disabled={disabled()} on:click={() => click.emit()}>
-        <Render fragment={children()} />
-      </button>
-    `,      
-  }),
+  script: () => {
+    // ...
+    
+    return {
+      template: `
+        <button {...rest} disabled={disabled()} on:click={() => click.emit()}>
+          <Render fragment={children()} />
+        </button>
+      `,      
+    };
+  },
 }
 ```
 
@@ -561,7 +569,7 @@ export #component UserDetailWrapper({
 }
 
 // -- UserDetail -----------------------------------
-import { input, model, output } from '@angular/core';
+import { input, model, output, fragment } from '@angular/core';
 
 export interface User {/** ... **/}
 
@@ -569,9 +577,12 @@ export #component UserDetail({
   user = input.required<User>(),
   email = model.required<string>(),
   makeAdmin = output<void>(),
+  children = fragment<void>(),
   ...rest,
 }) {
-  script: ({ children, dirs }) => {    
+  script: () => {
+    // ...
+    
     return {
       template: `...`,
     };
@@ -615,14 +626,15 @@ export #component ButtonConsumer() {
 }
 
 // -- button in @mylib/button --------------------
-import { input, computed } from '@angular/core';
+import { input, computed, fragment } from '@angular/core';
 import { HTMLButtonAttributes } from '@angular/core/elements';
 
 export #component Button({
   style = input<string>(''),
+  children = fragment<void>(),
   ...rest,
 }: HTMLButtonAttributes) {
-  script: ({ children }) => {
+  script: () => {
     const innerStyle = computed(() => `${style()}; color: red;`);
     
     return {
@@ -830,10 +842,10 @@ export #component Counter({
 - `directive` types: since `host` is defined as a parameter of `script` (rather then injected), static types checking could be introduced (directives can be applied only to compatible elementes),
 - `queries`: if `ref` makes sense, likely not needed anymore; if they stay, it would be nice to limit their DI capabilities: no way to `read` providers from `injector` tree (see [`viewChild abuses`](https://stackblitz.com/edit/stackblitz-starters-wkkqtd9j)),
 - multiple `directives` attached to the same element: as for the previous point, it would be nice to avoid directives injection when applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy)); instead, it should be an explicit template operation with a `ref` passed as an `input`,
-- in general, the concept of injecting components / directives inside each others should be restricted cause it generates lots of indirection / complexity; the downside is that some ng-reserved names are necessary (`elRef`, `children`).
+- in general, the concept of injecting components / directives inside each others should be restricted cause it generates lots of indirection / complexity; the downside is that some ng-reserved names are necessary (`host`, `children`).
 
 ### Unresolved points
-- other decorator props: in this proposal, components and directives have only `providers` / `script` / `template` / `style` entries. On the other hand, `@Component` and `@Directive` have many more and some of them (like `preserveWhitespaces`) should probably stay. They are not considered to avoid digressions; 
+- other decorator props: in this proposal, components and directives have only `providers` / `script` entries. On the other hand, `@Component` and `@Directive` have many more and some of them (like `preserveWhitespaces`) should probably stay. They are not considered to avoid digressions; 
 - `providers` defined at `directive` level: never really understood the added value, but experienced the confusion they generate; not really sure if they have a meaning or not; 
 - there isn't any obvious `short notation` for passing signals (like svelte / vue);
 ```ts
