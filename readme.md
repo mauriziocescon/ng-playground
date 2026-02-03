@@ -234,6 +234,8 @@ export #directive tooltip({
    * 
    * readonly signal provided by ng (not bindable)
    * tooltip can be attached to any HTMLElement
+   * 
+   * available only in afterNextRender or similar
    */
   script: ({ host }) => {
     const renderer = inject(Renderer2);
@@ -281,7 +283,7 @@ export #component PriceSimulator({
   script: () => ({
     /**
      * any declaration can be used directly in the template
-     * declarations require @
+     * declarations require @ cause they can only be used with @const
      * 
      * qty / price have the same @let scope and get created once 
      * following the @for embedded views life cycle
