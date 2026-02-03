@@ -51,14 +51,14 @@ export interface Item {
   },
 }
 
-#declaration currency() {
+#declaration currency({
+  value = input.required<number | undefined>(),
+  currencyCode = input<string>(),
+}) {
   script: () => {
     const localeId = inject(LOCALE_ID);
     
-    return (
-      value: () => (number | undefined),
-      currencyCode: string | undefined,
-    ) => computed(/** ... **/);
+    return computed(/** ... **/);
   },
 }
 
