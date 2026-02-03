@@ -30,6 +30,7 @@ export #component TextSearch({
   value = input.required<string>(),
   valueChange = output<string>(),
 }) {
+  // runs once on init
   script: () => {
     const text = linkedSignal(() => value());
     const isDanger = signal(false);
@@ -245,7 +246,7 @@ export #directive tooltip({
 ```
 
 ## Declarations and template-scope `@const` constants
-Definition of template-scoped constant `@const` where creation happens once and can run in an injection context:
+Definition of template-scoped constant `@const` where creation happens once (view life cycle) and can run in an injection context:
 ```ts
 import { signal, computed, inject, input } from '@angular/core';
 import { Item, PriceManager } from '@mylib/item';
@@ -260,12 +261,17 @@ function quantity(value?: number) {
   };
 }
 
-#declaration price() {
+#declaration price({
+  /**
+   * can only have input
+   */
+  qty = input.required<number>(),
+}) {
   script: () => {
     // injection context
     const priceManager = inject(PriceManager);
     
-    return (qty: () => (number | undefined)) => computed(/** ... **/);
+    return computed(/** ... **/);
   },
 }
 
@@ -277,12 +283,13 @@ export #component PriceSimulator({
      * any declaration can be used directly in the template
      * declarations require @
      * 
-     * qty / price have the same @let scope and get created once (no recreation after each CD)
+     * qty / price have the same @let scope and get created once 
+     * following the @for embedded views life cycle
      */
     template: `
       @for (item of items(); track item.id) {
         @const qty = quantity(0);
-        @const price = @price(qty.value);
+        @const price = @price({qty: qty.value});
       
         <h5>{item.desc}</h5>
         <button on:click={() => qty.decrease()}>-</button>
@@ -479,7 +486,7 @@ export #component ButtonConsumer() {
 }
 
 // -- button in @mylib/button --------------------
-import { input, output, retrieveDirectives } from '@angular/core';
+import { input, output } from '@angular/core';
 import { Render } from '@angular/common';
 
 export #component Button({
@@ -488,24 +495,22 @@ export #component Button({
   /**
    * destruction syntax: whatever is not matching 
    * inputs / outputs / models / fragments
-   * defined explicitly (like children, disabled, click).
-   * 
-   * @directive on a component => implicitly becomes part of rest
+   * defined explicitly (like disabled, click).
    */
   ...rest,
 }) {
-  script: ({ children }) => {
-    // retrieve attached directives
-    const dirs = retrieveDirectives(rest);
-    
-    return {
-      template: `
-        <button @**={dirs()} disabled={disabled()} on:click={() => click.emit()}>
-          <Render fragment={children()} />
-        </button>
-      `,      
-    };
-  },
+  /**
+   * @directive on a component are provided 
+   * by the framework within script
+   */
+   */
+  script: ({ children, dirs }) => ({
+    template: `
+      <button @**={dirs()} disabled={disabled()} on:click={() => click.emit()}>
+        <Render fragment={children()} />
+      </button>
+    `,      
+  }),
 }
 ```
 
@@ -556,7 +561,7 @@ export #component UserDetailWrapper({
 }
 
 // -- UserDetail -----------------------------------
-import { input, model, output, retrieveDirectives } from '@angular/core';
+import { input, model, output } from '@angular/core';
 
 export interface User {/** ... **/}
 
@@ -566,9 +571,7 @@ export #component UserDetail({
   makeAdmin = output<void>(),
   ...rest,
 }) {
-  script: ({ children }) => {
-    const dirs = retrieveDirectives(rest);
-    
+  script: ({ children, dirs }) => {    
     return {
       template: `...`,
     };
@@ -824,7 +827,7 @@ export #component Counter({
 - `event delegation`: not explicitly considered, but it could fit as "special attributes" (`onClick`, ...) similarly to [solid events](https://docs.solidjs.com/concepts/components/event-handlers),
 - `@let`: likely obsolete and not needed anymore,
 - `directives` attached to the host (components): not possible anymore, but you can pass directives and use `@**` / spread them,
-- `directive` types: since `ref` is defined as a parameter of a function (rather then injected), static types checking can be introduced (directives can be applied only to compatible elementes),
+- `directive` types: since `host` is defined as a parameter of `script` (rather then injected), static types checking could be introduced (directives can be applied only to compatible elementes),
 - `queries`: if `ref` makes sense, likely not needed anymore; if they stay, it would be nice to limit their DI capabilities: no way to `read` providers from `injector` tree (see [`viewChild abuses`](https://stackblitz.com/edit/stackblitz-starters-wkkqtd9j)),
 - multiple `directives` attached to the same element: as for the previous point, it would be nice to avoid directives injection when applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy)); instead, it should be an explicit template operation with a `ref` passed as an `input`,
 - in general, the concept of injecting components / directives inside each others should be restricted cause it generates lots of indirection / complexity; the downside is that some ng-reserved names are necessary (`elRef`, `children`).
