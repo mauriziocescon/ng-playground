@@ -377,6 +377,7 @@ export #component Menu({
    * children = fragment<void>()
    * 
    * readonly signal provided by ng (not bindable directly)
+   * name reserver to ng
    */
    children = fragment<void>(),
 }) {
@@ -491,7 +492,7 @@ export #component ButtonConsumer() {
 }
 
 // -- button in @mylib/button --------------------
-import { input, output, fragment } from '@angular/core';
+import { input, output, fragment, attachments } from '@angular/core';
 import { Render } from '@angular/common';
 
 export #component Button({
@@ -499,21 +500,19 @@ export #component Button({
   disabled = input<boolean>(false),
   click = output<void>(),
   /**
-   * destruction syntax: whatever is not matching 
-   * inputs / outputs / models / fragments
-   * defined explicitly (like children, disabled, click).
+   * all @directive applied to <Button />
    * 
-   * @directive on a component => implicitly becomes part of rest
-   * which can be further passed to a native element
+   * readonly signal provided by ng (not bindable directly)
+   * name reserver to ng
    */
-  ...rest,
+  directives = attachments<HTMLButtonElement>(), 
 }) {
   script: () => {
     // ...
     
     return {
       template: `
-        <button {...rest} disabled={disabled()} on:click={() => click.emit()}>
+        <button @**={directives()} disabled={disabled()} on:click={() => click.emit()}>
           <Render fragment={children()} />
         </button>
       `,      
@@ -552,7 +551,7 @@ export #component UserDetailWrapper({
   user = input<User>(),
   /**
    * destruction syntax: whatever is not matching 
-   * inputs / outputs / models / fragments
+   * inputs / outputs / models / fragments / directives
    * defined explicitly (like user).
    */
   ...rest,
@@ -569,7 +568,7 @@ export #component UserDetailWrapper({
 }
 
 // -- UserDetail -----------------------------------
-import { input, model, output, fragment } from '@angular/core';
+import { input, model, output, fragment, attachments } from '@angular/core';
 
 export interface User {/** ... **/}
 
@@ -578,7 +577,7 @@ export #component UserDetail({
   email = model.required<string>(),
   makeAdmin = output<void>(),
   children = fragment<void>(),
-  ...rest,
+  directives = attachments<HTMLElement>(), 
 }) {
   script: () => {
     // ...
@@ -842,7 +841,7 @@ export #component Counter({
 - `directive` types: since `host` is defined as a parameter of `script` (rather then injected), static types checking could be introduced (directives can be applied only to compatible elementes),
 - `queries`: if `ref` makes sense, likely not needed anymore; if they stay, it would be nice to limit their DI capabilities: no way to `read` providers from `injector` tree (see [`viewChild abuses`](https://stackblitz.com/edit/stackblitz-starters-wkkqtd9j)),
 - multiple `directives` attached to the same element: as for the previous point, it would be nice to avoid directives injection when applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy)); instead, it should be an explicit template operation with a `ref` passed as an `input`,
-- in general, the concept of injecting components / directives inside each others should be restricted cause it generates lots of indirection / complexity; the downside is that some ng-reserved names are necessary (`host`, `children`).
+- in general, the concept of injecting components / directives inside each others should be restricted cause it generates lots of indirection / complexity; the downside is that some ng-reserved names are necessary (`directives`, `children`).
 
 ### Unresolved points
 - other decorator props: in this proposal, components and directives have only `providers` / `script` entries. On the other hand, `@Component` and `@Directive` have many more and some of them (like `preserveWhitespaces`) should probably stay. They are not considered to avoid digressions; 
