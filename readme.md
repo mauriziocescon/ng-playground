@@ -335,7 +335,7 @@ export #component Counter({
       `,      
     };
   },
-  providers: [
+  providers: () => [
     provide({ token: CounterStore, useFactory: () => new CounterStore(c) }),
   ],
 }
@@ -812,7 +812,7 @@ export #component Counter({
     const store = inject(Store);
     /** ... **/
   },
-  providers: [
+  providers: () => [
     // provide compToken at Counter level using the default factory
     provide(compToken),
     

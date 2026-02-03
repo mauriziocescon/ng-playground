@@ -15,7 +15,7 @@ let Comp = component(({
         style: `...`,
       };
     },
-    providers: [...],
+    providers: () => [...],
   };
 });
 ```
@@ -111,7 +111,7 @@ export #component ItemsPage() {
       styleUrl: './items-page.css',
     };
   },
-  providers: [
+  providers: () => [
     provide({ token: ItemsStore, useFactory: () => new ItemsStore() }),
   ],
 }
