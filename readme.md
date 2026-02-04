@@ -223,21 +223,21 @@ export #component TextSearch() {
 }
 
 // -- tooltip in @mylib/tooltip --------------------
-import { input, output, inject, Renderer2, afterRenderEffect } from '@angular/core';
+import { input, output, ref, inject, Renderer2, afterRenderEffect } from '@angular/core';
 
 export #directive tooltip({
   message = input.required<string>(),
   dismiss = output<void>(),
-}) {
   /**
-   * host = ref<HTMLElement>()
-   * 
-   * readonly signal provided by ng (not bindable)
+   * usable only in afterNextRender or similar
    * tooltip can be attached to any HTMLElement
    * 
-   * available only in afterNextRender or similar
+   * readonly signal provided by ng (not bindable directly)
+   * name reserver to ng
    */
-  script: ({ host }) => {
+   host = ref<HTMLElement>(),
+}) {
+  script: () => {
     const renderer = inject(Renderer2);
 
     afterRenderEffect(() => {
@@ -840,10 +840,10 @@ export #component Counter({
 - `event delegation`: not explicitly considered, but it could fit as "special attributes" (`onClick`, ...) similarly to [solid events](https://docs.solidjs.com/concepts/components/event-handlers),
 - `@let`: likely obsolete and not needed anymore,
 - `directives` attached to the host (components): not possible anymore, but you can pass directives and use `@**` / spread them,
-- `directive` types: since `host` is defined as a parameter of `script` (rather then injected), static types checking could be introduced (directives can be applied only to compatible elementes),
+- `directive` types: since `host` is defined as an input (rather then injected), static types checking could be introduced (directives can be applied only to compatible elementes),
 - `queries`: if `ref` makes sense, likely not needed anymore; if they stay, it would be nice to limit their DI capabilities: no way to `read` providers from `injector` tree (see [`viewChild abuses`](https://stackblitz.com/edit/stackblitz-starters-wkkqtd9j)),
 - multiple `directives` attached to the same element: as for the previous point, it would be nice to avoid directives injection when applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy)); instead, it should be an explicit template operation with a `ref` passed as an `input`,
-- in general, the concept of injecting components / directives inside each others should be restricted cause it generates lots of indirection / complexity; the downside is that some ng-reserved names are necessary (`directives`, `children`).
+- in general, the concept of injecting components / directives inside each others should be restricted cause it generates lots of indirection / complexity; the downside is that some ng-reserved names are necessary (`host`, `directives`, `children`).
 
 ### Unresolved points
 - other decorator props: in this proposal, components and directives have only `providers` / `script` entries. On the other hand, `@Component` and `@Directive` have many more and some of them (like `preserveWhitespaces`) should probably stay. They are not considered to avoid digressions; 

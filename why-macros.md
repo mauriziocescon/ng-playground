@@ -41,8 +41,9 @@ export interface Item {
 
 #directive tooltip({
   message = input.required<string>(),
+  host = ref<HTMLElement>(),
 }) {
-  script: ({ host }) => {
+  script: () => {
     const renderer = inject(Renderer2);
 
     afterRenderEffect(() => {
