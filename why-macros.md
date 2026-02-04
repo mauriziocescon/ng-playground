@@ -26,6 +26,8 @@ So with macros and `**.ng` files
 - you have clear markers for tools,
 - you keep DI separated from script / template and at the same time enable the definition of providers depending on inputs, but not on variables defined inside script. 
 
+Note that the entire proposal is keeping the idea of creating inputs / outputs / ... at component level and have ng syncing them(compatibility). Otherwise a more interface driven approach could be used. 
+
 ### Another example
 ```ts
 import { ... } from '@angular/core';
