@@ -233,7 +233,7 @@ export #directive tooltip({
    * tooltip can be attached to any HTMLElement
    * 
    * readonly signal provided by ng (not bindable directly)
-   * name reserver to ng
+   * name reserved to ng
    */
    host = ref<HTMLElement>(),
 }) {
@@ -379,7 +379,7 @@ export #component Menu({
    * children = fragment<void>()
    * 
    * readonly signal provided by ng (not bindable directly)
-   * name reserver to ng
+   * name reserved to ng
    */
    children = fragment<void>(),
 }) {
@@ -505,7 +505,7 @@ export #component Button({
    * all @directive applied to <Button />
    * 
    * readonly signal provided by ng (not bindable directly)
-   * name reserver to ng
+   * name reserved to ng
    */
   directives = attachments<HTMLButtonElement>(), 
 }) {
