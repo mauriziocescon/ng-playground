@@ -627,12 +627,13 @@ export #component ButtonConsumer() {
 }
 
 // -- button in @mylib/button --------------------
-import { input, computed, fragment } from '@angular/core';
+import { input, computed, fragment, attachments } from '@angular/core';
 import { HTMLButtonAttributes } from '@angular/core/elements';
 
 export #component Button({
   style = input<string>(''),
   children = fragment<void>(),
+  directives = attachments<HTMLButtonElement>(), 
   ...rest,
 }: HTMLButtonAttributes) {
   script: () => {
@@ -640,10 +641,10 @@ export #component Button({
     
     return {
       /**
-       * {...rest} adds type / class and attaches directives
+       * {...rest} adds type / class
        */
       template: `
-        <button {...rest} style={innerStyle()}>
+        <button {...rest} @**={directives()} style={innerStyle()}>
           <Render fragment={children()} />
         </button>
       `,
@@ -721,7 +722,7 @@ export #component Parent() {
     
     return {
       /**
-       * ref: can bind to a function as well
+       * ref: can bind to a function as well (runs at view creation)
        */
       template: `
         <div
