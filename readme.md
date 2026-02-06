@@ -538,6 +538,7 @@ export #component UserDetailConsumer() {
     return {
       /**
        * bind:**={object} bind entries of object; same for model / on
+       * compile-time unrolling
        */
       template: (
         <UserDetailWrapper
@@ -561,6 +562,9 @@ export #component UserDetailWrapper({
   script: () => {
     const other = computed(() => /** something depending on user or a default value **/);
     
+    /**
+     * compile-time unrolling (UserDetail props): no real runtime spread + strict types
+     */
     return {
       template: (
         <UserDetail {...rest} user={other()} />
