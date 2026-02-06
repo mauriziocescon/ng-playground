@@ -11,7 +11,7 @@ let Comp = component(({
     script: () => {
       ...
       return {
-        template: `...`,
+        template: (...),
         style: `...`,
       };
     },
@@ -70,11 +70,11 @@ export interface Item {
   item = fragment<[Item]>(),
 }) {
   script: () => ({
-    template: `
+    template: (
       @for (i of items(); track i.id) {
         <Render fragment={item()} params={[i]} />
       }
-    `,
+    ),
   }),
 }
 
@@ -91,7 +91,7 @@ export #component ItemsPage() {
     }
     
     return {
-      template: `
+      template: (
         <List items={store.items()}>
           @fragment item(i: Item) {
             <Card on:click={(i: Item) => goTo(i)}>
@@ -110,7 +110,7 @@ export #component ItemsPage() {
             </Card>
           }
         </List>
-      `,
+      ),
       styleUrl: './items-page.css',
     };
   },
