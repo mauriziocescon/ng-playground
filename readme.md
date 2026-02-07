@@ -422,7 +422,7 @@ export #component Menu({
 }
 ```
 
-Directives attached to a component and bound to an element at runtime:
+Directives attached to a component and bound to an element:
 ```ts
 import { signal } from '@angular/core';
 import { Button } from '@mylib/button';
@@ -802,7 +802,7 @@ export #component Counter({
 
 <User {user} {age} {gender} model:{address} on:{userChange} />
 ```
-- there isn't any obvious way to conditionally apply directives at runtime;
+- there isn't any obvious way to conditionally apply directives;
 ```ts
 // maybe using another ()?
 
