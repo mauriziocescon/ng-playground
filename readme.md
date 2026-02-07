@@ -467,8 +467,11 @@ export #component Button({
   script: () => {
     // ...
     
+    /**
+     * compile-time unrolling + type checking
+     */
     return (
-      <button @**={directives()} disabled={disabled()} on:click={() => click.emit()}>
+      <button {...directives()} disabled={disabled()} on:click={() => click.emit()}>
         <Render fragment={children()} />
       </button>
     );
@@ -488,15 +491,13 @@ export #component UserDetailConsumer() {
 
     function makeAdmin() {/** ... **/}
     
+    const all = { user, email, makeAdmin };
+    
     /**
-     * bind:**={object} bind entries of object; same for model / on
-     * compile-time unrolling
+     * compile-time unrolling + type checking
      */
     return (
-      <UserDetailWrapper
-        bind:**={{user}}
-        model:**={{email}}
-        on:**={{makeAdmin}} />
+      <UserDetailWrapper {...all} />
     );
   },
 }
@@ -592,7 +593,7 @@ export #component Button({
      * {...rest} adds type / class
      */
     return (
-      <button {...rest} @**={directives()} style={innerStyle()}>
+      <button {...directives()} {...rest} style={innerStyle()}>
         <Render fragment={children()} />
       </button>
     );
@@ -783,7 +784,7 @@ export #component Counter({
 - `pipes`: replaced by declarations,
 - `event delegation`: not explicitly considered, but it could fit as "special attributes" (`onClick`, ...) similarly to [solid events](https://docs.solidjs.com/concepts/components/event-handlers),
 - `@let`: likely obsolete and not needed anymore,
-- `directives` attached to the host (components): not possible anymore, but you can pass directives and use `@**` / spread them,
+- `directives` attached to the host (components): not possible anymore, but you can pass directives and spread them,
 - `directive` types: since `host` is defined as an input (rather then injected), static types checking could be introduced (directives can be applied only to compatible elementes),
 - `queries`: if `ref` makes sense, likely not needed anymore; if they stay, it would be nice to limit their DI capabilities: no way to `read` providers from `injector` tree (see [`viewChild abuses`](https://stackblitz.com/edit/stackblitz-starters-wkkqtd9j)),
 - multiple `directives` attached to the same element: as for the previous point, it would be nice to avoid directives injection when applied to the same element (see [`ngModel hijacking`](https://stackblitz.com/edit/stackblitz-starters-ezryrmmy)); instead, it should be an explicit template operation with a `ref` passed as an `input`,
