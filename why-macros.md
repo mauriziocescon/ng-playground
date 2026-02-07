@@ -1,5 +1,5 @@
 ## Why macros
-Considering the `tsx` grammar doesn't currently support angular control flow or directives, the only likely way to go is using something like DLS + [Volar](https://volarjs.dev/) which requires `**.ng` files. Assuming this setup (or similar in nature), one might argue that macros are not really necessary cause a component could be written as a "sort of valid function". On the other hand: 
+Considering the `tsx` grammar doesn't currently support angular control flow or directives, the likely way to go is using something like DLS + [Volar](https://volarjs.dev/) which requires `**.ng` files. In practice, something similar to what [ripple](https://www.ripple-ts.com/) did (high level). Assuming this setup (or similar in nature), one might argue that macros are not really necessary cause a component could be written as a "sort of valid function". On the other hand: 
 ```ts
 import { component, ... } from '@angular/core';
 
