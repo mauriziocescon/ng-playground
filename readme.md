@@ -39,60 +39,35 @@ export #component TextSearch({
       valueChange.emit(text());
     }
     
-    return {
-      /**
-       * - 1way: bind:property={var} (bind: can be omitted)
-       * - 2way: model:property={var} (input / select / textarea)
-       * - events: on:event_name={handler}
-       * 
-       * cannot duplicate attribute names: only one (static or bound)
-       * ‼️ <span class="..." class="..." class={...}> ‼️
-       * ‼️ <span on:click={...} on:click={...}> ‼️
-       * 
-       * can use multiple class: and style:
-       * ✅ <span class="..." class:some-class={...} class:some-other-class={...}> ✅
-       * 
-       * can bind not existing attributes (ignored)
-       * ✅ <span nonsense={...} on:nonsense={...}> ✅ -->
-       */
-      template: (
-        <label class:danger={isDanger()}>Text:</label>
-        <input type="text" model:value={text} on:input={textChange} />
-        
-        <button disabled={text().length === 0} on:click={() => text.set('')}>
-          {'Reset ' + text()}
-        </button>
-      ),
-      style: `
-        .danger {
-          color: red;
-        }
-      `,
-    };
+    /**
+     * - 1way: bind:property={var} (bind: can be omitted)
+     * - 2way: model:property={var} (input / select / textarea)
+     * - events: on:event_name={handler}
+     * 
+     * cannot duplicate attribute names: only one (static or bound)
+     * ‼️ <span class="..." class="..." class={...}> ‼️
+     * ‼️ <span on:click={...} on:click={...}> ‼️
+     * 
+     * can use multiple class: and style:
+     * ✅ <span class="..." class:some-class={...} class:some-other-class={...}> ✅
+     * 
+     * can bind not existing attributes (ignored)
+     * ✅ <span nonsense={...} on:nonsense={...}> ✅ -->
+     */
+    return (
+      <label class:danger={isDanger()}>Text:</label>
+      <input type="text" model:value={text} on:input={textChange} />
+      
+      <button disabled={text().length === 0} on:click={() => text.set('')}>
+        {'Reset ' + text()}
+      </button>
+    );
   },
-}
-```
-
-External template / style files:
-```ts
-import { input, output } from '@angular/core';
-
-export #component Checkbox({
-  value = input.required<boolean>(),
-  valueChange = output<boolean>(),
-}) {
-  script: () => {
-    /** ... **/
-    
-    return {
-      /**
-       * have to import what's used in **.ng.html:
-       * @import { Comp } from '...';
-       */
-      templateUrl: './checkbox.ng.html',
-      styleUrl: './checkbox.css',
-    };
-  },
+  style: `
+    .danger {
+      color: red;
+    }
+  `,
 }
 ```
 
@@ -108,30 +83,28 @@ export #component UserDetailConsumer() {
 
     function makeAdmin() {/** ... **/}
     
-    return {
-      /**
-       * any component can be used directly in the template
-       * bind: model: on: behaves the same as for native elements
-       * 
-       * ⚠️ must provide all required inputs / models ⚠️
-       * 
-       * cannot duplicate prop names: only one
-       * ‼️ <UserDetail user={...} user={...} model:user={...} /> ‼️
-       * ‼️ <UserDetail on:makeAdmin={...} on:makeAdmin={...} /> ‼️
-       * 
-       * shouldn't use 'on' prefix with input / model / output
-       * ⚠️ <UserDetail onInput={...} model:onModel={...} on:onEvent={...} /> ⚠️
-       * 
-       * can bind not existing entries (ignored)
-       * ✅ <UserDetail nonsense={...} on:nonsense={...} /> ✅
-       */
-      template: (
-        <UserDetail
-          user={user()}
-          model:email={email}
-          on:makeAdmin={makeAdmin} />
-      ),
-    };
+    /**
+     * any component can be used directly in the template
+     * bind: model: on: behaves the same as for native elements
+     * 
+     * ⚠️ must provide all required inputs / models ⚠️
+     * 
+     * cannot duplicate prop names: only one
+     * ‼️ <UserDetail user={...} user={...} model:user={...} /> ‼️
+     * ‼️ <UserDetail on:makeAdmin={...} on:makeAdmin={...} /> ‼️
+     * 
+     * shouldn't use 'on' prefix with input / model / output
+     * ⚠️ <UserDetail onInput={...} model:onModel={...} on:onEvent={...} /> ⚠️
+     * 
+     * can bind not existing entries (ignored)
+     * ✅ <UserDetail nonsense={...} on:nonsense={...} /> ✅
+     */
+    return (
+      <UserDetail
+        user={user()}
+        model:email={email}
+        on:makeAdmin={makeAdmin} />
+    );
   },
 }
 
@@ -178,15 +151,13 @@ const type = Type.Counter;
 const counter = (value: number) => `Let's count till ${value}`;
 
 export #component Counter() {
-  script: () => ({
-    template: (
-      @if (type === Type.Counter) {
-        <p>{counter(5)}</p>
-      } @else {
-        <span>Empty</span>
-      }
-    ),
-  }),
+  script: () => (
+    @if (type === Type.Counter) {
+      <p>{counter(5)}</p>
+    } @else {
+      <span>Empty</span>
+    }
+  ),
 }
 ```
 
@@ -204,21 +175,19 @@ export #component TextSearch() {
     function valueChange() {/** ... **/}
     function doSomething() {/** ... **/}
     
-    return {
-      /**
-       * encapsulation of directive data: @directive(...)
-       * any directive can be used directly in the template
-       */
-      template: (
-        <input
-          type="text"
-          model:value={text}
-          on:input={valueChange}
-          @tooltip(message={message()} on:dismiss={doSomething}) />
-      
-        <p>Value: {text()}</p>
-      ),
-    };
+     /**
+      * encapsulation of directive data: @directive(...)
+      * any directive can be used directly in the template
+      */
+     return (
+       <input
+         type="text"
+         model:value={text}
+         on:input={valueChange}
+         @tooltip(message={message()} on:dismiss={doSomething}) />
+     
+       <p>Value: {text()}</p>
+     );
   },
 }
 
@@ -280,7 +249,7 @@ function quantity(value?: number) {
 export #component PriceSimulator({
   items = input.required<Item[]>(),
 }) {
-  script: () => ({
+  script: () => {
     /**
      * any declaration can be used directly in the template
      * declarations require @ cause they can only be used with @const
@@ -288,7 +257,7 @@ export #component PriceSimulator({
      * qty / price have the same @let scope and get created once 
      * following the @for embedded views life cycle
      */
-    template: (
+    return (
       @for (item of items(); track item.id) {
         @const qty = quantity(0);
         @const price = @price({qty: qty.value});
@@ -300,8 +269,8 @@ export #component PriceSimulator({
         <hr />
         <div>Price: {price()}</div>
       }
-    ),
-  }),
+    );
+  },
 }
 ```
 
@@ -328,14 +297,12 @@ export #component Counter({
   script: () => {
     const store = inject(CounterStore);
     
-    return {
-      template: (
-        <h1>Counter</h1>
-        <div>Value: {store.value()}</div>
-        <button on:click={() => store.decrease()}>-</button>
-        <button on:click={() => store.increase()}>+</button>
-      ),
-    };
+    return (
+      <h1>Counter</h1>
+      <div>Value: {store.value()}</div>
+      <button on:click={() => store.decrease()}>-</button>
+      <button on:click={() => store.increase()}>+</button>
+    );
   },
   providers: () => [
     provide({ token: CounterStore, useFactory: () => new CounterStore(c) }),
@@ -356,17 +323,15 @@ export #component MenuConsumer() {
     const first = signal('First');
     const second = signal('Second');
     
-    return {
-      /**
-       * markup inside comp tag => implicitly becomes a fragment called children
-       */
-      template: (
-        <Menu>
-          <MenuItem>{first()}</MenuItem>
-          <MenuItem>{second()}</MenuItem>
-        </Menu>
-      ),
-    };
+    /**
+     * markup inside comp tag => implicitly becomes a fragment called children
+     */
+    return (
+      <Menu>
+        <MenuItem>{first()}</MenuItem>
+        <MenuItem>{second()}</MenuItem>
+      </Menu>
+    );
   },
 }
 
@@ -387,29 +352,25 @@ export #component Menu({
   script: () => {
     /** ... **/
     
-    return {
-      /**
-       * no need to have an explicit anchor point like ng-container
-       */
-      template: (
-        @if (children()) {
-          <Render fragment={children()} />
-        } @else {
-          <span>Empty</span>
-        }
-      ),
-    };
+    /**
+     * no need to have an explicit anchor point like ng-container
+     */
+    return (
+      @if (children()) {
+        <Render fragment={children()} />
+      } @else {
+        <span>Empty</span>
+      }
+    );
   },
 }
 
 export #component MenuItem({
   children = fragment<void>(),
 }) {
-  script: () => ({
-    template: (
-      <Render fragment={children()} />
-    ),
-  }),
+  script: () => (
+    <Render fragment={children()} />
+  ),
 }
 ```
 
@@ -428,21 +389,19 @@ export #component MenuConsumer() {
   script: () => {
     const items = signal<Item[]>(/** ... **/);
     
-    return {
-      /**
-       * menuItem inside <Menu></Menu> automatically becomes a fragment input
-       */
-      template: (
-        @fragment menuItem(item: Item) {
-          <div class="my-menu-item">
-            <MyMenuItem>{item.desc}</MyMenuItem>
-          </div>
-        }
-        <Menu items={items()} menuItem={menuItem} />
-      ),
-      styleUrl: './menu-consumer.css',
-    };
+    /**
+     * menuItem inside <Menu></Menu> automatically becomes a fragment input
+     */
+    return (
+      @fragment menuItem(item: Item) {
+        <div class="my-menu-item">
+          <MyMenuItem>{item.desc}</MyMenuItem>
+        </div>
+      }
+      <Menu items={items()} menuItem={menuItem} />
+    );
   },
+  styleUrl: './menu-consumer.css',
 }
 
 // -- Menu in @mylib/menu --------------------------
@@ -453,15 +412,13 @@ export #component Menu({
   items = input.required<{ id: string, desc: string }[]>(),
   menuItem = fragment<[{ id: string, desc: string }]>(),
 }) {
-  script: () => ({
-    template: (
-      <h1> Total items: {items().length} </h1>
-      
-      @for (item of items(); track item.id) {
-        <Render fragment={menuItem()} params={[item]} />
-      }
-    ),
-  }),
+  script: () => (
+    <h1> Total items: {items().length} </h1>
+    
+    @for (item of items(); track item.id) {
+      <Render fragment={menuItem()} params={[item]} />
+    }
+  ),
 }
 ```
 
@@ -479,17 +436,15 @@ export #component ButtonConsumer() {
 
     function doSomething() {/** ... **/}
     
-    return {
-      template: (
-        <Button
-          @ripple
-          @tooltip(message={tooltipMsg()})
-          disabled={!valid()}
-          on:click={doSomething}>
-            Click / Hover me
-        </Button>
-      ),
-    };
+    return (
+      <Button
+        @ripple
+        @tooltip(message={tooltipMsg()})
+        disabled={!valid()}
+        on:click={doSomething}>
+          Click / Hover me
+      </Button>
+    );
   },
 }
 
@@ -512,13 +467,11 @@ export #component Button({
   script: () => {
     // ...
     
-    return {
-      template: (
-        <button @**={directives()} disabled={disabled()} on:click={() => click.emit()}>
-          <Render fragment={children()} />
-        </button>
-      ),
-    };
+    return (
+      <button @**={directives()} disabled={disabled()} on:click={() => click.emit()}>
+        <Render fragment={children()} />
+      </button>
+    );
   },
 }
 ```
@@ -535,18 +488,16 @@ export #component UserDetailConsumer() {
 
     function makeAdmin() {/** ... **/}
     
-    return {
-      /**
-       * bind:**={object} bind entries of object; same for model / on
-       * compile-time unrolling
-       */
-      template: (
-        <UserDetailWrapper
-          bind:**={{user}}
-          model:**={{email}}
-          on:**={{makeAdmin}} />
-      ),
-    };
+    /**
+     * bind:**={object} bind entries of object; same for model / on
+     * compile-time unrolling
+     */
+    return (
+      <UserDetailWrapper
+        bind:**={{user}}
+        model:**={{email}}
+        on:**={{makeAdmin}} />
+    );
   },
 }
 
@@ -565,11 +516,9 @@ export #component UserDetailWrapper({
     /**
      * compile-time unrolling (UserDetail props): no real runtime spread + strict types
      */
-    return {
-      template: (
-        <UserDetail {...rest} user={other()} />
-      ),
-    };
+    return (
+      <UserDetail {...rest} user={other()} />
+    );
   },
 }
 
@@ -588,9 +537,7 @@ export #component UserDetail({
   script: () => {
     // ...
     
-    return {
-      template: (...),
-    };
+    return (...);
   },
 }
 ```
@@ -609,24 +556,22 @@ export #component ButtonConsumer() {
 
     function doSomething() {/** ... **/}
     
-    return {
-      /**
-       * can pass down attributes (either static or bound) and event listeners
-       * cannot have multiple style / class / ...
-       */
-      template: (
-        <Button
-          type="button"
-          style="background-color: cyan"
-          class={valid() ? 'global-css-valid' : ''}
-          @ripple
-          @tooltip(message={tooltipMsg()})
-          disabled={!valid()}
-          on:click={doSomething}>
-            Click / Hover me
-        </Button>
-      ),
-    };
+    /**
+     * can pass down attributes (either static or bound) and event listeners
+     * cannot have multiple style / class / ...
+     */
+    return (
+      <Button
+        type="button"
+        style="background-color: cyan"
+        class={valid() ? 'global-css-valid' : ''}
+        @ripple
+        @tooltip(message={tooltipMsg()})
+        disabled={!valid()}
+        on:click={doSomething}>
+          Click / Hover me
+      </Button>
+    );
   },
 }
 
@@ -643,16 +588,14 @@ export #component Button({
   script: () => {
     const innerStyle = computed(() => `${style()}; color: red;`);
     
-    return {
-      /**
-       * {...rest} adds type / class
-       */
-      template: (
-        <button {...rest} @**={directives()} style={innerStyle()}>
-          <Render fragment={children()} />
-        </button>
-      ),
-    };
+    /**
+     * {...rest} adds type / class
+     */
+    return (
+      <button {...rest} @**={directives()} style={innerStyle()}>
+        <Render fragment={children()} />
+      </button>
+    );
   },
 }
 ```
@@ -670,11 +613,9 @@ export #component Something() {
     const comp = computed(() => condition() ? AComp : BComp);
     const inputs = computed(() => /** ... **/);
     
-    return {
-      template: (
-        <Dynamic component={comp()} inputs={inputs()} />
-      ),
-    };
+    return (
+      <Dynamic component={comp()} inputs={inputs()} />
+    );
   },
 }
 ```
@@ -724,26 +665,24 @@ export #component Parent() {
       // something with refs
     });
     
-    return {
-      /**
-       * ref: can bind to a function as well (runs at view creation)
-       */
-      template: (
-        <div
-          #el
-          @ripple=#rpl
-          @tooltip(message={'something'})=#tlp>
-            Something
-        </div>
+    /**
+     * ref: can bind to a function as well (runs at view creation)
+     */
+    return (
+      <div
+        #el
+        @ripple=#rpl
+        @tooltip(message={'something'})=#tlp>
+          Something
+      </div>
+    
+      <Child #child />
       
-        <Child #child />
-        
-        <Child ref={(c) => many.update(v => [...v, c])} />
-        <Child ref={(c) => many.update(v => [...v, c])} />
-      
-        <button on:click={() => tlp().toggle()}>Toggle tlp</button>
-      ),
-    };
+      <Child ref={(c) => many.update(v => [...v, c])} />
+      <Child ref={(c) => many.update(v => [...v, c])} />
+    
+      <button on:click={() => tlp().toggle()}>Toggle tlp</button>
+    );
   },
 }
 ```

@@ -12,9 +12,10 @@ let Comp = component(({
       ...
       return {
         template: (...),
-        style: `...`,
+        exports: {...},
       };
     },
+    style: `...`,
     providers: () => [...],
   };
 });
@@ -69,13 +70,11 @@ export interface Item {
   items = input.required<Item[]>(),
   item = fragment<[Item]>(),
 }) {
-  script: () => ({
-    template: (
-      @for (i of items(); track i.id) {
-        <Render fragment={item()} params={[i]} />
-      }
-    ),
-  }),
+  script: () => (
+    @for (i of items(); track i.id) {
+      <Render fragment={item()} params={[i]} />
+    }
+  ),
 }
 
 class ItemsStore {
@@ -90,30 +89,28 @@ export #component ItemsPage() {
       // ..
     }
     
-    return {
-      template: (
-        <List items={store.items()}>
-          @fragment item(i: Item) {
-            <Card on:click={() => goTo(i)}>
-              <HStack width={100}>
-                <Img url={i.imgUrl} />
-                <VStack>
-                  <Title title={i.title} />
-                  <Description @tooltip(message={i.title}) description={i.description} />
-                  
-                  <hr />                
-                  
-                  @const price = @currency(() => i.price, 'EUR');
-                  <p>Price: {price}</p>
-                </VStack>
-              </HStack>
-            </Card>
-          }
-        </List>
-      ),
-      styleUrl: './items-page.css',
-    };
+    return (
+      <List items={store.items()}>
+        @fragment item(i: Item) {
+          <Card on:click={() => goTo(i)}>
+            <HStack width={100}>
+              <Img url={i.imgUrl} />
+              <VStack>
+                <Title title={i.title} />
+                <Description @tooltip(message={i.title}) description={i.description} />
+                
+                <hr />                
+                
+                @const price = @currency(() => i.price, 'EUR');
+                <p>Price: {price}</p>
+              </VStack>
+            </HStack>
+          </Card>
+        }
+      </List>
+    );
   },
+  styleUrl: './items-page.css',
   providers: () => [
     provide({ token: ItemsStore, useFactory: () => new ItemsStore() }),
   ],
