@@ -20,7 +20,7 @@ let Comp = component(({
 });
 ```
 
-So with macros 
+So with macros and DLS + Volar (or equivalent)
 - you avoid unwanted flexility (definitions: let / var),
 - you avoid strange scope behaviours (`unwanted` above),
 - you have clear markers for tools,
