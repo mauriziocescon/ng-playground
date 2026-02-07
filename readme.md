@@ -494,10 +494,14 @@ export #component UserDetailConsumer() {
     const all = { user, email, makeAdmin };
     
     /**
+     * bind:**={object} bind entries of object; same for model / on
      * compile-time unrolling + type checking
      */
     return (
-      <UserDetailWrapper {...all} />
+      <UserDetailWrapper
+        bind:**={{user}}
+        model:**={{email}}
+        on:**={{makeAdmin}} />
     );
   },
 }
