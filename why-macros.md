@@ -101,7 +101,7 @@ export #component ItemsPage() {
                 
                 <hr />                
                 
-                @const price = @currency(() => i.price, 'EUR');
+                @const price = @currency({value: i.price, currencyCode: 'EUR'});
                 <p>Price: {price}</p>
               </VStack>
             </HStack>
