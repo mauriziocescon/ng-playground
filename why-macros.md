@@ -1,5 +1,5 @@
 ## Why macros
-Angular components has already some special hoisting rules: class fields are visible in templates (string literals) despite they are not in the same ts scope. Assuming similar principles are applied to `script` and `template` (where template is resolved similarly to right now), one might argue that macros are not really necessary cause a component could be written as a "sort of valid function". On the other hand: 
+Considering the `tsx` grammar cannot support angular control flow or directives, the only likely way to go is using something like DLS + [Volar](https://volarjs.dev/) which requires `**.ng` files. Assuming this setup, one might argue that macros are not really necessary cause a component could be written as a "sort of valid function". On the other hand: 
 ```ts
 import { component, ... } from '@angular/core';
 
@@ -20,13 +20,13 @@ let Comp = component(({
 });
 ```
 
-So with macros and `**.ng` files
+So with macros 
 - you avoid unwanted flexility (definitions: let / var),
 - you avoid strange scope behaviours (`unwanted` above),
 - you have clear markers for tools,
 - you keep DI separated from script / template and at the same time enable the definition of providers depending on inputs, but not on variables defined inside script. 
 
-Note that the entire proposal is keeping the idea of creating inputs / outputs / ... at component level and have ng syncing them(compatibility). Otherwise a more interface driven approach could be used. 
+Note that the entire proposal is keeping the idea of creating inputs / outputs / ... at component level, have ng syncing them(compatibility) and strict type checking. 
 
 ### Another example
 ```ts
