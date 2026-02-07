@@ -94,7 +94,7 @@ export #component ItemsPage() {
       template: (
         <List items={store.items()}>
           @fragment item(i: Item) {
-            <Card on:click={(i: Item) => goTo(i)}>
+            <Card on:click={() => goTo(i)}>
               <HStack width={100}>
                 <Img url={i.imgUrl} />
                 <VStack>
