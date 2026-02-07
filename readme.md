@@ -590,7 +590,7 @@ export #component Button({
     const innerStyle = computed(() => `${style()}; color: red;`);
     
     /**
-     * {...rest} adds type / class
+     * {...rest} adds type / class / ...
      */
     return (
       <button {...directives()} {...rest} style={innerStyle()}>
