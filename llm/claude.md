@@ -1,11 +1,11 @@
 # Claude code
 ## Prompt:
 
-Hey! 
+Hey!
 
 In readme.md and why-macros.md, I drafted a possible evolution of the angular syntax in templates and proposed a new authoring format.
 
-Considering such files and the current angular best practices, could you please create an example of components composition using directives, declarations and fragments?  
+Considering such files and the current angular best practices, could you please create an example of components composition using directives, declarations and fragments?
 
 Thanks
 
@@ -13,1324 +13,796 @@ Thanks
 
 ```ts
 /**
- * Comprehensive Component Composition Example
+ * Comprehensive example of component composition using:
+ * - Directives (tooltip, ripple, highlight)
+ * - Declarations (currency, discount)
+ * - Fragments (card, actions, customItem)
  *
- * This example demonstrates:
- * - Fragments for content projection and customization
- * - Directives for behavior enhancement
- * - Declarations for reusable template logic with DI
- * - Component composition with spread syntax
- * - Best practices for Angular signal components
+ * Scenario: Product catalog with customizable display and interactions
  */
 
 import {
   signal,
   computed,
   linkedSignal,
+  inject,
   input,
   output,
   model,
   fragment,
-  inject,
-  provide,
-  injectionToken,
+  attachments,
   ref,
+  provide,
   afterRenderEffect,
   Renderer2,
-  Signal,
+  LOCALE_ID,
 } from '@angular/core';
 import { Render } from '@angular/common';
 
-// ============================================================================
-// DATA MODELS
-// ============================================================================
+// ============================================
+// TYPES
+// ============================================
 
 export interface Product {
   id: string;
   name: string;
   description: string;
   price: number;
-  inStock: boolean;
+  discountPercent?: number;
   imageUrl: string;
+  inStock: boolean;
 }
 
-export interface CartItem {
-  product: Product;
-  quantity: number;
-}
-
-// ============================================================================
+// ============================================
 // DIRECTIVES
-// ============================================================================
+// ============================================
 
 /**
- * Highlight directive - changes background on hover
- * Demonstrates: directive with inputs and host manipulation
+ * Tooltip directive - shows message on hover
  */
-export #directive highlight({
-  color = input<string>('yellow'),
-  intensity = input<number>(0.3),
+#directive tooltip({
+  message = input.required<string>(),
+  position = input<'top' | 'bottom' | 'left' | 'right'>('top'),
+  dismiss = output<void>(),
+  host = ref<HTMLElement>(),
 }) {
-  script: ({ host }) => {
+  script: () => {
     const renderer = inject(Renderer2);
-    let originalBackground = '';
+    const tooltipElement = signal<HTMLElement | null>(null);
 
     afterRenderEffect(() => {
+      if (!host()) return;
+
       const element = host();
-      if (!element) return;
 
-      originalBackground = element.style.backgroundColor;
+      // Create tooltip element
+      const tooltip = renderer.createElement('div');
+      renderer.addClass(tooltip, 'tooltip');
+      renderer.addClass(tooltip, `tooltip-${position()}`);
+      renderer.setProperty(tooltip, 'textContent', message());
 
-      const enter = () => {
-        const rgb = colorToRgb(color());
-        renderer.setStyle(
-          element,
-          'background-color',
-          `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${intensity()})`
-        );
+      // Show/hide handlers
+      const showTooltip = () => {
+        renderer.appendChild(element, tooltip);
+        tooltipElement.set(tooltip);
       };
 
-      const leave = () => {
-        renderer.setStyle(element, 'background-color', originalBackground);
-      };
-
-      element.addEventListener('mouseenter', enter);
-      element.addEventListener('mouseleave', leave);
-
-      return () => {
-        element.removeEventListener('mouseenter', enter);
-        element.removeEventListener('mouseleave', leave);
-      };
-    });
-  },
-}
-
-/**
- * Click outside directive - triggers callback when clicking outside element
- * Demonstrates: directive with outputs
- */
-export #directive clickOutside({
-  trigger = output<void>(),
-}) {
-  script: ({ host }) => {
-    afterRenderEffect(() => {
-      const element = host();
-      if (!element) return;
-
-      const handler = (event: MouseEvent) => {
-        if (!element.contains(event.target as Node)) {
-          trigger.emit();
+      const hideTooltip = () => {
+        if (tooltipElement()) {
+          renderer.removeChild(element, tooltipElement());
+          tooltipElement.set(null);
+          dismiss.emit();
         }
       };
 
-      document.addEventListener('click', handler);
-      return () => document.removeEventListener('click', handler);
+      renderer.listen(element, 'mouseenter', showTooltip);
+      renderer.listen(element, 'mouseleave', hideTooltip);
     });
   },
 }
 
 /**
- * Animate in directive - adds entrance animation
- * Demonstrates: directive with lifecycle and ref exports
+ * Ripple directive - adds ripple effect on click
  */
-export #directive animateIn({
-  duration = input<number>(300),
-  delay = input<number>(0),
+#directive ripple({
+  color = input<string>('rgba(255, 255, 255, 0.5)'),
+  duration = input<number>(600),
+  host = ref<HTMLElement>(),
 }) {
-  script: ({ host }) => {
+  script: () => {
     const renderer = inject(Renderer2);
-    const isVisible = signal(false);
 
     afterRenderEffect(() => {
+      if (!host()) return;
+
       const element = host();
-      if (!element) return;
 
-      renderer.setStyle(element, 'opacity', '0');
-      renderer.setStyle(element, 'transform', 'translateY(20px)');
-      renderer.setStyle(element, 'transition', `all ${duration()}ms ease-out ${delay()}ms`);
+      renderer.listen(element, 'click', (event: MouseEvent) => {
+        const rect = element.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
 
-      setTimeout(() => {
-        renderer.setStyle(element, 'opacity', '1');
-        renderer.setStyle(element, 'transform', 'translateY(0)');
-        isVisible.set(true);
-      }, 50);
-    });
+        const ripple = renderer.createElement('span');
+        renderer.addClass(ripple, 'ripple-effect');
+        renderer.setStyle(ripple, 'left', `${x}px`);
+        renderer.setStyle(ripple, 'top', `${y}px`);
+        renderer.setStyle(ripple, 'background', color());
 
-    return {
-      exports: {
-        isVisible: isVisible.asReadonly(),
-        reset: () => isVisible.set(false),
-      },
-    };
-  },
-}
+        renderer.appendChild(element, ripple);
 
-// ============================================================================
-// DECLARATIONS
-// ============================================================================
-
-/**
- * Currency formatter declaration
- * Demonstrates: declaration with DI for reusable template logic
- */
-#declaration formatCurrency() {
-  script: () => {
-    const localeId = inject(LOCALE_ID);
-
-    return (
-      value: () => number | undefined,
-      currencyCode = 'USD',
-    ) => computed(() => {
-      const v = value();
-      if (v === undefined) return 'N/A';
-
-      return new Intl.NumberFormat(localeId, {
-        style: 'currency',
-        currency: currencyCode,
-      }).format(v);
-    });
-  },
-}
-
-/**
- * Date formatter declaration
- * Demonstrates: declaration for complex formatting logic
- */
-#declaration formatDate() {
-  script: () => {
-    const localeId = inject(LOCALE_ID);
-
-    return (
-      value: () => Date | undefined,
-      format: 'short' | 'medium' | 'long' = 'medium',
-    ) => computed(() => {
-      const v = value();
-      if (!v) return 'N/A';
-
-      const options: Intl.DateTimeFormatOptions = format === 'short'
-        ? { month: 'short', day: 'numeric' }
-        : format === 'medium'
-        ? { month: 'short', day: 'numeric', year: 'numeric' }
-        : { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
-
-      return new Intl.DateTimeFormat(localeId, options).format(v);
-    });
-  },
-}
-
-/**
- * Debounced value declaration
- * Demonstrates: declaration with reactive state management
- */
-#declaration debounced() {
-  script: () => {
-    return <T>(
-      value: () => T,
-      delay = 300,
-    ) => {
-      const debouncedValue = signal<T>(value());
-      let timeoutId: ReturnType<typeof setTimeout> | null = null;
-
-      afterRenderEffect(() => {
-        if (timeoutId) clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-          debouncedValue.set(value());
-        }, delay);
+        setTimeout(() => {
+          renderer.removeChild(element, ripple);
+        }, duration());
       });
-
-      return debouncedValue.asReadonly();
-    };
+    });
   },
 }
 
-// ============================================================================
-// REUSABLE UI COMPONENTS
-// ============================================================================
+/**
+ * Highlight directive - highlights element when condition is true
+ */
+#directive highlight({
+  active = input<boolean>(false),
+  highlightColor = input<string>('yellow'),
+  host = ref<HTMLElement>(),
+}) {
+  script: () => {
+    const renderer = inject(Renderer2);
+
+    afterRenderEffect(() => {
+      if (!host()) return;
+
+      const element = host();
+
+      if (active()) {
+        renderer.setStyle(element, 'background-color', highlightColor());
+        renderer.setStyle(element, 'transition', 'background-color 0.3s ease');
+      } else {
+        renderer.removeStyle(element, 'background-color');
+      }
+    });
+  },
+}
+
+// ============================================
+// DECLARATIONS
+// ============================================
 
 /**
- * Card component - generic container with optional header/footer
- * Demonstrates: fragments for flexible content projection
+ * Currency declaration - formats price with locale
+ */
+#declaration currency({
+  value = input.required<number | undefined>(),
+  currencyCode = input<string>('USD'),
+  locale = input<string | undefined>(),
+}) {
+  script: () => {
+    const defaultLocale = inject(LOCALE_ID);
+
+    return computed(() => {
+      const val = value();
+      if (val === undefined) return 'N/A';
+
+      const effectiveLocale = locale() ?? defaultLocale;
+
+      return new Intl.NumberFormat(effectiveLocale, {
+        style: 'currency',
+        currency: currencyCode(),
+      }).format(val);
+    });
+  },
+}
+
+/**
+ * Discount declaration - calculates discounted price
+ */
+#declaration discount({
+  originalPrice = input.required<number>(),
+  discountPercent = input<number>(0),
+}) {
+  script: () => {
+    return computed(() => {
+      const price = originalPrice();
+      const percent = discountPercent();
+
+      if (percent <= 0) return price;
+
+      return price - (price * percent / 100);
+    });
+  },
+}
+
+// ============================================
+// REUSABLE COMPONENTS
+// ============================================
+
+/**
+ * Card component - wraps content with styling and directives
  */
 export #component Card({
-  elevated = input<boolean>(false),
-  padding = input<number>(16),
-  header = fragment<void>(),
-  footer = fragment<void>(),
-}) {
-  script: ({ children }) => {
-    const classes = computed(() => ({
-      'card': true,
-      'card-elevated': elevated(),
-    }));
-
-    return {
-      template: `
-        <div class={classNames(classes())} style:padding={padding() + 'px'}>
-          @if (header()) {
-            <div class="card-header">
-              <Render fragment={header()} />
-            </div>
-          }
-
-          <div class="card-body">
-            <Render fragment={children()} />
-          </div>
-
-          @if (footer()) {
-            <div class="card-footer">
-              <Render fragment={footer()} />
-            </div>
-          }
-        </div>
-      `,
-      style: `
-        .card {
-          border: 1px solid #e0e0e0;
-          border-radius: 8px;
-          background: white;
-        }
-
-        .card-elevated {
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .card-header {
-          padding-bottom: 12px;
-          border-bottom: 1px solid #e0e0e0;
-          margin-bottom: 12px;
-        }
-
-        .card-footer {
-          padding-top: 12px;
-          border-top: 1px solid #e0e0e0;
-          margin-top: 12px;
-        }
-      `,
-    };
-  },
-}
-
-/**
- * Button component - wraps native button with directives support
- * Demonstrates: spread syntax and directive forwarding
- */
-export #component Button({
-  variant = input<'primary' | 'secondary' | 'danger'>('primary'),
-  size = input<'small' | 'medium' | 'large'>('medium'),
-  disabled = input<boolean>(false),
-  loading = input<boolean>(false),
-  click = output<void>(),
-  ...rest,
-}) {
-  script: ({ children }) => {
-    const dirs = retrieveDirectives(rest);
-
-    const classes = computed(() => ({
-      'btn': true,
-      [`btn-${variant()}`]: true,
-      [`btn-${size()}`]: true,
-      'btn-loading': loading(),
-    }));
-
-    return {
-      template: `
-        <button
-          @**={dirs()}
-          class={classNames(classes())}
-          disabled={disabled() || loading()}
-          on:click={() => click.emit()}>
-
-          @if (loading()) {
-            <span class="spinner"></span>
-          }
-
-          <Render fragment={children()} />
-        </button>
-      `,
-      style: `
-        .btn {
-          padding: 8px 16px;
-          border: none;
-          border-radius: 4px;
-          cursor: pointer;
-          font-weight: 500;
-          transition: all 200ms;
-        }
-
-        .btn:hover:not(:disabled) {
-          transform: translateY(-1px);
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-        }
-
-        .btn-primary { background: #007bff; color: white; }
-        .btn-secondary { background: #6c757d; color: white; }
-        .btn-danger { background: #dc3545; color: white; }
-
-        .btn-small { font-size: 12px; padding: 4px 8px; }
-        .btn-medium { font-size: 14px; padding: 8px 16px; }
-        .btn-large { font-size: 16px; padding: 12px 24px; }
-
-        .spinner {
-          display: inline-block;
-          width: 12px;
-          height: 12px;
-          border: 2px solid rgba(255, 255, 255, 0.3);
-          border-top-color: white;
-          border-radius: 50%;
-          animation: spin 0.6s linear infinite;
-          margin-right: 8px;
-        }
-
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-      `,
-    };
-  },
-}
-
-/**
- * List component - generic list with customizable item rendering
- * Demonstrates: fragments for item customization + empty state
- */
-export #component List<T extends { id: string }>({
-  items = input.required<T[]>(),
-  item = fragment<[T, number]>(),
-  emptyState = fragment<void>(),
-  gap = input<number>(8),
-}) {
-  script: () => ({
-    template: `
-      @if (items().length > 0) {
-        <div class="list" style:gap={gap() + 'px'}>
-          @for (i of items(); track i.id; let idx = $index) {
-            <Render fragment={item()} params={[i, idx]} />
-          }
-        </div>
-      } @else {
-        @if (emptyState()) {
-          <Render fragment={emptyState()} />
-        } @else {
-          <div class="empty-state">No items to display</div>
-        }
-      }
-    `,
-    style: `
-      .list {
-        display: flex;
-        flex-direction: column;
-      }
-
-      .empty-state {
-        padding: 32px;
-        text-align: center;
-        color: #6c757d;
-      }
-    `,
-  }),
-}
-
-/**
- * Modal component - overlay with click-outside support
- * Demonstrates: directives on components + portal-like behavior
- */
-export #component Modal({
-  open = model.required<boolean>(),
-  title = input<string>(''),
-  actions = fragment<void>(),
-}) {
-  script: ({ children }) => {
-    function close() {
-      open.set(false);
-    }
-
-    return {
-      template: `
-        @if (open()) {
-          <div class="modal-backdrop" @animateIn(duration={200})>
-            <div
-              class="modal-content"
-              @clickOutside(on:trigger={close})
-              @animateIn(duration={300} delay={100})>
-
-              <div class="modal-header">
-                <h2>{title()}</h2>
-                <button class="close-btn" on:click={close}>×</button>
-              </div>
-
-              <div class="modal-body">
-                <Render fragment={children()} />
-              </div>
-
-              @if (actions()) {
-                <div class="modal-actions">
-                  <Render fragment={actions()} />
-                </div>
-              }
-            </div>
-          </div>
-        }
-      `,
-      style: `
-        .modal-backdrop {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: rgba(0, 0, 0, 0.5);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          z-index: 1000;
-        }
-
-        .modal-content {
-          background: white;
-          border-radius: 8px;
-          max-width: 600px;
-          width: 90%;
-          max-height: 80vh;
-          overflow: auto;
-        }
-
-        .modal-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 16px 24px;
-          border-bottom: 1px solid #e0e0e0;
-        }
-
-        .modal-header h2 {
-          margin: 0;
-          font-size: 20px;
-        }
-
-        .close-btn {
-          background: none;
-          border: none;
-          font-size: 28px;
-          cursor: pointer;
-          color: #6c757d;
-          line-height: 1;
-        }
-
-        .close-btn:hover {
-          color: #000;
-        }
-
-        .modal-body {
-          padding: 24px;
-        }
-
-        .modal-actions {
-          padding: 16px 24px;
-          border-top: 1px solid #e0e0e0;
-          display: flex;
-          justify-content: flex-end;
-          gap: 8px;
-        }
-      `,
-    };
-  },
-}
-
-// ============================================================================
-// BUSINESS LOGIC - CART STORE
-// ============================================================================
-
-const CartStoreToken = injectionToken('CartStore', {
-  factory: () => new CartStore(),
-});
-
-class CartStore {
-  private readonly items = signal<CartItem[]>([]);
-  readonly cartItems = this.items.asReadonly();
-
-  readonly total = computed(() => {
-    return this.items().reduce(
-      (sum, item) => sum + item.product.price * item.quantity,
-      0
-    );
-  });
-
-  readonly itemCount = computed(() => {
-    return this.items().reduce((sum, item) => sum + item.quantity, 0);
-  });
-
-  addItem(product: Product) {
-    const existing = this.items().find(i => i.product.id === product.id);
-
-    if (existing) {
-      this.updateQuantity(product.id, existing.quantity + 1);
-    } else {
-      this.items.update(items => [...items, { product, quantity: 1 }]);
-    }
-  }
-
-  removeItem(productId: string) {
-    this.items.update(items => items.filter(i => i.product.id !== productId));
-  }
-
-  updateQuantity(productId: string, quantity: number) {
-    if (quantity <= 0) {
-      this.removeItem(productId);
-      return;
-    }
-
-    this.items.update(items =>
-      items.map(item =>
-        item.product.id === productId
-          ? { ...item, quantity }
-          : item
-      )
-    );
-  }
-
-  clear() {
-    this.items.set([]);
-  }
-}
-
-// ============================================================================
-// DOMAIN COMPONENTS - PRODUCT DISPLAY
-// ============================================================================
-
-/**
- * Product card component
- * Demonstrates: composition with directives and declarations
- */
-export #component ProductCard({
-  product = input.required<Product>(),
-  addToCart = output<Product>(),
-  showDetails = output<Product>(),
+  children = fragment<void>(),
+  directives = attachments<HTMLDivElement>(),
+  elevated = input<boolean>(true),
+  padding = input<string>('1rem'),
 }) {
   script: () => {
-    const isAdding = signal(false);
+    const cardClass = computed(() =>
+      elevated() ? 'card card-elevated' : 'card'
+    );
 
-    async function handleAddToCart() {
-      isAdding.set(true);
-      // Simulate async operation
-      await new Promise(resolve => setTimeout(resolve, 500));
-      addToCart.emit(product());
-      isAdding.set(false);
+    return (
+      <div
+        {...directives()}
+        class={cardClass()}
+        style={`padding: ${padding()}`}>
+        <Render fragment={children()} />
+      </div>
+    );
+  },
+  style: `
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background: white;
+      position: relative;
+      overflow: hidden;
     }
 
-    return {
-      template: `
-        <Card elevated={true}>
-          @fragment header() {
-            <div
-              class="product-image"
-              @highlight(color={'blue'} intensity={0.1})
-              @animateIn(duration={400})
-              style:background-image={'url(' + product().imageUrl + ')'}>
-            </div>
-          }
-
-          <div class="product-info">
-            <h3>{product().name}</h3>
-            <p class="product-description">{product().description}</p>
-
-            @const formattedPrice = @formatCurrency(() => product().price, 'USD');
-            <p class="product-price">{formattedPrice()}</p>
-
-            @if (!product().inStock) {
-              <p class="out-of-stock">Out of Stock</p>
-            }
-          </div>
-
-          @fragment footer() {
-            <div class="product-actions">
-              <Button
-                variant={'secondary'}
-                size={'small'}
-                on:click={() => showDetails.emit(product())}>
-                View Details
-              </Button>
-
-              <Button
-                variant={'primary'}
-                size={'small'}
-                disabled={!product().inStock}
-                loading={isAdding()}
-                on:click={handleAddToCart}>
-                Add to Cart
-              </Button>
-            </div>
-          }
-        </Card>
-      `,
-      style: `
-        .product-image {
-          width: 100%;
-          height: 200px;
-          background-size: cover;
-          background-position: center;
-          border-radius: 4px;
-        }
-
-        .product-info h3 {
-          margin: 0 0 8px 0;
-          font-size: 18px;
-        }
-
-        .product-description {
-          color: #6c757d;
-          font-size: 14px;
-          margin: 0 0 12px 0;
-        }
-
-        .product-price {
-          font-size: 20px;
-          font-weight: bold;
-          color: #007bff;
-          margin: 0;
-        }
-
-        .out-of-stock {
-          color: #dc3545;
-          font-weight: 500;
-          margin: 8px 0 0 0;
-        }
-
-        .product-actions {
-          display: flex;
-          gap: 8px;
-          justify-content: space-between;
-        }
-      `,
-    };
-  },
+    .card-elevated {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+  `,
 }
 
 /**
- * Product list with search
- * Demonstrates: complex composition with multiple features
+ * Badge component - displays a small label
+ */
+export #component Badge({
+  children = fragment<void>(),
+  variant = input<'primary' | 'success' | 'warning' | 'danger'>('primary'),
+}) {
+  script: () => (
+    <span class={`badge badge-${variant()}`}>
+      <Render fragment={children()} />
+    </span>
+  ),
+  style: `
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .badge-primary { background: #007bff; color: white; }
+    .badge-success { background: #28a745; color: white; }
+    .badge-warning { background: #ffc107; color: black; }
+    .badge-danger { background: #dc3545; color: white; }
+  `,
+}
+
+/**
+ * Button component - reusable button with directives support
+ */
+export #component Button({
+  children = fragment<void>(),
+  directives = attachments<HTMLButtonElement>(),
+  variant = input<'primary' | 'secondary' | 'outline'>('primary'),
+  disabled = input<boolean>(false),
+  click = output<void>(),
+}) {
+  script: () => (
+    <button
+      {...directives()}
+      class={`btn btn-${variant()}`}
+      disabled={disabled()}
+      on:click={() => click.emit()}>
+      <Render fragment={children()} />
+    </button>
+  ),
+  style: `
+    .btn {
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: #007bff;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid #007bff;
+      color: #007bff;
+    }
+
+    .ripple-effect {
+      position: absolute;
+      border-radius: 50%;
+      width: 100px;
+      height: 100px;
+      margin-left: -50px;
+      margin-top: -50px;
+      animation: ripple 0.6s ease-out;
+      pointer-events: none;
+    }
+
+    @keyframes ripple {
+      from {
+        transform: scale(0);
+        opacity: 1;
+      }
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+  `,
+}
+
+// ============================================
+// PRODUCT DISPLAY COMPONENTS
+// ============================================
+
+/**
+ * ProductImage component - displays product image with stock badge
+ */
+export #component ProductImage({
+  url = input.required<string>(),
+  alt = input<string>('Product image'),
+  inStock = input<boolean>(true),
+}) {
+  script: () => (
+    <div class="product-image-wrapper">
+      <img src={url()} alt={alt()} class="product-image" />
+
+      @if (!inStock()) {
+        <Badge variant="danger">Out of Stock</Badge>
+      }
+    </div>
+  ),
+  style: `
+    .product-image-wrapper {
+      position: relative;
+      width: 100%;
+      height: 200px;
+      overflow: hidden;
+    }
+
+    .product-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .product-image-wrapper .badge {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+    }
+  `,
+}
+
+/**
+ * ProductInfo component - displays product details with fragments
+ */
+export #component ProductInfo({
+  product = input.required<Product>(),
+  actions = fragment<void>(),
+  showDescription = input<boolean>(true),
+}) {
+  script: () => (
+    <div class="product-info">
+      <h3 class="product-name">{product().name}</h3>
+
+      @if (showDescription() && product().description) {
+        <p class="product-description">{product().description}</p>
+      }
+
+      <div class="product-pricing">
+        @const finalPrice = @discount({
+          originalPrice: product().price,
+          discountPercent: product().discountPercent ?? 0,
+        });
+
+        @const formattedPrice = @currency({
+          value: finalPrice(),
+          currencyCode: 'USD',
+        });
+
+        @if (product().discountPercent && product().discountPercent > 0) {
+          <div class="price-with-discount">
+            @const originalFormatted = @currency({
+              value: product().price,
+              currencyCode: 'USD',
+            });
+
+            <span class="original-price">{originalFormatted()}</span>
+            <span class="discounted-price">{formattedPrice()}</span>
+            <Badge variant="success">{product().discountPercent}% OFF</Badge>
+          </div>
+        } @else {
+          <div class="price">{formattedPrice()}</div>
+        }
+      </div>
+
+      @if (actions()) {
+        <div class="product-actions">
+          <Render fragment={actions()} />
+        </div>
+      }
+    </div>
+  ),
+  style: `
+    .product-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .product-name {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .product-description {
+      margin: 0;
+      color: #666;
+      font-size: 0.875rem;
+      line-height: 1.4;
+    }
+
+    .product-pricing {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .price-with-discount {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .original-price {
+      text-decoration: line-through;
+      color: #999;
+      font-size: 0.875rem;
+    }
+
+    .discounted-price {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #28a745;
+    }
+
+    .price {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #007bff;
+    }
+
+    .product-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+  `,
+}
+
+/**
+ * ProductList component - renders list of products with customizable item fragment
  */
 export #component ProductList({
   products = input.required<Product[]>(),
-  productDetails = output<Product>(),
+  item = fragment<[Product]>(),
+  emptyMessage = input<string>('No products available'),
+}) {
+  script: () => (
+    <div class="product-list">
+      @if (products().length === 0) {
+        <p class="empty-message">{emptyMessage()}</p>
+      } @else {
+        @for (product of products(); track product.id) {
+          <Render fragment={item()} params={[product]} />
+        }
+      }
+    </div>
+  ),
+  style: `
+    .product-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+      padding: 1rem;
+    }
+
+    .empty-message {
+      text-align: center;
+      color: #999;
+      font-size: 1.125rem;
+      padding: 2rem;
+    }
+  `,
+}
+
+// ============================================
+// MAIN APPLICATION COMPONENT
+// ============================================
+
+/**
+ * Store for managing products and cart
+ */
+class ProductStore {
+  private readonly products = signal<Product[]>([]);
+  private readonly cart = signal<Set<string>>(new Set());
+  private readonly highlighted = signal<Set<string>>(new Set());
+
+  readonly allProducts = this.products.asReadonly();
+  readonly cartItems = computed(() =>
+    this.products().filter(p => this.cart().has(p.id))
+  );
+  readonly cartCount = computed(() => this.cart().size);
+
+  constructor(initialProducts: Product[] = []) {
+    this.products.set(initialProducts);
+  }
+
+  addToCart(productId: string) {
+    this.cart.update(cart => new Set([...cart, productId]));
+  }
+
+  removeFromCart(productId: string) {
+    this.cart.update(cart => {
+      const newCart = new Set(cart);
+      newCart.delete(productId);
+      return newCart;
+    });
+  }
+
+  isInCart(productId: string) {
+    return computed(() => this.cart().has(productId));
+  }
+
+  toggleHighlight(productId: string) {
+    this.highlighted.update(hl => {
+      const newSet = new Set(hl);
+      if (newSet.has(productId)) {
+        newSet.delete(productId);
+      } else {
+        newSet.add(productId);
+      }
+      return newSet;
+    });
+  }
+
+  isHighlighted(productId: string) {
+    return computed(() => this.highlighted().has(productId));
+  }
+}
+
+/**
+ * Main catalog component demonstrating composition
+ */
+export #component ProductCatalog({
+  initialProducts = input<Product[]>([]),
 }) {
   script: () => {
-    const cart = inject(CartStoreToken);
-    const searchTerm = signal('');
-
-    // Use declaration for debouncing
-    const debouncedSearch = computed(() => searchTerm());
+    const store = inject(ProductStore);
+    const searchQuery = signal('');
+    const showDescriptions = signal(true);
 
     const filteredProducts = computed(() => {
-      const term = debouncedSearch().toLowerCase();
-      if (!term) return products();
+      const query = searchQuery().toLowerCase();
+      if (!query) return store.allProducts();
 
-      return products().filter(p =>
-        p.name.toLowerCase().includes(term) ||
-        p.description.toLowerCase().includes(term)
+      return store.allProducts().filter(p =>
+        p.name.toLowerCase().includes(query) ||
+        p.description.toLowerCase().includes(query)
       );
     });
 
     function handleAddToCart(product: Product) {
-      cart.addItem(product);
+      if (product.inStock) {
+        store.addToCart(product.id);
+      }
     }
 
-    return {
-      template: `
-        <div class="product-list-container">
-          <div class="search-bar">
+    function handleRemoveFromCart(productId: string) {
+      store.removeFromCart(productId);
+    }
+
+    function handleToggleHighlight(productId: string) {
+      store.toggleHighlight(productId);
+    }
+
+    return (
+      <div class="catalog">
+        <header class="catalog-header">
+          <h1>Product Catalog</h1>
+
+          <div class="catalog-controls">
             <input
-              type="text"
+              type="search"
               placeholder="Search products..."
-              model:value={searchTerm}
+              model:value={searchQuery}
               class="search-input" />
 
-            @if (searchTerm()) {
-              <button
-                class="clear-search"
-                on:click={() => searchTerm.set('')}>
-                Clear
-              </button>
-            }
-          </div>
-
-          <p class="results-count">
-            Showing {filteredProducts().length} of {products().length} products
-          </p>
-
-          <List items={filteredProducts()} gap={16}>
-            @fragment item(product: Product, index: number) {
-              <div @animateIn(delay={index * 50}>
-                <ProductCard
-                  product={product}
-                  on:addToCart={(p) => handleAddToCart(p)}
-                  on:showDetails={(p) => productDetails.emit(p)} />
-              </div>
-            }
-
-            @fragment emptyState() {
-              <div class="no-results">
-                <p>No products found matching "{searchTerm()}"</p>
-                <Button
-                  variant={'secondary'}
-                  on:click={() => searchTerm.set('')}>
-                  Clear Search
-                </Button>
-              </div>
-            }
-          </List>
-        </div>
-      `,
-      style: `
-        .product-list-container {
-          max-width: 1200px;
-          margin: 0 auto;
-        }
-
-        .search-bar {
-          display: flex;
-          gap: 8px;
-          margin-bottom: 16px;
-        }
-
-        .search-input {
-          flex: 1;
-          padding: 12px 16px;
-          border: 2px solid #e0e0e0;
-          border-radius: 4px;
-          font-size: 16px;
-        }
-
-        .search-input:focus {
-          outline: none;
-          border-color: #007bff;
-        }
-
-        .clear-search {
-          padding: 12px 24px;
-          background: #dc3545;
-          color: white;
-          border: none;
-          border-radius: 4px;
-          cursor: pointer;
-        }
-
-        .results-count {
-          color: #6c757d;
-          margin-bottom: 16px;
-        }
-
-        .no-results {
-          text-align: center;
-          padding: 48px;
-        }
-
-        .no-results p {
-          margin-bottom: 16px;
-          font-size: 18px;
-          color: #6c757d;
-        }
-      `,
-    };
-  },
-}
-
-// ============================================================================
-// DOMAIN COMPONENTS - CART
-// ============================================================================
-
-/**
- * Cart item component
- * Demonstrates: model binding and event handling
- */
-export #component CartItemRow({
-  item = input.required<CartItem>(),
-  quantityChange = output<number>(),
-  remove = output<void>(),
-}) {
-  script: () => {
-    const quantity = linkedSignal(() => item().quantity);
-
-    function handleQuantityChange() {
-      quantityChange.emit(quantity());
-    }
-
-    return {
-      template: `
-        <div class="cart-item" @highlight(color={'green'} intensity={0.05})>
-          <div class="item-info">
-            <img
-              src={item().product.imageUrl}
-              alt={item().product.name}
-              class="item-image" />
-
-            <div>
-              <h4>{item().product.name}</h4>
-
-              @const price = @formatCurrency(() => item().product.price, 'USD');
-              <p class="item-price">{price()}</p>
-            </div>
-          </div>
-
-          <div class="item-controls">
-            <div class="quantity-control">
-              <button
-                class="qty-btn"
-                on:click={() => {quantity.update(q => Math.max(1, q - 1)); handleQuantityChange();}}>
-                −
-              </button>
-
+            <label class="toggle-label">
               <input
-                type="number"
-                model:value={quantity}
-                on:input={handleQuantityChange}
-                min={1}
-                class="qty-input" />
+                type="checkbox"
+                model:checked={showDescriptions} />
+              <span>Show descriptions</span>
+            </label>
 
-              <button
-                class="qty-btn"
-                on:click={() => {quantity.update(q => q + 1); handleQuantityChange();}}>
-                +
-              </button>
+            <div
+              class="cart-badge"
+              @tooltip(message={`${store.cartCount()} items in cart`})>
+              🛒 Cart ({store.cartCount()})
             </div>
-
-            @const total = @formatCurrency(() => item().product.price * quantity(), 'USD');
-            <p class="item-total">{total()}</p>
-
-            <button
-              class="remove-btn"
-              on:click={() => remove.emit()}>
-              Remove
-            </button>
           </div>
-        </div>
-      `,
-      style: `
-        .cart-item {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 16px;
-          border: 1px solid #e0e0e0;
-          border-radius: 4px;
-        }
+        </header>
 
-        .item-info {
-          display: flex;
-          gap: 16px;
-          align-items: center;
-        }
+        <ProductList
+          products={filteredProducts()}
+          emptyMessage="No products match your search">
+          @fragment item(product: Product) {
+            <Card
+              @highlight(
+                active={store.isHighlighted(product.id)()}
+                highlightColor="#fff3cd"
+              )>
+              <ProductImage
+                url={product.imageUrl}
+                alt={product.name}
+                inStock={product.inStock} />
 
-        .item-image {
-          width: 80px;
-          height: 80px;
-          object-fit: cover;
-          border-radius: 4px;
-        }
+              <ProductInfo
+                product={product}
+                showDescription={showDescriptions()}>
+                @fragment actions() {
+                  @const inCart = store.isInCart(product.id);
 
-        .item-info h4 {
-          margin: 0 0 8px 0;
-        }
+                  @if (inCart()) {
+                    <Button
+                      variant="secondary"
+                      @ripple
+                      @tooltip(message="Remove from cart")
+                      on:click={() => handleRemoveFromCart(product.id)}>
+                      Remove from Cart
+                    </Button>
+                  } @else {
+                    <Button
+                      variant="primary"
+                      disabled={!product.inStock}
+                      @ripple
+                      @tooltip(message={product.inStock ? 'Add to cart' : 'Out of stock'})
+                      on:click={() => handleAddToCart(product)}>
+                      {product.inStock ? 'Add to Cart' : 'Unavailable'}
+                    </Button>
+                  }
 
-        .item-price {
-          color: #6c757d;
-          margin: 0;
-        }
-
-        .item-controls {
-          display: flex;
-          align-items: center;
-          gap: 16px;
-        }
-
-        .quantity-control {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
-
-        .qty-btn {
-          width: 32px;
-          height: 32px;
-          border: 1px solid #e0e0e0;
-          background: white;
-          border-radius: 4px;
-          cursor: pointer;
-          font-size: 18px;
-        }
-
-        .qty-btn:hover {
-          background: #f8f9fa;
-        }
-
-        .qty-input {
-          width: 60px;
-          padding: 8px;
-          text-align: center;
-          border: 1px solid #e0e0e0;
-          border-radius: 4px;
-        }
-
-        .item-total {
-          font-weight: bold;
-          min-width: 80px;
-          text-align: right;
-          margin: 0;
-        }
-
-        .remove-btn {
-          padding: 8px 16px;
-          background: #dc3545;
-          color: white;
-          border: none;
-          border-radius: 4px;
-          cursor: pointer;
-        }
-
-        .remove-btn:hover {
-          background: #c82333;
-        }
-      `,
-    };
-  },
-}
-
-/**
- * Shopping cart component
- * Demonstrates: state management with store injection
- */
-export #component ShoppingCart() {
-  script: () => {
-    const cart = inject(CartStoreToken);
-    const modalOpen = signal(false);
-
-    function updateQuantity(productId: string, quantity: number) {
-      cart.updateQuantity(productId, quantity);
-    }
-
-    function removeItem(productId: string) {
-      cart.removeItem(productId);
-    }
-
-    function handleCheckout() {
-      modalOpen.set(true);
-    }
-
-    function confirmCheckout() {
-      // Simulate checkout
-      cart.clear();
-      modalOpen.set(false);
-    }
-
-    return {
-      template: `
-        <div class="shopping-cart">
-          <div class="cart-header">
-            <h2>Shopping Cart</h2>
-            <span class="item-count">
-              {cart.itemCount()} {cart.itemCount() === 1 ? 'item' : 'items'}
-            </span>
-          </div>
-
-          <List items={cart.cartItems()} gap={12}>
-            @fragment item(cartItem: CartItem) {
-              <CartItemRow
-                item={cartItem}
-                on:quantityChange={(qty) => updateQuantity(cartItem.product.id, qty)}
-                on:remove={() => removeItem(cartItem.product.id)} />
-            }
-
-            @fragment emptyState() {
-              <div class="empty-cart">
-                <p>Your cart is empty</p>
-              </div>
-            }
-          </List>
-
-          @if (cart.cartItems().length > 0) {
-            <div class="cart-footer">
-              @const totalFormatted = @formatCurrency(() => cart.total(), 'USD');
-
-              <div class="total-row">
-                <span class="total-label">Total:</span>
-                <span class="total-amount">{totalFormatted()}</span>
-              </div>
-
-              <Button
-                variant={'primary'}
-                size={'large'}
-                on:click={handleCheckout}>
-                Proceed to Checkout
-              </Button>
-            </div>
+                  <Button
+                    variant="outline"
+                    @tooltip(message="Toggle highlight")
+                    on:click={() => handleToggleHighlight(product.id)}>
+                    ⭐
+                  </Button>
+                }
+              </ProductInfo>
+            </Card>
           }
-
-          <Modal model:open={modalOpen} title={'Checkout Confirmation'}>
-            <p>Are you sure you want to complete this purchase?</p>
-
-            @const total = @formatCurrency(() => cart.total(), 'USD');
-            <p class="checkout-total">Total: {total()}</p>
-
-            @fragment actions() {
-              <Button
-                variant={'secondary'}
-                on:click={() => modalOpen.set(false)}>
-                Cancel
-              </Button>
-
-              <Button
-                variant={'primary'}
-                on:click={confirmCheckout}>
-                Confirm Purchase
-              </Button>
-            }
-          </Modal>
-        </div>
-      `,
-      style: `
-        .shopping-cart {
-          max-width: 800px;
-          margin: 0 auto;
-        }
-
-        .cart-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 24px;
-        }
-
-        .cart-header h2 {
-          margin: 0;
-        }
-
-        .item-count {
-          color: #6c757d;
-          font-size: 14px;
-        }
-
-        .empty-cart {
-          text-align: center;
-          padding: 48px;
-          color: #6c757d;
-        }
-
-        .cart-footer {
-          margin-top: 24px;
-          padding: 24px;
-          background: #f8f9fa;
-          border-radius: 4px;
-        }
-
-        .total-row {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 16px;
-          font-size: 20px;
-        }
-
-        .total-label {
-          font-weight: 500;
-        }
-
-        .total-amount {
-          font-weight: bold;
-          color: #007bff;
-        }
-
-        .checkout-total {
-          font-size: 18px;
-          font-weight: bold;
-          color: #007bff;
-        }
-      `,
-    };
+        </ProductList>
+      </div>
+    );
   },
-}
+  style: `
+    .catalog {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
 
-// ============================================================================
-// MAIN APP COMPONENT
-// ============================================================================
+    .catalog-header {
+      padding: 2rem 1rem;
+      background: #f8f9fa;
+      border-bottom: 1px solid #dee2e6;
+    }
 
-/**
- * Main application component
- * Demonstrates: full composition with all features
- */
-export #component ShoppingApp() {
-  script: () => {
-    const selectedProduct = signal<Product | null>(null);
+    .catalog-header h1 {
+      margin: 0 0 1rem 0;
+    }
 
-    // Mock product data
-    const products = signal<Product[]>([
-      {
-        id: '1',
-        name: 'Wireless Headphones',
-        description: 'Premium noise-cancelling headphones',
-        price: 299.99,
-        inStock: true,
-        imageUrl: 'https://via.placeholder.com/300x200?text=Headphones',
-      },
-      {
-        id: '2',
-        name: 'Smart Watch',
-        description: 'Fitness tracker with heart rate monitor',
-        price: 399.99,
-        inStock: true,
-        imageUrl: 'https://via.placeholder.com/300x200?text=Watch',
-      },
-      {
-        id: '3',
-        name: 'Laptop Stand',
-        description: 'Ergonomic aluminum laptop stand',
-        price: 59.99,
-        inStock: false,
-        imageUrl: 'https://via.placeholder.com/300x200?text=Stand',
-      },
-    ]);
+    .catalog-controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
 
-    return {
-      template: `
-        <div class="app-container">
-          <header class="app-header">
-            <h1>Shopping Demo</h1>
-            <p>Component Composition Example</p>
-          </header>
+    .search-input {
+      flex: 1;
+      min-width: 200px;
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
 
-          <main class="app-main">
-            <section class="products-section">
-              <ProductList
-                products={products()}
-                on:productDetails={(p) => selectedProduct.set(p)} />
-            </section>
+    .toggle-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+    }
 
-            <aside class="cart-section">
-              <ShoppingCart />
-            </aside>
-          </main>
+    .cart-badge {
+      padding: 0.5rem 1rem;
+      background: #007bff;
+      color: white;
+      border-radius: 20px;
+      font-weight: 600;
+      cursor: pointer;
+    }
 
-          <Modal
-            model:open={signal(selectedProduct() !== null)}
-            title={selectedProduct()?.name ?? ''}>
+    .tooltip {
+      position: absolute;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 0.5rem;
+      border-radius: 4px;
+      font-size: 0.875rem;
+      white-space: nowrap;
+      z-index: 1000;
+      pointer-events: none;
+    }
 
-            @if (selectedProduct()) {
-              <div class="product-details">
-                <img
-                  src={selectedProduct()!.imageUrl}
-                  alt={selectedProduct()!.name}
-                  class="detail-image" />
+    .tooltip-top {
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%) translateY(-8px);
+    }
 
-                <p>{selectedProduct()!.description}</p>
+    .tooltip-bottom {
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%) translateY(8px);
+    }
 
-                @const price = @formatCurrency(() => selectedProduct()!.price, 'USD');
-                <p class="detail-price">{price()}</p>
+    .tooltip-left {
+      right: 100%;
+      top: 50%;
+      transform: translateY(-50%) translateX(-8px);
+    }
 
-                <p class="stock-status">
-                  {selectedProduct()!.inStock ? 'In Stock' : 'Out of Stock'}
-                </p>
-              </div>
-            }
-
-            @fragment actions() {
-              <Button
-                variant={'primary'}
-                on:click={() => selectedProduct.set(null)}>
-                Close
-              </Button>
-            }
-          </Modal>
-        </div>
-      `,
-      style: `
-        .app-container {
-          min-height: 100vh;
-          background: #f8f9fa;
-        }
-
-        .app-header {
-          background: white;
-          padding: 24px;
-          border-bottom: 1px solid #e0e0e0;
-          text-align: center;
-        }
-
-        .app-header h1 {
-          margin: 0 0 8px 0;
-          color: #007bff;
-        }
-
-        .app-header p {
-          margin: 0;
-          color: #6c757d;
-        }
-
-        .app-main {
-          display: grid;
-          grid-template-columns: 2fr 1fr;
-          gap: 24px;
-          padding: 24px;
-          max-width: 1400px;
-          margin: 0 auto;
-        }
-
-        @media (max-width: 1024px) {
-          .app-main {
-            grid-template-columns: 1fr;
-          }
-        }
-
-        .product-details {
-          text-align: center;
-        }
-
-        .detail-image {
-          width: 100%;
-          max-width: 400px;
-          border-radius: 8px;
-          margin-bottom: 16px;
-        }
-
-        .detail-price {
-          font-size: 24px;
-          font-weight: bold;
-          color: #007bff;
-        }
-
-        .stock-status {
-          font-weight: 500;
-          color: #28a745;
-        }
-      `,
-    };
-  },
-  providers: [
-    provide({ token: CartStoreToken, useFactory: () => new CartStore() }),
+    .tooltip-right {
+      left: 100%;
+      top: 50%;
+      transform: translateY(-50%) translateX(8px);
+    }
+  `,
+  providers: () => [
+    provide({
+      token: ProductStore,
+      useFactory: () => new ProductStore(initialProducts()),
+    }),
   ],
-}
-
-// ============================================================================
-// UTILITY FUNCTIONS
-// ============================================================================
-
-function classNames(classes: Record<string, boolean>): string {
-  return Object.entries(classes)
-    .filter(([_, value]) => value)
-    .map(([key]) => key)
-    .join(' ');
-}
-
-function colorToRgb(color: string): { r: number; g: number; b: number } {
-  // Simplified color conversion - in real app use proper color library
-  const colors: Record<string, { r: number; g: number; b: number }> = {
-    yellow: { r: 255, g: 255, b: 0 },
-    blue: { r: 0, g: 123, b: 255 },
-    green: { r: 40, g: 167, b: 69 },
-  };
-
-  return colors[color] || { r: 255, g: 255, b: 0 };
 }
 ```
