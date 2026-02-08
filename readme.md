@@ -192,7 +192,7 @@ export #component TextSearch() {
 }
 
 // -- tooltip in @mylib/tooltip --------------------
-import { input, output, ref, inject, Renderer2, afterRenderEffect } from '@angular/core';
+import { input, output, ref, inject, DestroyRef, Renderer2, afterRenderEffect } from '@angular/core';
 
 export #directive tooltip({
   message = input.required<string>(),
@@ -207,10 +207,15 @@ export #directive tooltip({
    host = ref<HTMLElement>(),
 }) {
   script: () => {
+    const destroyRef = inject(DestroyRef);
     const renderer = inject(Renderer2);
 
     afterRenderEffect(() => {
       // something with host
+    });
+    
+    destroyRef.onDestroy(() => {
+      // cleanup logic
     });
   },
 }
